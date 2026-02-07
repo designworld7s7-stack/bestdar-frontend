@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-white: #FFFFFF;
+  --color-brand-black: #0A0A0A;
+  --color-brand-green: #1B4332;
+  
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.04), 0 4px 10px -5px rgba(0, 0, 0, 0.02);
+}
+
+/* Optional: Tailwind 4 is stricter about filename. 
+   If issues persist, rename 'globals.css' to 'global.css' */

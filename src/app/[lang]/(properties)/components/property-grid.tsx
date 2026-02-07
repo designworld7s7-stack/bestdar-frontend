@@ -1,0 +1,13 @@
+import ProjectCard from '@/components/shared/project-card';
+
+export default function PropertyGrid({ projects, lang }: { projects: any[], lang: string }) {
+  return (
+    <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+        {projects.map((project) => (
+          <ProjectCard key={project.id} {...project} lang={lang} />
+        ))}
+      </div>
+    </section>
+  );
+}
