@@ -27,10 +27,10 @@ export default function JoinPath({ lang }: { lang: string }) {
         
         {/* Section Header */}
         <div className="mb-20 lg:mb-32">
-          <h2 className="text-4xl lg:text-7xl font-black text-black tracking-tighter mb-6">
+          <h2 className="text-4xl lg:text-7xl font-medium text-black tracking-[0.1em] mb-6">
             {isAr ? "طريقك نحو الحصرية" : "Your Path to Exclusivity"}
           </h2>
-          <p className="text-gray-400 font-medium text-sm lg:text-lg">
+          <p className=" font-medium text-sm lg:text-lg tracking-[0.05em]">
             {isAr ? "اكتشف العملية المصممة خصيصاً لأعضائنا المتميزين." : "Discover the tailored process designed for our discerning members."}
           </p>
         </div>
@@ -51,8 +51,8 @@ export default function JoinPath({ lang }: { lang: string }) {
                 index <= 1 ? "border-[#12AD65]" : "border-gray-200"
               )} />
               
-              <h3 className="text-sm font-black text-black uppercase tracking-widest mb-2">{step.title}</h3>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{step.desc}</p>
+              <h3 className="text-sm font-medium text-black uppercase tracking-[0.1em] mb-2">{step.title}</h3>
+              <p className="text-[12px] font-medium  uppercase tracking-[0.1em]">{step.desc}</p>
             </div>
           ))}
         </div>
@@ -69,8 +69,8 @@ export default function JoinPath({ lang }: { lang: string }) {
                 index === 0 ? "border-[#12AD65]" : "border-gray-200"
               )} />
               <div>
-                <h3 className="text-xs font-black text-black uppercase tracking-widest mb-1">{step.title}</h3>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{step.desc}</p>
+                <h3 className="text-xs font-medium text-black uppercase tracking-[0.1em] mb-1">{step.title}</h3>
+                <p className="text-[12px] font-medium text-[#4B5563] uppercase tracking-[0.1em]">{step.desc}</p>
               </div>
             </div>
           ))}

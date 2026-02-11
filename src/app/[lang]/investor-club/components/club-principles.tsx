@@ -25,11 +25,11 @@ export default function ClubPrinciples({ lang }: { lang: string }) {
 
           {/* Text Content */}
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl lg:text-6xl font-black text-black tracking-tighter leading-tight mb-8">
+            <h2 className="text-4xl lg:text-6xl font-medium text-black tracking-[0.1em] leading-tight mb-8">
               {isAr ? "نحن لا نلحق بالأسواق؛ بل نتحرك قبلها." : "We don't chase markets; we move before them."}
             </h2>
             
-            <p className="text-gray-500 text-lg lg:text-xl font-medium leading-relaxed mb-10">
+            <p className="text-gray-500 text-lg lg:text-xl font-medium leading-relaxed mb-10 tracking-[0.05em]">
               {isAr 
                 ? "في بيست دار، نحن نؤمن بالسبق الاستراتيجي. نادي المستثمرين لدينا مصمم لمنحك الأفضلية المطلقة من خلال الوصول المبكر والبيانات الدقيقة."
                 : "At Best Dar, we believe in strategic precedence. Our Investor Club is engineered to give you the ultimate edge through early access and precision data."}
@@ -39,15 +39,15 @@ export default function ClubPrinciples({ lang }: { lang: string }) {
             <div className="flex items-center gap-8 pt-8 border-t border-gray-100">
               <div className="flex flex-col gap-2">
                 <TrendingUp className="text-[#12AD65]" size={32} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Growth</span>
+                <span className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563]">Growth</span>
               </div>
               <div className="flex flex-col gap-2">
                 <Target className="text-[#12AD65]" size={32} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Precision</span>
+                <span className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563]">Precision</span>
               </div>
               <div className="flex flex-col gap-2">
                 <BarChart3 className="text-[#12AD65]" size={32} />
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Strategy</span>
+                <span className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563]">Strategy</span>
               </div>
             </div>
           </div>

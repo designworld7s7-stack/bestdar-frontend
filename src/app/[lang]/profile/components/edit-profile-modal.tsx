@@ -23,8 +23,8 @@ export default function EditProfileModal({ isAr, onClose }: { isAr: boolean, onC
         
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-50">
-          <h2 className="text-[20px] font-black text-black">{isAr ? "تعديل الملف الشخصي" : "Edit Profile"}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-black transition-colors"><X size={24} /></button>
+          <h2 className="text-[20px] font-medium text-black">{isAr ? "تعديل الملف الشخصي" : "Edit Profile"}</h2>
+          <button onClick={onClose} className="text-[#4B5563] hover:text-black transition-colors"><X size={24} /></button>
         </div>
 
         <div className="p-8 space-y-6">
@@ -36,11 +36,11 @@ export default function EditProfileModal({ isAr, onClose }: { isAr: boolean, onC
             { id: 'country', label: isAr ? 'البلد' : 'Country', icon: Globe },
           ].map((field) => (
             <div key={field.id} className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">
+              <label className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563] px-1">
                 {field.label}
               </label>
               <div className="relative">
-                <field.icon size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300" />
+                <field.icon size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
                 <input 
                   type="text"
                   value={(formData as any)[field.id]}
@@ -53,7 +53,7 @@ export default function EditProfileModal({ isAr, onClose }: { isAr: boolean, onC
 
           <button 
             onClick={handleSave}
-            className="w-full bg-black text-white py-5 mt-4 rounded-2xl font-black text-[14px] uppercase tracking-widest shadow-2xl hover:bg-[#12AD65] transition-all"
+            className="w-full bg-black text-white py-5 mt-4 rounded-2xl font-medium text-[14px] uppercase tracking-tighter shadow-2xl hover:bg-[#12AD65] transition-all"
           >
             {isAr ? "حفظ التغييرات" : "Save Changes"}
           </button>

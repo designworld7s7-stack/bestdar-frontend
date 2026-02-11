@@ -43,7 +43,7 @@ export default function HowWeWork({ lang }: { lang: string }) {
         
         {/* Header */}
         <div className="mb-16 lg:mb-32">
-          <h2 className="text-4xl lg:text-6xl font-black text-white tracking-tighter mb-6 uppercase">
+          <h2 className="text-4xl lg:text-6xl  text-white tracking-[0.1em] mb-6 uppercase">
             {isAr ? "كيف نعمل" : "How We Work"}
           </h2>
           <p className="text-gray-500 font-medium text-sm lg:text-lg max-w-2xl mx-auto">
@@ -73,7 +73,7 @@ export default function HowWeWork({ lang }: { lang: string }) {
                 </div>
 
                 <div className="mt-4 flex flex-col items-center">
-                  <h3 className="text-xl lg:text-2xl font-black text-black mb-4">
+                  <h3 className="text-xl lg:text-2xl font-medium text-black mb-4">
                     {step.title}
                   </h3>
                   <p className="text-gray-500 text-sm lg:text-base font-medium leading-relaxed max-w-[200px]">
@@ -82,7 +82,7 @@ export default function HowWeWork({ lang }: { lang: string }) {
                 </div>
 
                 {/* Step Number */}
-                <span className="absolute top-6 right-8 text-[10px] font-black text-gray-100 uppercase tracking-widest">
+                <span className="absolute top-6 right-8 text-[12px] font-medium text-gray-100 uppercase tracking-tighter">
                   Step 0{index + 1}
                 </span>
               </div>

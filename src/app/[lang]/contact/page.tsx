@@ -15,10 +15,10 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 text-center mb-16 lg:mb-24">
         {/* Title and Subtitle */}
-        <h1 className="text-5xl lg:text-8xl font-black text-black tracking-tighter mb-6 uppercase">
+        <h1 className="text-5xl lg:text-8xl font-medium text-black tracking-[0.1em] mb-6 uppercase">
           {isAr ? "اتصل بنا" : "Contact Us"}
         </h1>
-        <p className="text-gray-400 font-medium text-sm lg:text-lg max-w-2xl mx-auto">
+        <p className="text-[#4B5563] font-medium text-sm lg:text-lg max-w-2xl mx-auto">
           {isAr 
             ? "يسعدنا أن نسمع منك! أرسل لنا رسالة وسنقوم بالرد قريباً."
             : "We'd love to hear from you! Send us a message and we'll respond soon."}

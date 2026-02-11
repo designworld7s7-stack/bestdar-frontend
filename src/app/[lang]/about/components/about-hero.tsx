@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { Calendar, MessageCircle } from 'lucide-react';
-
+import { useModals } from "@/context/modal-context"; //
 export default function AboutHero({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
-
+const { openConsultation } = useModals(); // Unified trigger
   return (
     <section className="bg-white pt-20 lg:pt-40 pb-20">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
@@ -13,11 +13,11 @@ export default function AboutHero({ lang }: { lang: string }) {
           
           {/* Text Content Area */}
           <div className="w-full lg:w-1/2">
-            <div className="inline-block bg-[#12AD65]/10 text-[#12AD65] text-[10px] font-black uppercase tracking-[0.2em] py-2 px-4 rounded-full mb-8">
+            <div className="inline-block bg-[#12AD65]/10 text-[#12AD65] text-[12px] font-medium uppercase tracking-tight py-2 px-4 rounded-full mb-8">
               {isAr ? "من نحن" : "Who We Are"}
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-black text-black leading-tight tracking-tighter mb-8">
+            <h1 className="text-5xl lg:text-7xl font-medium text-black leading-tight tracking-tight mb-8">
               {isAr ? (
                 <>مساعدة المشترين من الشرق الأوسط على الاستثمار <span className="text-[#12AD65]">بثقة في تركيا والإمارات</span></>
               ) : (
@@ -33,15 +33,23 @@ export default function AboutHero({ lang }: { lang: string }) {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4">
-              <button className="flex items-center gap-3 bg-[#12AD65] text-white px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-[#0f8f53] transition-all shadow-lg shadow-[#12AD65]/20">
-                <Calendar size={18} />
-                {isAr ? "حجز استشارة" : "Book Consultation"}
-              </button>
+              <button 
+        onClick={openConsultation}
+        className="btn-brand flex items-center gap-3"
+      >
+        <Calendar size={18} />
+        {isAr ? "حجز استشارة" : "Book Consultation"}
+      </button>
               
-              <button className="flex items-center gap-3 bg-white text-black border border-gray-100 px-8 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm">
-                <MessageCircle size={18} className="text-[#12AD65]" />
-                {isAr ? "اتصال واتساب" : "WhatsApp Contact"}
-              </button>
+              <a 
+        href="https://wa.me/9647500000000" // International format
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-secondary flex items-center gap-3"
+      >
+        <MessageCircle size={18} className="text-[#12AD65]" />
+        {isAr ? "اتصال واتساب" : "WhatsApp Contact"}
+      </a>
             </div>
           </div>
 

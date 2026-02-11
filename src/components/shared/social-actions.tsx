@@ -1,38 +1,65 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Heart, Share2 } from 'lucide-react';
+import React from 'react';
+import { Bookmark, Share2 } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
 import { clsx } from 'clsx';
 
 interface SocialActionsProps {
-  variant?: 'light' | 'dark';
-  className?: string;
+  lang?: string;
+  title?: string; // Renamed from propertyTitle to be generic for guides too [cite: 2026-02-04]
 }
 
-export default function SocialActions({ variant = 'light', className }: SocialActionsProps) {
-  const [isSaved, setIsSaved] = useState(false);
+export default function SocialActions({ 
+  lang, 
+  title 
+}: SocialActionsProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  
+  // Robust language detection [cite: 2026-02-04]
+  const currentLang = lang || pathname.split('/')[1] || 'en';
+  const isAr = currentLang === 'ar';
 
-  const iconClasses = clsx(
-    "flex items-center justify-center rounded-full transition-all duration-300 backdrop-blur-md border",
-    variant === 'light' 
-      ? "bg-white/90 text-black border-gray-100 hover:bg-white" 
-      : "bg-black/40 text-white border-white/10 hover:bg-black/60",
-    "h-10 w-10 lg:h-12 lg:w-12"
-  );
+  const handleSave = (e: React.MouseEvent) => {
+  e.stopPropagation(); 
+  e.preventDefault();
+
+  // FIX: Added /auth/ to match your actual folder structure [cite: 2026-02-04]
+  router.push(`/${currentLang}/auth/signup`); 
+};
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({ 
+          title: title || 'Best Dar | Premium Real Estate', 
+          url: url 
+        });
+      } catch (err) {
+        // User closed the share menu [cite: 2026-02-04]
+      }
+    } else {
+      navigator.clipboard.writeText(url);
+      alert(isAr ? "تم نسخ الرابط" : "Link copied");
+    }
+  };
+
+  const buttonStyle = "flex items-center justify-center rounded-full bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all hover:scale-110 active:scale-95 h-11 w-11";
 
   return (
-    <div className={clsx("flex items-center gap-3", className)}>
-      <button 
-        onClick={() => setIsSaved(!isSaved)}
-        className={iconClasses}
-      >
-        <Heart 
-          size={20} 
-          className={clsx("transition-colors", isSaved && "fill-red-500 text-red-500")} 
-        />
+    <div className="flex items-center gap-3 relative z-[30]">
+      <button onClick={handleSave} className={buttonStyle} type="button">
+        <Bookmark size={20} className="text-black" />
       </button>
-      <button className={iconClasses}>
-        <Share2 size={20} />
+      
+      <button onClick={handleShare} className={buttonStyle} type="button">
+        <Share2 size={20} className="text-black" />
       </button>
     </div>
   );

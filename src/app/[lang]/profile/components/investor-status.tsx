@@ -21,14 +21,14 @@ export default function InvestorStatus({ isAr }: { isAr: boolean }) {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-[#12AD65]">
               <Award size={16} />
-              <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em]">
+              <span className="text-[12px] sm:text-[11px] font-medium uppercase tracking-tight">
                 {isAr ? "حالة نادي المستثمرين" : "Investor Club Status"}
               </span>
             </div>
-            <h2 className="text-[32px] sm:text-[42px] font-black text-white tracking-tighter">
+            <h2 className="text-[32px] sm:text-[42px] font-medium text-white tracking-[0.1em]">
               {isAr ? "عضو ذهبي" : "Gold Member"}
             </h2>
-            <p className="text-gray-400 text-[14px] sm:text-[16px] font-medium">
+            <p className="text-[#4B5563] text-[14px] sm:text-[16px] font-medium">
               {isAr ? "استمتع بعروض حصرية خارج السوق ورسوم مخفضة." : "Unlock exclusive off-market deals and lower fees."}
             </p>
           </div>
@@ -37,12 +37,12 @@ export default function InvestorStatus({ isAr }: { isAr: boolean }) {
           <div className="space-y-4 max-w-md">
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-1">{isAr ? "إجمالي الاستثمار" : "Total Invested"}</p>
-                <p className="text-white text-[18px] font-black">$150,000</p>
+                <p className="text-gray-500 text-[12px] font-medium uppercase tracking-tighter mb-1">{isAr ? "إجمالي الاستثمار" : "Total Invested"}</p>
+                <p className="text-white text-[18px] font-medium">$150,000</p>
               </div>
               <div className="text-right">
-                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mb-1">{isAr ? "المستوى التالي" : "Next Tier"}</p>
-                <p className="text-gray-300 text-[14px] font-bold">$500,000</p>
+                <p className="text-gray-500 text-[12px] font-medium uppercase tracking-tighter mb-1">{isAr ? "المستوى التالي" : "Next Tier"}</p>
+                <p className="text-[#6B7280] text-[14px] font-medium">$500,000</p>
               </div>
             </div>
             

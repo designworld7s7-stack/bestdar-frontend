@@ -38,11 +38,11 @@ export default function ClientCentric({ lang }: { lang: string }) {
 
           {/* Text Content Area */}
           <div className="w-full lg:w-1/2">
-            <h2 className="text-4xl lg:text-6xl font-black text-white leading-tight tracking-tighter mb-8">
+            <h2 className="text-4xl lg:text-6xl font-medium text-white leading-tight tracking-[0.1em] mb-8">
               {isAr ? "نهج يركز على العميل" : "Client-Centric Approach"}
             </h2>
 
-            <p className="text-gray-400 text-sm lg:text-lg font-medium leading-relaxed mb-10 max-w-xl">
+            <p className="text-[#4B5563] text-sm lg:text-lg font-medium leading-relaxed mb-10 max-w-xl">
               {isAr 
                 ? "لكل عميل هدف فريد. نحن نأخذ الوقت الكافي لفهم احتياجاتك، ونقدم توصيات مخصصة للمشاريع، وندعمك في كل مرحلة من رحلتك الاستثمارية. لا ضغط، لا تحيز — تركيزنا على ما هو مناسب لك."
                 : "Every client has a unique goal. We take time to understand your needs, offer tailored project recommendations, and support you through every stage of your investment journey. No pressure, no bias — our focus is on what’s right for you."}

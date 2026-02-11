@@ -3,8 +3,9 @@ import CityGrid from "@/app/[lang]/(properties)/components/city-grid";
 import PropertyGrid from "@/app/[lang]/(properties)/components/property-grid";
 import LocalGuides from "@/app/[lang]/(properties)/components/local-guides";
 import PropertyFilter from "@/components/shared/property-filter";
+import { createClient } from '@/utils/supabase/server'; // Direct fetch for better control
 
-// Mock Data - In a real scenario, this would come from a database or /data folder
+// Keep mock cities for UI layout until you decide to move them to Supabase
 const turkeyCities = [
   { name: "Istanbul", subTitle: "Cultural Capital", projectCount: 42, image: "/cities/istanbul.jpg" },
   { name: "Antalya", subTitle: "Tourism Hub", projectCount: 18, image: "/cities/antalya.jpg" },
@@ -13,24 +14,42 @@ const turkeyCities = [
   { name: "Trabzon", subTitle: "Black Sea Gem", projectCount: 7, image: "/cities/trabzon.jpg" },
 ];
 
-const turkeyProjects = [
-  { id: "tr1", title: "Bosphorus Residences", developer: "Emaar Turkey", location: "Istanbul", price: "$180,000", image: "/prop-1.jpg", deliveryDate: "Delivery 2024" },
-  { id: "tr2", title: "Mediterranean Villas", developer: "Antalya Homes", location: "Antalya", price: "$650,000", image: "/prop-2.jpg", deliveryDate: "Delivery 2025" },
-  { id: "tr3", title: "Trabzon Green Valley", developer: "Black Sea Invest", location: "Trabzon", price: "$150,000", image: "/prop-3.jpg", deliveryDate: "Ready to Move" },
-];
-
-const turkeyGuides = [
-  { id: "g1", title: "The Ultimate Guide to Buying Property in Turkey", description: "Everything Iraqi investors need to know about laws and taxes.", image: "/guide-tr-1.jpg" },
-  { id: "g2", title: "Turkish Citizenship by Investment Program", description: "Step-by-step guide to obtaining a passport through real estate.", image: "/guide-tr-2.jpg" },
-];
-
-export default async function TurkeyPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function TurkeyPage({ 
+  params,
+  searchParams 
+}: { 
+  params: Promise<{ lang: string }>,
+  searchParams: Promise<{ city?: string, propertyType?: string, installments?: string, delivery?: string }> 
+}) {
   const { lang } = await params;
+  const filters = await searchParams; // Await searchParams for Next.js 15
   const isAr = lang === 'ar';
+  const supabase = await createClient();
+
+  // 1. Build Query for Turkey
+ let query = supabase
+  .from('projects')
+  .select(`
+    *,
+    project_units!inner (
+      has_installments
+    )
+  `)
+  .eq('country_code', 'tr'); // Hard-coded for this page
+
+// Apply the sub-filters
+if (filters.city) query = query.ilike('location', `%${filters.city}%`);
+if (filters.propertyType) query = query.ilike('property_type', filters.propertyType);
+
+// The crucial fix for the button
+if (filters.installments === 'true') {
+  query = query.eq('project_units.has_installments', true);
+}
+
+  const { data: turkeyProjects } = await query.order('created_at', { ascending: false });
 
   return (
     <main className="bg-white min-h-screen">
-      {/* 1. Header: Hidden on mobile, contains Back Button on Desktop */}
       <PropertyHeader 
         lang={lang}
         title={isAr ? "عقارات في تركيا" : "Properties in Turkey"}
@@ -39,29 +58,26 @@ export default async function TurkeyPage({ params }: { params: Promise<{ lang: s
           : "Explore top real estate projects across Istanbul, Antalya, Alanya, Ankara, and Trabzon."}
       />
 
-      {/* 2. City Cards: Starts page on mobile, grid on desktop */}
       <CityGrid 
         lang={lang} 
         country="turkey" 
         cities={turkeyCities} 
       />
 
-      {/* 3. Filter: Sticky logic can be added here */}
       <div className="lg:mt-8">
         <PropertyFilter type="turkey" lang={lang} />
       </div>
 
-      {/* 4. Projects: 3-column grid for Desktop, Vertical Stack for Mobile */}
       <PropertyGrid 
         lang={lang} 
-        projects={turkeyProjects} 
+        projects={turkeyProjects || []} 
       />
 
-      {/* 5. Guides: Vertical stack for both platforms */}
       <LocalGuides 
         lang={lang} 
         country={isAr ? "تركيا" : "Turkey"} 
-        guides={turkeyGuides} 
+        // We will make this dynamic in the next step!
+        guides={[]} 
       />
     </main>
   );

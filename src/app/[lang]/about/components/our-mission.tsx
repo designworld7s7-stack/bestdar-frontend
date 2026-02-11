@@ -36,10 +36,10 @@ export default function OurMission({ lang }: { lang: string }) {
         
         {/* Header */}
         <div className="mb-16 lg:mb-24">
-          <h2 className="text-4xl lg:text-6xl font-black text-black tracking-tighter mb-6">
+          <h2 className="text-4xl lg:text-6xl font-medium text-black tracking-[0.1em] mb-6">
             {isAr ? "مهمتنا" : "Our Mission"}
           </h2>
-          <p className="text-gray-400 font-medium text-sm lg:text-lg max-w-2xl mx-auto">
+          <p className="text-[#4B5563] font-medium text-sm lg:text-lg max-w-2xl mx-auto">
             {isAr 
               ? "نحن نسترشد بمبادئ أساسية تمنح الأولوية لأمانك ونجاحك."
               : "Guided by core principles that prioritize your safety and success."}
@@ -58,7 +58,7 @@ export default function OurMission({ lang }: { lang: string }) {
                 {item.icon}
               </div>
 
-              <h3 className="text-xl lg:text-2xl font-black text-black mb-6">
+              <h3 className="text-xl lg:text-2xl font-medium text-black mb-6">
                 {item.title}
               </h3>
               

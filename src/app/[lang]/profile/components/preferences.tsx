@@ -15,7 +15,7 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
   return (
     <div className="bg-white rounded-[32px] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-50 relative">
       <div className="flex items-center justify-between mb-10">
-        <h2 className="text-[22px] font-black text-black tracking-tight">
+        <h2 className="text-[22px] font-medium text-black tracking-tight">
           {isAr ? "تفضيلاتي" : "My Preferences"}
         </h2>
         {/* 4. Attach the function to the button */}
@@ -30,22 +30,22 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
       <div className="space-y-10">
         {/* Budget Range */}
         <section className="space-y-4">
-          <div className="flex items-center gap-3 text-gray-400">
+          <div className="flex items-center gap-3 text-[#4B5563]">
             <Wallet size={18} />
-            <span className="text-[13px] font-black uppercase tracking-[0.1em]">
+            <span className="text-[13px] font-medium uppercase tracking-[0.1em]">
               {isAr ? "نطاق الميزانية" : "Budget Range"}
             </span>
           </div>
           <div className="bg-[#F8F9FA] px-6 py-4 rounded-2xl inline-block">
-            <span className="text-[16px] font-black text-black">$250k - $500k</span>
+            <span className="text-[16px] font-medium text-black">$250k - $500k</span>
           </div>
         </section>
 
         {/* Preferred Cities */}
         <section className="space-y-4">
-          <div className="flex items-center gap-3 text-gray-400">
+          <div className="flex items-center gap-3 text-[#4B5563]">
             <MapPin size={18} />
-            <span className="text-[13px] font-black uppercase tracking-[0.1em]">
+            <span className="text-[13px] font-medium uppercase tracking-[0.1em]">
               {isAr ? "المدن المفضلة" : "Preferred Cities"}
             </span>
           </div>
@@ -60,16 +60,16 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
 
         {/* Property Types */}
         <section className="space-y-4">
-          <div className="flex items-center gap-3 text-gray-400">
+          <div className="flex items-center gap-3 text-[#4B5563]">
             <Home size={18} />
-            <span className="text-[13px] font-black uppercase tracking-[0.1em]">
+            <span className="text-[13px] font-medium uppercase tracking-[0.1em]">
               {isAr ? "أنواع العقارات" : "Property Types"}
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
             {types.map((type) => (
               <div key={type} className="bg-[#F8F9FA] px-6 py-3 rounded-xl border border-gray-50">
-                <span className="text-[14px] font-bold text-black">{type}</span>
+                <span className="text-[14px] font-medium text-black">{type}</span>
               </div>
             ))}
           </div>

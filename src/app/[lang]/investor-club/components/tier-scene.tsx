@@ -11,10 +11,10 @@ export default function TierScene({ lang }: { lang: string }) {
     <section className="relative bg-white py-24 lg:py-40 overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         <div className="text-center mb-20 lg:mb-32">
-          <h2 className="text-4xl lg:text-6xl font-black text-black tracking-tighter uppercase mb-4">
+          <h2 className="text-4xl lg:text-6xl font-medium text-black tracking-[0.1em] uppercase mb-4">
             {isAr ? "مستويات الاستثمار" : "Investment Tiers"}
           </h2>
-          <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">
+          <p className=" font-medium uppercase tracking-tighter text-[12px]">
             {isAr ? "ارتقِ بمحفظتك العقارية" : "Elevate Your Property Portfolio"}
           </p>
         </div>
@@ -89,11 +89,11 @@ function TierCard({ rank, badge, requirement, color, investor, benefits, depthCl
       
       {/* Badge */}
       <div className="inline-block py-1.5 px-4 rounded-full mb-6" style={{ backgroundColor: `${color}15`, color: color }}>
-        <span className="text-[10px] font-black uppercase tracking-widest">{badge}</span>
+        <span className="text-[12px] font-medium uppercase tracking-tighter">{badge}</span>
       </div>
 
-      <h3 className="text-4xl font-black text-black mb-2">{rank}</h3>
-      <p className="text-gray-400 text-[11px] font-bold uppercase tracking-widest mb-10">
+      <h3 className="text-4xl font-medium text-black mb-2">{rank}</h3>
+      <p className=" text-[11px] font-medium uppercase tracking-tighter mb-10">
         {isAr ? "المتطلبات:" : "Requirements:"} <span className="text-black">{requirement}</span>
       </p>
 
@@ -113,10 +113,10 @@ function TierCard({ rank, badge, requirement, color, investor, benefits, depthCl
           <img src={`/avatars/${rank.toLowerCase()}.jpg`} alt={investor} className="w-full h-full object-cover grayscale" />
         </div>
         <div>
-          <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">
+          <p className="text-[8px] font-medium uppercase tracking-tight  mb-1">
             {isAr ? "كبار المستثمرين" : "Top Tier Investor"}
           </p>
-          <p className="text-xs font-black text-black">{investor}</p>
+          <p className="text-xs font-medium text-black">{investor}</p>
         </div>
       </div>
     </div>

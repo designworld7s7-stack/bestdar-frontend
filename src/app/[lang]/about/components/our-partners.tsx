@@ -18,7 +18,7 @@ export default function OurPartners({ lang }: { lang: string }) {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 text-center">
         
         {/* Subtle Section Header */}
-        <p className="text-[10px] lg:text-[11px] font-black uppercase tracking-[0.3em] text-gray-400 mb-12 lg:mb-16">
+        <p className="text-[12px] lg:text-[11px] font-medium uppercase tracking-[0.3em] text-[#4B5563] mb-12 lg:mb-16">
           {isAr ? "شركاء التطوير العقاري الموثوقون" : "Our Trusted Development Partners"}
         </p>
 
@@ -30,7 +30,7 @@ export default function OurPartners({ lang }: { lang: string }) {
               className="flex justify-center transition-all duration-500 hover:opacity-100 hover:scale-110 grayscale hover:grayscale-0 cursor-default"
             >
               {/* Using text-based placeholder for logos per partners.png visual */}
-              <span className="text-xl lg:text-3xl font-serif font-bold text-slate-800 tracking-widest uppercase">
+              <span className="text-xl lg:text-3xl font-serif font-bold text-slate-800 tracking-tighter uppercase">
                 {partner.name}
               </span>
             </div>

@@ -33,7 +33,7 @@ export default function OTPInput({ length, isAr, onComplete }: { length: number;
               inputs.current[idx - 1]?.focus();
             }
           }}
-          className="w-14 h-16 sm:w-16 sm:h-20 bg-[#FAFAFA] rounded-2xl text-[24px] sm:text-[32px] font-black text-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all"
+          className="w-14 h-16 sm:w-16 sm:h-20 bg-[#FAFAFA] rounded-2xl text-[24px] sm:text-[32px] font-medium text-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.05)] border border-gray-100 outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all"
         />
       ))}
     </div>

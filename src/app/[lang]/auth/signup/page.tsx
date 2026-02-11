@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, User, Phone, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function SignUpPage({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
+  const router = useRouter(); // [cite: 2026-02-04]
   const [countryCode, setCountryCode] = useState('+964');
 
   const getCountryName = (code: string) => {
@@ -14,108 +16,128 @@ export default function SignUpPage({ params }: { params: { lang: string } }) {
     return "";
   };
 
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real app, you would validate and save user data here [cite: 2026-02-04]
+    router.push(`/${params.lang}/auth/verify`); // [cite: 2026-02-07]
+  };
+
   return (
     <div className="min-h-screen w-full bg-[#F2F4F7] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12">
       
-      {/* 1. RESPONSIVE CARD: Smaller padding on mobile */}
+      {/* 1. BOUTIQUE CARD [cite: 2026-02-04] */}
       <div 
         style={{ maxWidth: '480px', width: '100%' }}
-        className="bg-white rounded-[32px] sm:rounded-[48px] p-6 sm:p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.08)] flex flex-col"
+        className="bg-white rounded-[32px] sm:rounded-[48px] p-7 sm:p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.08)] flex flex-col"
       >
         
         <div className="text-center mb-10">
-          <h1 className="text-[28px] sm:text-[36px] font-black text-black tracking-tighter mb-3 leading-tight">
+          <h1 className="text-[28px] sm:text-[36px] font-medium text-black tracking-[0.1em] mb-3 leading-tight">
             {isAr ? "إنشاء حسابك" : "Create Your Account"}
           </h1>
-          <p className="text-gray-400 font-medium text-[14px] sm:text-[16px] leading-relaxed max-w-[300px] mx-auto">
+          <p className="text-[#4B5563] font-medium text-[14px] sm:text-[16px] leading-relaxed max-w-[300px] mx-auto">
             {isAr ? "وصول حصري للمستثمرين العراقيين." : "Exclusive access for Iraqi investors."}
           </p>
         </div>
 
-        <div className="space-y-6">
+        {/* 2. FORM INTEGRATION [cite: 2026-02-04] */}
+        <form onSubmit={handleSignUp} className="space-y-6">
           {/* Full Name */}
           <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
               {isAr ? "الاسم الكامل" : "Full Name"}
             </label>
-            <input 
-              type="text" 
-              placeholder={isAr ? "الاسم الكامل" : "Enter your name"}
-              className="w-full bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-            />
+            <div className="relative">
+              <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+              <input 
+                required
+                type="text" 
+                placeholder={isAr ? "الاسم الكامل" : "Enter your name"}
+                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none focus:ring-2 focus:ring-[#12AD65]/10" 
+              />
+            </div>
           </div>
 
-          {/* PHONE: Balanced inputs */}
+          {/* Phone Number */}
           <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
               {isAr ? "رقم الهاتف" : "Phone Number"}
             </label>
-            <div className="flex gap-3 items-start">
-              {/* Code input matches height of the main phone input */}
+            <div className="flex gap-3">
               <div className="relative w-24 shrink-0">
                 <input 
                   type="text"
                   value={countryCode}
                   onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-full bg-[#FAFAFA] px-2 py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold text-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none"
+                  className="w-full bg-[#FAFAFA] px-2 py-4 rounded-2xl text-[15px] font-bold text-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none"
                 />
-                <span className="absolute -bottom-5 left-0 w-full text-center text-[9px] font-black uppercase text-[#12AD65] tracking-widest">
+                <span className="absolute -bottom-5 left-0 w-full text-center text-[9px] font-medium uppercase text-[#12AD65] tracking-tighter">
                   {getCountryName(countryCode)}
                 </span>
               </div>
               <input 
+                required
                 type="tel" 
                 placeholder="770 000 0000" 
-                className="flex-1 min-w-0 bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
+                className="flex-1 bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
               />
             </div>
           </div>
 
-          {/* Email Address */}
+          {/* Email */}
           <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
               {isAr ? "البريد الإلكتروني" : "Email Address"}
             </label>
-            <input 
-              type="email" 
-              className="w-full bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-            />
+            <div className="relative">
+              <Mail size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+              <input 
+                required
+                type="email" 
+                placeholder="name@example.com"
+                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
+              />
+            </div>
           </div>
 
           {/* Password */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-black uppercase tracking-[0.2em] text-gray-400 px-1">
+          <div className="flex flex-col gap-2 pb-2">
+            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
               {isAr ? "كلمة المرور" : "Password"}
             </label>
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              className="w-full bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] sm:text-[16px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-            />
+            <div className="relative">
+              <Lock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
+              <input 
+                required
+                type="password" 
+                placeholder="••••••••"
+                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
+              />
+            </div>
           </div>
 
-          {/* Primary Action Button */}
-          <div className="pt-4">
-            <button className="w-full bg-[#12AD65] text-white py-5 rounded-2xl font-black text-[13px] sm:text-[14px] uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(18,173,101,0.25)] hover:bg-black transition-all">
-              {isAr ? "إنشاء حساب" : "Create Account"}
-            </button>
-          </div>
-        </div>
+          <button 
+            type="submit"
+            className="w-full btn-brand py-5 rounded-2xl font-medium text-[13px] uppercase tracking-tight shadow-[0_20px_40px_rgba(18,173,101,0.25)] hover:bg-black transition-all active:scale-[0.98]"
+          >
+            {isAr ? "إنشاء حساب" : "Create Account"}
+          </button>
+        </form>
 
-        {/* Separator */}
+        {/* 3. SECONDARY ACTIONS [cite: 2026-02-04] */}
         <div className="relative my-10 flex items-center justify-center">
             <div className="absolute w-full border-t border-gray-100"></div>
-            <span className="relative bg-white px-6 text-[11px] font-black uppercase tracking-[0.4em] text-gray-300">OR</span>
+            <span className="relative bg-white px-6 text-[11px] font-medium uppercase tracking-[0.4em] text-[#6B7280]">OR</span>
         </div>
 
-        {/* WhatsApp Button */}
-        <button className="w-full bg-white text-gray-800 py-5 rounded-2xl font-black text-[12px] uppercase tracking-[0.2em] flex items-center justify-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-gray-100">
+        <button className="w-full bg-white text-gray-800 py-5 rounded-2xl font-medium text-[12px] uppercase tracking-tight flex items-center justify-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-all">
           <MessageSquare size={20} className="text-[#12AD65]" />
-          <span>WhatsApp</span>
+          <span>{isAr ? "واتساب" : "WhatsApp"}</span>
         </button>
 
-        <p className="mt-10 text-center text-[14px] font-bold text-gray-400">
-          <Link href={`/${params.lang}/auth/login`} className="text-[#12AD65] font-black uppercase tracking-widest hover:underline">
+        <p className="mt-10 text-center text-[14px] font-medium text-[#4B5563]">
+          <span className="opacity-50">{isAr ? "لديك حساب بالفعل؟" : "Already have an account?"}</span>{' '}
+          <Link href={`/${params.lang}/auth/login`} className="text-[#12AD65] font-medium uppercase tracking-tighter hover:underline ml-1">
             {isAr ? "تسجيل الدخول" : "Log In"}
           </Link>
         </p>

@@ -30,7 +30,7 @@ export default function StrategySafety({ lang }: { lang: string }) {
     <section className="bg-[#050505] py-24 lg:py-40">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         {/* Section Title */}
-        <h2 className="text-4xl lg:text-6xl font-black text-white text-center mb-20 lg:mb-32 tracking-tighter">
+        <h2 className="text-4xl lg:text-6xl font-medium text-white text-center mb-20 lg:mb-32 tracking-[0.1em]">
           {isAr ? "الاستراتيجية والأمان" : "Strategy & Safety"}
         </h2>
 
@@ -44,11 +44,11 @@ export default function StrategySafety({ lang }: { lang: string }) {
               {/* Green Top Border Accent */}
               <div className="absolute top-0 left-0 w-full h-[3px] bg-[#12AD65] opacity-80" />
 
-              <h3 className="text-[#12AD65] text-xl lg:text-2xl font-black mb-6 tracking-tight">
+              <h3 className="text-[#12AD65] text-xl lg:text-2xl font-medium mb-6 tracking-tight">
                 {card.title}
               </h3>
               
-              <p className="text-gray-400 text-sm lg:text-base leading-relaxed font-medium">
+              <p className=" text-sm lg:text-base leading-relaxed font-medium">
                 {card.text}
               </p>
               

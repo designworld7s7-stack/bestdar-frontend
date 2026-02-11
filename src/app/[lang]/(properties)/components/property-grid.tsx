@@ -5,7 +5,19 @@ export default function PropertyGrid({ projects, lang }: { projects: any[], lang
     <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
         {projects.map((project) => (
-          <ProjectCard key={project.id} {...project} lang={lang} />
+          <ProjectCard 
+            key={project.id} 
+            // 1. Pass the SLUG as the ID for the URL
+            slug={project.slug} 
+            title={project.title}
+            // 2. Map Supabase column names to Card props
+            developer={project.developer_name || 'Boutique Developer'}
+            location={project.location}
+            price={`${project.currency || '$'} ${project.price?.toLocaleString()}`}
+            image={project.image_url || '/prop-1.jpg'} 
+            deliveryDate={project.delivery_date || 'Ready to Move'}
+            lang={lang} 
+          />
         ))}
       </div>
     </section>

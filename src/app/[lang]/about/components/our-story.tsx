@@ -14,7 +14,7 @@ export default function OurStory({ lang }: { lang: string }) {
           <div className="w-full lg:w-1/2 order-2 lg:order-1">
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-4">
-                <h2 className="text-4xl lg:text-6xl font-black text-black tracking-tighter">
+                <h2 className="text-4xl lg:text-6xl font-medium text-black tracking-[0.1em]">
                   {isAr ? "قصتنا" : "Our Story"}
                 </h2>
                 {/* Brand Green Accent Bar */}

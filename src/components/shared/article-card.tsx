@@ -37,7 +37,7 @@ export default function ArticleCard({
           className="object-cover transition-transform duration-1000 group-hover:scale-110" 
         />
         {/* Floating Category Badge */}
-        <div className="absolute top-4 lg:top-6 left-4 lg:left-6 bg-white/95 backdrop-blur-md text-black text-[9px] lg:text-[10px] font-black uppercase tracking-[0.15em] py-2 px-4 lg:py-2.5 lg:px-5 rounded-xl shadow-lg">
+        <div className="absolute top-4 lg:top-6 left-4 lg:left-6 bg-white/95 backdrop-blur-md text-black text-[9px] lg:text-[12px] font-medium uppercase tracking-[0.15em] py-2 px-4 lg:py-2.5 lg:px-5 rounded-xl shadow-lg">
           {category}
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function ArticleCard({
       <div className="p-6 lg:p-10 flex flex-col flex-1">
         
         {/* Meta Info */}
-        <div className="flex items-center gap-4 lg:gap-6 mb-4 lg:mb-6 text-gray-400 text-[9px] lg:text-[11px] font-bold uppercase tracking-widest">
+        <div className="flex items-center gap-4 lg:gap-6 mb-4 lg:mb-6 text-[#4B5563] text-[9px] lg:text-[11px] font-medium uppercase tracking-tighter">
           <div className="flex items-center gap-2">
             <Calendar size={14} className="text-[#12AD65]" />
             {date}
@@ -59,7 +59,7 @@ export default function ArticleCard({
         </div>
 
         {/* Title: Size scales from 1.25rem to 1.5rem */}
-        <h3 className="text-xl lg:text-2xl font-black text-black leading-tight mb-3 lg:mb-4 tracking-tight transition-colors duration-300 group-hover:text-[#12AD65]">
+        <h3 className="text-xl lg:text-2xl font-medium text-black leading-tight mb-3 lg:mb-4 tracking-tight transition-colors duration-300 group-hover:text-[#12AD65]">
           {title}
         </h3>
 
@@ -69,7 +69,7 @@ export default function ArticleCard({
         </p>
 
         {/* Action: Boutique Arrow */}
-        <div className="mt-auto flex items-center gap-3 text-[#12AD65] font-black text-[10px] lg:text-[11px] uppercase tracking-[0.2em]">
+        <div className="mt-auto flex items-center gap-3 text-[#12AD65] font-medium text-[12px] lg:text-[11px] uppercase tracking-tight">
           <span>{isAr ? "اقرأ الدليل" : "Read Guide"}</span>
           <ArrowRight 
             size={16} 

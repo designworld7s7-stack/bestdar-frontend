@@ -35,18 +35,18 @@ export default function GuideCard({ id, title, description, image, lang }: Guide
       {/* CONTENT AREA */}
       <div className="flex flex-1 flex-col justify-center p-6 lg:p-10">
         {/* Title: Turns green on hover */}
-        <h3 className="text-xl font-black leading-tight text-brand-black transition-colors duration-300 group-hover:text-[#12AD65] lg:text-2xl">
+        <h3 className="text-xl font-medium leading-tight text-brand-black transition-colors duration-300 group-hover:text-[#12AD65] lg:text-2xl">
           {title}
         </h3>
         
-        <p className="mt-3 text-sm font-medium text-gray-400 lg:text-base">
+        <p className="mt-3 text-sm font-medium text-[#4B5563] lg:text-base">
           {description}
         </p>
 
         {/* Action: Arrow moves right on hover */}
         <div 
           style={{ color: brandGreen }}
-          className="mt-6 flex items-center gap-2 text-sm font-black uppercase tracking-wider"
+          className="mt-6 flex items-center gap-2 text-sm font-medium uppercase tracking-wider"
         >
           <span>{isAr ? "اقرأ الدليل" : "Read Guide"}</span>
           <ArrowRight 

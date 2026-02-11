@@ -10,8 +10,8 @@ export default function GuideHero({ lang }: { lang: string }) {
     <section className="w-full pt-10 lg:pt-20 pb-12 border-b border-gray-50">
       {/* 1. Meta Info Row */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
-        <div className="flex flex-wrap items-center gap-4 text-gray-400">
-          <span className="bg-gray-50 text-black px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+        <div className="flex flex-wrap items-center gap-4 text-[#4B5563]">
+          <span className="bg-gray-50 text-black px-4 py-1.5 rounded-full text-[12px] font-medium uppercase tracking-tighter shadow-sm">
             {isAr ? "دليل الإمارات" : "UAE Guide"}
           </span>
           <div className="flex items-center gap-2 text-[11px] font-bold">
@@ -34,7 +34,7 @@ export default function GuideHero({ lang }: { lang: string }) {
           ].map((action, i) => (
             <button 
               key={i} 
-              className="h-11 w-11 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-400 hover:text-[#12AD65] hover:shadow-md transition-all border-0"
+              className="h-11 w-11 rounded-full bg-white shadow-sm flex items-center justify-center text-[#4B5563] hover:text-[#12AD65] hover:shadow-md transition-all border-0"
             >
               {action.icon}
             </button>
@@ -44,7 +44,7 @@ export default function GuideHero({ lang }: { lang: string }) {
 
       {/* 3. Main Title & Description */}
       <div className="max-w-4xl">
-        <h1 className="text-4xl lg:text-7xl font-black text-black leading-[1.1] tracking-tighter mb-8">
+        <h1 className="text-4xl lg:text-7xl font-medium text-black leading-[1.1] tracking-[0.1em] mb-8">
           {isAr 
             ? "الاستثمار في عقارات الإمارات: الدليل الكامل للمواطنين العراقيين" 
             : "Investing in UAE Real Estate: The Complete Guide for Iraqi Citizens"}
@@ -58,7 +58,7 @@ export default function GuideHero({ lang }: { lang: string }) {
 
       {/* 4. Mobile Social Actions (Floating or Inline) */}
       <div className="lg:hidden flex items-center gap-4 mt-10 p-4 bg-gray-50 rounded-2xl shadow-inner">
-         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+         <span className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563]">
            {isAr ? "مشاركة الدليل" : "Share Guide"}
          </span>
          <div className="flex gap-2">

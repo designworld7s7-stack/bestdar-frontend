@@ -25,32 +25,35 @@ const { openConsultation } = useModals();
       <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 pt-32 pb-20 lg:px-12 lg:pt-0">
         <div className="flex w-full flex-col items-center text-center lg:items-start lg:text-start lg:max-w-3xl">
           
-          <h1 className="text-[36px] font-black leading-[1.1] text-brand-black lg:text-white lg:text-[72px] tracking-tighter">
-            {isAr 
-              ? "اشتري عقارات في تركيا والإمارات بكل ثقة وشفافية" 
-              : "Buy Real Estate in Turkey & UAE With Trust, Transparency, and Expertise"}
-          </h1>
+          <h1 className="text-[36px] lg:text-[72px] font-medium leading-[1.1] text-brand-black lg:text-white uppercase tracking-[0.05em]">
+  {isAr 
+    ? "اشتري عقارات في تركيا والإمارات بكل ثقة وشفافية" 
+    : "Buy Real Estate in Turkey & UAE With Trust, Transparency, and Expertise"}
+</h1>
 
-          <p className="mt-8 text-lg font-medium text-gray-600 lg:text-gray-200 max-w-xl">
-            {isAr 
-              ? "نساعد المشترين العراقيين على الاستثمار بأمان وثقة." 
-              : "Helping Iraqi buyers invest safely and confidently with curated projects and full support."}
-          </p>
+<p className="mt-8 text-lg font-medium text-gray-600 lg:text-gray-200/80 max-w-xl">
+  {isAr 
+    ? "نساعد المشترين العراقيين على الاستثمار بأمان وثقة." 
+    : "Helping Iraqi buyers invest safely and confidently with curated projects and full support."}
+</p>
 
-          <div className="mt-12 flex w-full flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
-            <Link 
-              href={`/${lang}/properties`}
-              style={{ backgroundColor: brandGreen }}
-              className="rounded-2xl lg:rounded-xl px-10 py-5 text-[15px] font-black text-white shadow-xl shadow-green-500/30 transition-all hover:scale-[1.02] active:scale-95"
-            >
-              Explore Properties
-            </Link>
-            <button 
-          onClick={openConsultation} // 3. This triggers the modal in layout.tsx
-          className="bg-[#12AD65] text-white px-12 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#12AD65]/20"
-        >
-          {isAr ? "استشارة مجانية" : "Free Consultation"}
-        </button>
+<div className="mt-12 flex w-full flex-col gap-4 sm:flex-row lg:justify-start">
+  {/* Using Global Button Utility [cite: 2026-02-04] */}
+  <Link 
+    href={`/${lang}/all-properties`}
+    className="btn-brand px-10"
+  >
+    {isAr ? "استكشف العقارات" : "Explore Properties"}
+  </Link>
+
+  {/* Using Global Secondary Utility with Consultation [cite: 2026-02-04] */}
+  <button 
+    onClick={openConsultation}
+    className="btn-secondary px-12 !bg-white/10 !text-white backdrop-blur-md border border-white/20 hover:!bg-white hover:!text-black"
+  >
+    {isAr ? "استشارة مجانية" : "Free Consultation"}
+  </button>
+
           </div>
         </div>
       </div>

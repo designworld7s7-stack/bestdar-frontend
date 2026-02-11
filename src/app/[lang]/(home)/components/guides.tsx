@@ -19,7 +19,7 @@ export default function GuidesSection({ lang }: { lang: string }) {
     <section className="py-24 px-6 lg:px-12 max-w-[1440px] mx-auto bg-white">
       {/* Header - Matches ArticlesAndGuides.png */}
       <div className="text-center mb-16">
-        <h2 className="text-4xl lg:text-6xl font-black text-brand-black tracking-tighter leading-tight">
+        <h2 className="text-4xl lg:text-6xl font-medium text-brand-black tracking-[0.1em] leading-tight">
           {isAr ? "أدلة ورؤى عقارية" : "Real Estate Guides & Insights"}
         </h2>
         <p className="mt-6 text-gray-500 font-medium max-w-2xl mx-auto">
@@ -32,7 +32,7 @@ export default function GuidesSection({ lang }: { lang: string }) {
       {/* Grid Layout - 4 Cards Desktop | Carousel Mobile */}
       <div className="relative">
         {/* Swipe Indicator for Mobile */}
-        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-gray-400 text-[10px] font-black uppercase tracking-widest">
+        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-[#4B5563] text-[12px] font-medium uppercase tracking-tighter">
           <span>{isAr ? "اسحب" : "Swipe"}</span>
           <ArrowRight size={14} className={isAr ? "rotate-180" : ""} />
         </div>
@@ -53,7 +53,7 @@ export default function GuidesSection({ lang }: { lang: string }) {
       <div className="mt-20 text-center">
         <Link 
           href={`/${lang}/guides`}
-          className="inline-flex items-center gap-3 text-[#12AD65] font-black text-sm lg:text-base group"
+          className="inline-flex items-center gap-3 text-[#12AD65] font-medium text-sm lg:text-base group"
         >
           <span>{isAr ? "عرض جميع الأدلة" : "View All Guides"}</span>
           <ArrowRight 

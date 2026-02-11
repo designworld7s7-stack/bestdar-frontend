@@ -18,8 +18,8 @@ function CustomSelect({ label, options, icon: Icon, onSelect, lang }: any) {
           isOpen ? "border-[#12AD65] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.08)]" : "hover:bg-[#F1F3F5]"
         )}
       >
-        <Icon size={18} className={clsx("absolute left-4 transition-colors", isOpen ? "text-[#12AD65]" : "text-gray-400")} />
-        <span className={selected ? "text-black" : "text-gray-400"}>
+        <Icon size={18} className={clsx("absolute left-4 transition-colors", isOpen ? "text-[#12AD65]" : "text-[#4B5563]")} />
+        <span className={selected ? "text-black" : "text-[#4B5563]"}>
           {selected || label}
         </span>
         <ChevronDown size={16} className={clsx("absolute right-4 transition-transform", isOpen && "rotate-180")} />
@@ -46,7 +46,7 @@ function CustomSelect({ label, options, icon: Icon, onSelect, lang }: any) {
 export default function LeadForm({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
   const inputClass = `w-full bg-[#F8F9FA] border-2 border-transparent rounded-xl py-4 px-12 text-sm font-medium transition-all focus:border-[#12AD65] focus:bg-white outline-none`;
-  const iconClass = `absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#12AD65] transition-colors`;
+  const iconClass = `absolute left-4 top-1/2 -translate-y-1/2 text-[#4B5563] group-focus-within:text-[#12AD65] transition-colors`;
 
   return (
     <section className="flex flex-col lg:flex-row min-h-[850px] bg-white overflow-hidden">
@@ -56,7 +56,7 @@ export default function LeadForm({ lang }: { lang: string }) {
            <img src="/lead-bg.jpg" alt="Interior" className="h-full w-full object-cover" />
         </div>
         <div className="relative z-10">
-          <p className="text-3xl lg:text-5xl font-black text-white leading-tight italic tracking-tighter">
+          <p className="text-3xl lg:text-5xl font-medium text-white leading-tight italic tracking-[0.1em]">
             {isAr ? "\"نحن لا نجد العقارات فحسب، بل نصنع موروثات استثمارية.\"" : "\"We don't just find properties. We craft investment legacies.\""}
           </p>
           <div className="h-2 w-20 bg-[#12AD65] mt-8" />
@@ -68,10 +68,10 @@ export default function LeadForm({ lang }: { lang: string }) {
         <div className="w-full max-w-xl bg-white rounded-[48px] p-8 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)]">
           
           <div className="mb-12">
-            <h2 className="text-4xl font-black text-brand-black tracking-tighter">
+            <h2 className="text-4xl font-medium text-brand-black tracking-[0.1em]">
               {isAr ? "احصل على استشارة" : "Get Personal Assistance"}
             </h2>
-            <p className="text-gray-400 mt-3 font-bold text-sm lg:text-base">
+            <p className="text-[#4B5563] mt-3 font-medium text-sm lg:text-base">
               {isAr ? "فريقنا سيقودك إلى أفضل الفرص." : "Let our team guide you to the best opportunities."}
             </p>
           </div>
@@ -110,11 +110,11 @@ export default function LeadForm({ lang }: { lang: string }) {
             </div>
 
             <div className="relative group">
-              <MessageSquare size={18} className="absolute left-4 top-5 text-gray-400 group-focus-within:text-[#12AD65]" />
+              <MessageSquare size={18} className="absolute left-4 top-5 text-[#4B5563] group-focus-within:text-[#12AD65]" />
               <textarea rows={4} placeholder={isAr ? "رسالتك" : "Message"} className={`${inputClass} resize-none`} />
             </div>
 
-            <button className="w-full bg-[#12AD65] text-white py-6 rounded-2xl font-black text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all hover:bg-black hover:shadow-2xl active:scale-95 shadow-lg shadow-[#12AD65]/20">
+            <button className="w-full btn-brand py-6 rounded-2xl font-medium text-xs uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all hover:bg-black hover:shadow-2xl active:scale-95 shadow-lg shadow-[#12AD65]/20">
               {isAr ? "إرسال" : "Submit Inquiry"}
               <Send size={16} />
             </button>

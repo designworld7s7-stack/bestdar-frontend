@@ -30,14 +30,14 @@ export default function Footer({ lang }: { lang: string }) {
                 ? "توجيه عقاري متميز للمستثمرين العراقيين في تركيا والإمارات العربية المتحدة. نصيحة موثوقة، فرص حصرية." 
                 : "Premium real estate guidance for Iraqi investors in Turkey and UAE. Trusted advice, exclusive opportunities."}
             </p>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-700">
+            <span className="text-[12px] font-medium uppercase tracking-[0.3em] text-gray-700">
               Since 2025
             </span>
           </div>
 
           {/* Column 2: Quick Links */}
           <div>
-            <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8">
+            <h4 className="text-white font-medium text-xs uppercase tracking-tight mb-8">
               {isAr ? "روابط سريعة" : "Quick Links"}
             </h4>
             <ul className="space-y-4">
@@ -53,7 +53,7 @@ export default function Footer({ lang }: { lang: string }) {
 
           {/* Column 3: Contact Us */}
           <div>
-            <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8">
+            <h4 className="text-white font-medium text-xs uppercase tracking-tight mb-8">
               {isAr ? "اتصل بنا" : "Contact Us"}
             </h4>
             <ul className="space-y-6">
@@ -78,7 +78,7 @@ export default function Footer({ lang }: { lang: string }) {
 
           {/* Column 4: Newsletter */}
           <div>
-            <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8">
+            <h4 className="text-white font-medium text-xs uppercase tracking-tight mb-8">
               {isAr ? "اشترك للتحديثات" : "Subscribe for Updates"}
             </h4>
             <p className="text-gray-500 text-sm mb-6">
@@ -92,7 +92,7 @@ export default function Footer({ lang }: { lang: string }) {
                 placeholder={isAr ? "بريدك الإلكتروني" : "Your Email Address"}
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-sm text-white outline-none focus:border-[#12AD65] transition-all"
               />
-              <button className="w-full bg-[#12AD65] text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all">
+              <button className="w-full btn-brand py-4 rounded-xl font-medium text-[12px] uppercase tracking-tight flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all">
                 {isAr ? "اشترك" : "Subscribe"}
                 <Send size={14} />
               </button>
@@ -102,7 +102,7 @@ export default function Footer({ lang }: { lang: string }) {
 
         {/* Bottom Bar */}
         <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-gray-600 text-[10px] font-bold uppercase tracking-widest">
+          <p className="text-gray-600 text-[12px] font-bold uppercase tracking-tighter">
             © 2025 Elite Estate. All rights reserved.
           </p>
           

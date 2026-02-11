@@ -24,7 +24,7 @@ export default function TurkeySection({ lang }: { lang: string }) {
     <section className="py-20 px-6 lg:px-12 max-w-[1440px] mx-auto">
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl lg:text-5xl font-black text-brand-black leading-tight">
+        <h2 className="text-3xl lg:text-5xl font-medium text-brand-black leading-tight">
           {isAr ? "استكشف العقارات في تركيا" : "Explore Real Estate in Turkey"}
         </h2>
         <p className="mt-4 text-gray-500 font-medium max-w-2xl mx-auto">
@@ -37,7 +37,7 @@ export default function TurkeySection({ lang }: { lang: string }) {
       {/* 1. PROJECT CARDS: Grid on Desktop | Carousel on Mobile */}
       <div className="relative">
         {/* Mobile "Swipe" Indicator */}
-        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-gray-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-[#4B5563] text-xs font-bold uppercase tracking-tighter">
           <span>{isAr ? "اسحب" : "Swipe"}</span>
           <ArrowRight size={14} className={isAr ? "rotate-180" : ""} />
         </div>
@@ -62,7 +62,7 @@ export default function TurkeySection({ lang }: { lang: string }) {
       <div className="mt-16 text-center">
         <Link 
           href={`/${lang}/turkey`}
-          className="inline-flex items-center gap-2 text-[#12AD65] font-black text-sm lg:text-base group"
+          className="inline-flex items-center gap-2 text-[#12AD65] font-medium text-sm lg:text-base group"
         >
           <span>{isAr ? "عرض جميع مشاريع تركيا" : "View All Turkey Projects"}</span>
           <ArrowRight 

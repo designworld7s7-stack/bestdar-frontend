@@ -30,10 +30,10 @@ export default function MeetTheTeam({ lang }: { lang: string }) {
         
         {/* Header */}
         <div className="mb-12 lg:mb-20">
-          <h2 className="text-3xl lg:text-6xl font-black text-black tracking-tighter mb-4 lg:mb-6">
+          <h2 className="text-3xl lg:text-6xl font-medium text-black tracking-[0.1em] mb-4 lg:mb-6">
             {isAr ? "تعرف على الفريق" : "Meet the Team"}
           </h2>
-          <p className="text-gray-400 font-medium text-base lg:text-lg">
+          <p className="text-[#4B5563] font-medium text-base lg:text-lg">
             {isAr ? "الخبراء المخصصون لنجاحك." : "The experts dedicated to your success."}
           </p>
         </div>
@@ -56,10 +56,10 @@ export default function MeetTheTeam({ lang }: { lang: string }) {
 
               {/* Detail Area */}
               <div className="p-8 lg:p-12">
-                <h3 className="text-2xl lg:text-3xl font-black text-black mb-2">
+                <h3 className="text-2xl lg:text-3xl font-medium text-black mb-2">
                   {member.name}
                 </h3>
-                <p className="text-[#12AD65] text-xs lg:text-sm font-black uppercase tracking-widest mb-6">
+                <p className="text-[#12AD65] text-xs lg:text-sm font-medium uppercase tracking-tighter mb-6">
                   {member.role}
                 </p>
                 <p className="text-gray-500 text-sm lg:text-base font-medium leading-relaxed">

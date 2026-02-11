@@ -21,7 +21,7 @@ export default function HelpCard({ isAr }: { isAr: boolean }) {
 
   return (
     <div className="bg-[#12AD65] rounded-[32px] p-8 sm:p-10 shadow-[0_25px_60px_rgba(18,173,101,0.2)] text-white w-full">
-      <h3 className="text-[22px] sm:text-[24px] font-black tracking-tight mb-3">
+      <h3 className="text-[22px] sm:text-[24px] font-medium tracking-tight mb-3">
         {isAr ? "هل تحتاج مساعدة؟" : "Need Help?"}
       </h3>
       
@@ -37,7 +37,7 @@ export default function HelpCard({ isAr }: { isAr: boolean }) {
         className="group w-full bg-white/10 hover:bg-white/20 border border-white/20 py-4.5 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95"
       >
         <MessageCircle size={20} className="group-hover:animate-pulse" />
-        <span className="text-[13px] font-black uppercase tracking-[0.1em]">
+        <span className="text-[13px] font-medium uppercase tracking-[0.1em]">
           {isAr ? "دردشة واتساب" : "WhatsApp Chat"}
         </span>
       </button>

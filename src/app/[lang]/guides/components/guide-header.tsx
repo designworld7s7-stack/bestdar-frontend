@@ -7,32 +7,23 @@ export default function GuideHeader({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
 
   return (
-    <section className="bg-white pt-12 lg:pt-32 pb-12 lg:pb-20 border-b border-gray-50">
-      {/* 1. Global Back Button: Desktop Only */}
-      <div className="hidden lg:block">
-        <BackButton lang={lang} />
-      </div>
-
+    /* pt-4 on mobile moves the title almost to the very top */
+    <section className="bg-white pt-4 lg:pt-32 pb-6 lg:pb-12">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-        <div className="flex flex-col items-start gap-6">
+        <div className="flex flex-col items-start gap-2 lg:gap-6">
           
-          {/* 2. Main Title */}
-          <h1 className="text-5xl lg:text-8xl font-black text-black tracking-tighter uppercase">
-            {isAr ? "جميع الأدلة" : "All Guides"}
+          {/* Main Title - Tightened leading to save space */}
+          <h1 className="text-4xl lg:text-7xl font-medium text-black uppercase tracking-tighter leading-[0.8]">
+            {isAr ? "أدلة المستثمر" : "Investor Guides"}
           </h1>
 
-          {/* 3. Accent & Subtitle */}
-          <div className="flex items-center gap-6 w-full">
-            {/* The brandGreen line from H2.png */}
-            <div className="h-[3px] w-12 lg:w-20 bg-[#12AD65] shrink-0" />
-            
-            <p className="text-gray-500 text-sm lg:text-xl font-medium tracking-tight">
-              {isAr 
-                ? "استكشف الأدلة والنصائح ورؤى السوق للعقارات في الإمارات وتركيا." 
-                : "Explore guides, tips, and market insights for UAE and Turkey real estate."}
+          {/* Accent Line & Subtitle */}
+          <div className="flex items-center gap-3 lg:gap-6 w-full">
+            <div className="h-[2px] w-8 lg:w-20 bg-[#12AD65] shrink-0" />
+            <p className="text-gray-400 text-[10px] lg:text-sm font-medium uppercase tracking-[0.2em]">
+              {isAr ? "رؤى حصرية" : "Exclusive Insights"}
             </p>
           </div>
-
         </div>
       </div>
     </section>

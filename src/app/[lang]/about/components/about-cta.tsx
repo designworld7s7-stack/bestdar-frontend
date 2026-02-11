@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { ArrowRight, MessageCircle, ShieldCheck } from 'lucide-react';
-
+import { ArrowRight, Calendar, MessageCircle, ShieldCheck } from 'lucide-react';
+import { useModals } from "@/context/modal-context"; //
 export default function AboutCTA({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
-
+const { openConsultation } = useModals(); // Unified trigger
   return (
     <section className="bg-white py-12 lg:py-32 px-4 lg:px-6">
       <div className="max-w-[1440px] mx-auto">
@@ -14,11 +14,11 @@ export default function AboutCTA({ lang }: { lang: string }) {
           
           <div className="relative z-10">
             {/* Smaller Title for Mobile */}
-            <h2 className="text-2xl lg:text-6xl font-black text-white leading-tight tracking-tighter mb-4 lg:mb-8 uppercase">
+            <h2 className="text-2xl lg:text-6xl font-medium text-white leading-tight tracking-[0.1em] mb-4 lg:mb-8 uppercase">
               {isAr ? "جاهز للاستثمار؟" : "Ready to Invest?"}
             </h2>
 
-            <p className="text-gray-400 text-[11px] lg:text-lg font-medium mb-8 lg:mb-12 max-w-xl mx-auto opacity-80">
+            <p className="text-[#4B5563] text-[11px] lg:text-lg font-medium mb-8 lg:mb-12 max-w-xl mx-auto opacity-80">
               {isAr 
                 ? "تواصل مع خبرائنا اليوم للحصول على استشارة مجانية."
                 : "Connect with our experts today for a free consultation."}
@@ -26,21 +26,29 @@ export default function AboutCTA({ lang }: { lang: string }) {
 
             {/* Smaller, more compact buttons for Mobile */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 lg:gap-6 mb-8">
-              <button className="w-full sm:w-auto bg-[#12AD65] text-white px-6 py-4 lg:px-10 lg:py-5 rounded-xl lg:rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#0f8f53] transition-all">
-                {isAr ? "استشارة مجانية" : "Free Consultation"}
-                <ArrowRight size={14} />
-              </button>
+              <button 
+        onClick={openConsultation}
+        className="btn-brand flex items-center gap-3"
+      >
+        <Calendar size={18} />
+        {isAr ? "حجز استشارة" : "Book Consultation"}
+      </button>
               
-              <button className="w-full sm:w-auto bg-white text-black px-6 py-4 lg:px-10 lg:py-5 rounded-xl lg:rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-gray-50 transition-all">
-                <MessageCircle size={14} className="text-[#12AD65]" />
-                {isAr ? "واتساب" : "WhatsApp"}
-              </button>
+              <a 
+        href="https://wa.me/9647500000000" // International format
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-secondary flex items-center gap-3"
+      >
+        <MessageCircle size={18} className="text-[#12AD65]" />
+        {isAr ? "اتصال واتساب" : "WhatsApp Contact"}
+      </a>
             </div>
 
             {/* Minimalist Trust Badge */}
             <div className="flex items-center justify-center gap-2 text-gray-500 opacity-60">
               <ShieldCheck size={12} className="text-[#12AD65]" />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em]">
+              <span className="text-[9px] font-medium uppercase tracking-tight">
                 {isAr ? "سري وآمن" : "Confidential & Secure"}
               </span>
             </div>

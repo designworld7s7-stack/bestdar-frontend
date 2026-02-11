@@ -16,9 +16,9 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
       {/* 1. BRAND LOGO */}
       <Link href={`/${params.lang}`} className="flex items-center gap-2 group">
         <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center group-hover:bg-[#12AD65] transition-colors">
-            <span className="text-white font-black text-xs">BD</span>
+            <span className="text-white font-medium text-xs">BD</span>
         </div>
-        <span className="text-xl font-black tracking-tighter text-black uppercase">
+        <span className="text-xl font-medium tracking-[0.1em] text-black uppercase">
           Best <span className="text-[#12AD65]">Dar</span>
         </span>
       </Link>
@@ -28,7 +28,7 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
         {/* Language Switcher */}
         <Link 
           href={pathname.replace(`/${params.lang}`, isAr ? '/en' : '/ar')}
-          className="text-[12px] font-black uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+          className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563] hover:text-black transition-colors"
         >
           {isAr ? "EN" : "عربي"}
         </Link>
@@ -36,7 +36,7 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
         {/* Dynamic Auth Toggle */}
         <Link 
           href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
-          className="hidden sm:block text-[12px] font-black uppercase tracking-widest text-black hover:text-[#12AD65] transition-colors"
+          className="hidden sm:block text-[12px] font-medium uppercase tracking-tighter text-black hover:text-[#12AD65] transition-colors"
         >
           {isLoginPage ? (isAr ? "إنشاء حساب" : "Sign Up") : (isAr ? "دخول" : "Log In")}
         </Link>
@@ -44,7 +44,7 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
         {/* Mobile Call to Action Button */}
         <Link 
           href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
-          className="sm:hidden bg-black text-white px-5 py-2.5 rounded-full text-[11px] font-black uppercase tracking-widest active:scale-95 transition-all"
+          className="sm:hidden bg-black text-white px-5 py-2.5 rounded-full text-[11px] font-medium uppercase tracking-tighter active:scale-95 transition-all"
         >
            {isLoginPage ? (isAr ? "سجل" : "Join") : (isAr ? "دخول" : "Login")}
         </Link>

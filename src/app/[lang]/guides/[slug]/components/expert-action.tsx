@@ -16,7 +16,7 @@ export default function ExpertAction({ lang }: { lang: string }) {
         target="_blank"
         rel="noopener noreferrer"
         className={clsx(
-          "hidden lg:flex fixed bottom-10 z-[1000] bg-[#12AD65] text-white px-8 py-4 rounded-full font-black text-[11px] uppercase tracking-widest items-center gap-3 shadow-2xl hover:bg-black transition-all duration-500 group",
+          "hidden lg:flex fixed bottom-10 z-[1000] btn-brand px-8 py-4 rounded-full font-medium text-[11px] uppercase tracking-tighter items-center gap-3 shadow-2xl hover:bg-black transition-all duration-500 group",
           isAr ? "left-10" : "right-10"
         )}
       >
@@ -32,7 +32,7 @@ export default function ExpertAction({ lang }: { lang: string }) {
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mx-auto max-w-[280px] bg-[#12AD65] text-white flex items-center justify-center gap-3 py-3.5 rounded-full font-black text-[10px] uppercase tracking-widest shadow-lg shadow-[#12AD65]/20 active:scale-95 transition-all"
+          className="mx-auto max-w-[280px] btn-brand flex items-center justify-center gap-3 py-3.5 rounded-full font-medium text-[12px] uppercase tracking-tighter shadow-lg shadow-[#12AD65]/20 active:scale-95 transition-all"
         >
           <MessageSquare size={16} />
           <span>{isAr ? "تحدث مع خبير" : "Talk with Expert"}</span>

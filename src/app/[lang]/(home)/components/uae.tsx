@@ -24,7 +24,7 @@ export default function UaeSection({ lang }: { lang: string }) {
     <section className="py-20 px-6 lg:px-12 max-w-[1440px] mx-auto">
       {/* Updated Header for UAE */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl lg:text-5xl font-black text-brand-black leading-tight">
+        <h2 className="text-3xl lg:text-5xl font-medium text-brand-black leading-tight">
           {isAr ? "استكشف العقارات في الإمارات" : "Explore Real Estate in UAE"}
         </h2>
         <p className="mt-4 text-gray-500 font-medium max-w-2xl mx-auto">
@@ -36,7 +36,7 @@ export default function UaeSection({ lang }: { lang: string }) {
 
       {/* PROJECT CARDS: Carousel on Mobile | Grid on Desktop */}
       <div className="relative">
-        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-gray-400 text-xs font-bold uppercase tracking-widest">
+        <div className="flex justify-end items-center gap-2 mb-4 lg:hidden text-[#4B5563] text-xs font-bold uppercase tracking-tighter">
           <span>{isAr ? "اسحب" : "Swipe"}</span>
           <ArrowRight size={14} className={isAr ? "rotate-180" : ""} />
         </div>
@@ -61,7 +61,7 @@ export default function UaeSection({ lang }: { lang: string }) {
       <div className="mt-16 text-center">
         <Link 
           href={`/${lang}/uae`}
-          className="inline-flex items-center gap-2 text-[#12AD65] font-black text-sm lg:text-base group"
+          className="inline-flex items-center gap-2 text-[#12AD65] font-medium text-sm lg:text-base group"
         >
           <span>{isAr ? "عرض جميع مشاريع الإمارات" : "View All UAE Projects"}</span>
           <ArrowRight 

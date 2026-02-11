@@ -50,7 +50,7 @@ export default function InvestorClub({ lang }: { lang: string }) {
       <div className="max-w-[1440px] mx-auto">
         
         <div className="text-center mb-24">
-          <h2 className="text-4xl lg:text-7xl font-black text-white tracking-tighter uppercase">
+          <h2 className="text-4xl lg:text-7xl font-medium text-white tracking-[0.1em] uppercase">
             {isAr ? "نادي المستثمرين" : "Investor Club"}
           </h2>
           <div className="h-[1px] w-24 bg-[#12AD65] mx-auto mt-6 opacity-50" />
@@ -75,8 +75,8 @@ export default function InvestorClub({ lang }: { lang: string }) {
               />
 
               <div className="relative z-10 mb-10">
-                <h3 className="text-2xl font-black text-white">{tier.rank}</h3>
-                <p className="mt-2 text-[11px] font-black uppercase tracking-[0.3em] text-[#12AD65] opacity-80">
+                <h3 className="text-2xl font-medium text-white">{tier.rank}</h3>
+                <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.3em] text-[#12AD65] opacity-80">
                   {tier.range}
                 </p>
               </div>
@@ -85,7 +85,7 @@ export default function InvestorClub({ lang }: { lang: string }) {
                 {tier.benefits.map((benefit, i) => (
                   <li key={i} className="flex items-start gap-4 transition-all duration-500 group-hover:translate-x-2">
                     <Check size={18} style={{ color: brandGreen }} className="mt-0.5 shrink-0 opacity-40 group-hover:opacity-100" />
-                    <span className="text-sm font-bold text-gray-400 group-hover:text-gray-100 transition-colors">
+                    <span className="text-sm font-medium text-[#4B5563] group-hover:text-gray-100 transition-colors">
                         {benefit}
                     </span>
                   </li>
@@ -93,7 +93,7 @@ export default function InvestorClub({ lang }: { lang: string }) {
               </ul>
 
               <div className="relative z-10 mt-12 pt-8 border-t border-white/5">
-                <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-700 group-hover:text-gray-400 transition-colors">
+                <p className="text-[9px] font-medium uppercase tracking-[0.4em] text-gray-700 group-hover:text-[#4B5563] transition-colors">
                    {isAr ? "متطلبات العضوية" : "Membership Requirement"}
                 </p>
               </div>
@@ -107,7 +107,7 @@ export default function InvestorClub({ lang }: { lang: string }) {
         <div className="mt-24 text-center">
           <Link 
             href={`/${lang}/investor-club`}
-            className="inline-flex items-center gap-4 py-4 px-12 rounded-full border border-white/10 text-white font-black text-[10px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all duration-500"
+            className="inline-flex items-center gap-4 py-4 px-12 rounded-full border border-white/10 text-white font-medium text-[12px] uppercase tracking-[0.4em] hover:bg-white hover:text-black transition-all duration-500"
           >
             {isAr ? "عرض النادي بالكامل" : "View Full Club"}
             <ArrowRight size={14} />

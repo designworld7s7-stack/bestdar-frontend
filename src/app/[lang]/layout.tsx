@@ -1,9 +1,21 @@
 import type { Metadata } from "next";
+import { Inter, Playfair_Display } from 'next/font/google'; // Import loaders
 import "../globals.css";
 import Navbar from "@/components/shared/nav";
-// 1. Import the Provider and the Global Wrapper
 import { ModalProvider } from "@/context/modal-context";
+import { AuthProvider } from "@/context/auth-context";
 import ConsultationGlobalWrapper from "@/components/shared/consultation-wrapper";
+
+// 1. INITIALIZE HERE (Outside the function) [cite: 2026-02-04]
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap', 
+});
+
+const playfair = Playfair_Display({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "Best Dar | Premium Real Estate",
@@ -22,15 +34,15 @@ export default async function RootLayout({
 
   return (
     <html lang={lang} dir={isRtl ? "rtl" : "ltr"}>
-      <body className="antialiased bg-white text-brand-black">
-        {/* 2. Wrap everything in the ModalProvider */}
-        <ModalProvider>
-          <Navbar lang={lang} />
-          {children}
-          
-          {/* 3. This wrapper listens for the global open/close */}
-          <ConsultationGlobalWrapper lang={lang} />
-        </ModalProvider>
+      {/* 2. APPLY CLASS NAMES HERE [cite: 2026-02-04] */}
+      <body className={`${inter.className} antialiased bg-white text-brand-black`}>
+        <AuthProvider>
+          <ModalProvider>
+            <Navbar lang={lang} />
+            {children}
+            <ConsultationGlobalWrapper lang={lang} />
+          </ModalProvider>
+        </AuthProvider>
       </body>
     </html>
   );

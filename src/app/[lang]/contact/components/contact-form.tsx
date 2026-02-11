@@ -18,17 +18,17 @@ export default function ContactForm({ lang }: { lang: string }) {
           <InputField label={isAr ? "الموضوع" : "Subject"} placeholder={isAr ? "استفسار استثماري" : "Investment Inquiry"} />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">
+          <label className="text-[12px] font-medium uppercase text-[#4B5563] tracking-tighter ml-1">
             {isAr ? "الرسالة" : "Message"}
           </label>
           <textarea 
             rows={5}
-            className="w-full bg-[#F8F9FA] rounded-2xl p-5 text-sm font-bold outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all border-none"
+            className="w-full bg-[#F8F9FA] rounded-2xl p-5 text-sm font-medium outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all border-none"
             placeholder={isAr ? "كيف يمكننا مساعدتك اليوم؟" : "How can we help you today?"}
           />
         </div>
 
-        <button className="w-full bg-[#12AD65] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-[#0f8f53] transition-all shadow-lg shadow-[#12AD65]/20 group">
+        <button className="w-full btn-brand py-5 rounded-2xl font-medium text-sm uppercase tracking-tighter flex items-center justify-center gap-3 hover:bg-[#0f8f53] transition-all shadow-lg shadow-[#12AD65]/20 group">
           {isAr ? "إرسال الرسالة" : "Send Message"}
           <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
         </button>
@@ -40,11 +40,11 @@ export default function ContactForm({ lang }: { lang: string }) {
 function InputField({ label, placeholder, type = "text" }: any) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">{label}</label>
+      <label className="text-[12px] font-medium uppercase text-[#4B5563] tracking-tighter ml-1">{label}</label>
       <input 
         type={type}
         placeholder={placeholder}
-        className="w-full bg-[#F8F9FA] rounded-2xl px-6 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all border-none"
+        className="w-full bg-[#F8F9FA] rounded-2xl px-6 py-4 text-sm font-medium outline-none focus:ring-2 focus:ring-[#12AD65]/20 transition-all border-none"
       />
     </div>
   );

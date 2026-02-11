@@ -39,7 +39,7 @@ export default function WhyUs({ lang }: { lang: string }) {
         
         {/* Header Section */}
         <div className="mb-16 lg:mb-24">
-          <h2 className="text-4xl lg:text-6xl font-black text-white tracking-tighter mb-6 uppercase">
+          <h2 className="text-4xl lg:text-6xl font-medium text-white tracking-[0.1em] mb-6 uppercase">
             {isAr ? "لماذا تختارنا" : "Why Choose Us"}
           </h2>
           <p className="text-gray-500 font-medium text-sm lg:text-lg max-w-2xl mx-auto">
@@ -61,7 +61,7 @@ export default function WhyUs({ lang }: { lang: string }) {
                 {item.icon}
               </div>
 
-              <h3 className="text-left text-sm lg:text-base font-black text-black leading-tight">
+              <h3 className="text-left text-sm lg:text-base font-medium text-black leading-tight">
                 {item.title}
               </h3>
             </div>
