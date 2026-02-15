@@ -19,20 +19,21 @@ const config: Config = {
       boxShadow: {
         soft: "0 2px 12px 0 rgba(27, 67, 50, 0.08)",
       },
-      typography: (theme) => ({
+      // قمنا بإزالة (theme) واستبدال الألوان بقيم مباشرة لحل الخطأ
+      typography: {
         DEFAULT: {
           css: {
-            color: theme('colors.black'),
-            a: { color: theme('colors.premium.green') },
-            h1: { color: theme('colors.black') },
-            h2: { color: theme('colors.black') },
-            h3: { color: theme('colors.black') },
-            h4: { color: theme('colors.black') },
-            h5: { color: theme('colors.black') },
-            h6: { color: theme('colors.black') },
+            color: "#0A0A0A",
+            a: { color: "#1B4332" },
+            h1: { color: "#0A0A0A" },
+            h2: { color: "#0A0A0A" },
+            h3: { color: "#0A0A0A" },
+            h4: { color: "#0A0A0A" },
+            h5: { color: "#0A0A0A" },
+            h6: { color: "#0A0A0A" },
           },
         },
-      }),
+      },
     },
   },
   plugins: [typography],
