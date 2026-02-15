@@ -6,7 +6,6 @@ const locales = ['en', 'ar'];
 const defaultLocale = 'en';
 
 export async function middleware(req: NextRequest) {
-  // We initialize the response first so we can append cookies to it
   let res = NextResponse.next({
     request: {
       headers: req.headers,
@@ -18,59 +17,68 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-  getAll: () => req.cookies.getAll(),
-  setAll: (cookiesToSet) => {
-    cookiesToSet.forEach(({ name, value, options }) => {
-      res.cookies.set(name, value, {
-        ...options,
-        sameSite: 'lax',
-        secure: true, // ضروري جداً للروابط التي تعمل بـ https
-        path: '/',
-      });
-    });
-  },
-},
+        getAll: () => req.cookies.getAll(),
+        setAll: (cookiesToSet) => {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            req.cookies.set(name, value);
+            res.cookies.set(name, value, {
+              ...options,
+              sameSite: 'lax',
+              secure: true,
+              path: '/',
+            });
+          });
+        },
+      },
     }
   );
 
-  // IMPORTANT: This refreshes the session if it's expired
   const { data: { user } } = await supabase.auth.getUser();
-
   const { pathname } = req.nextUrl;
 
-  // 1. Handle Locale Redirection
+  // 1. معالجة توجيه اللغة
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
   if (pathnameIsMissingLocale) {
     const locale = req.cookies.get('NEXT_LOCALE')?.value || defaultLocale;
-    return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
+    const redirectUrl = new URL(`/${locale}${pathname}`, req.url);
+    const redirectRes = NextResponse.redirect(redirectUrl);
+    
+    // الطريقة الصحيحة لنقل الكوكيز في Next.js
+    res.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie.name, cookie.value);
+    });
+    
+    return redirectRes;
   }
 
-  // 2. Protected Routes Logic (Boutique Security)
+  // 2. حماية المسارات (Gated Sections)
   const pathWithoutLocale = pathname.replace(/^\/(en|ar)/, '') || '/';
-  
-  // These are the gated sections you mentioned
-  const isProtectedRoute = ['/profile', '/dashboard', '/saved'].some(
-  route => pathWithoutLocale.startsWith(route)
-);
+  const isProtectedRoute = ['/profile', '/dashboard', '/saved', '/investor-club'].some(
+    route => pathWithoutLocale.startsWith(route)
+  );
 
   if (isProtectedRoute && !user) {
     const locale = pathname.split('/')[1] || defaultLocale;
-    // Redirect to login if a guest tries to access gated sections
-    const redirectUrl = new URL(`/${locale}/login`, req.url);
-    // Add current path as a 'next' param so they return here after login
-    redirectUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(redirectUrl);
+    // تم تعديل المسار ليتطابق مع مجلداتك الحقيقية /auth/login
+    const loginUrl = new URL(`/${locale}/auth/login`, req.url);
+    loginUrl.searchParams.set('next', pathname);
+    
+    const authRes = NextResponse.redirect(loginUrl);
+    
+    // نقل الكوكيز لضمان استمرار الجلسة
+    res.cookies.getAll().forEach((cookie) => {
+      authRes.cookies.set(cookie.name, cookie.value);
+    });
+    
+    return authRes;
   }
 
   return res;
 }
 
 export const config = {
-  matcher: [
-    // This matcher is perfect for Next.js 14/15
-    '/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)'],
 }
