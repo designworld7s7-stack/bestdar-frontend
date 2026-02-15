@@ -30,7 +30,7 @@ export default async function InvestorClubPage({ params }: { params: Promise<{ l
       <JoinPath lang={lang} />
 
       {/* 7. Final White Section: The CTA */}
-      <ClubCTA lang={lang} />
+      <ClubCTA isAr={lang === 'ar'} />
     </main>
   );
 }
