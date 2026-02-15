@@ -13,29 +13,24 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("1. بدء محاولة الاشتراك..."); 
-    
-    if (!email) return;
-    setIsLoading(true);
+  e.preventDefault(); // هذا سيعمل الآن لأننا سنستدعيه من onSubmit
+  if (!email) return;
+  setIsLoading(true);
+  
+  try {
+    const { error } = await supabase
+      .from('newsletter_subscribers')
+      .insert([{ email, source: 'guide_sidebar' }]);
 
-    try {
-      const { error } = await supabase
-        .from('newsletter_subscribers')
-        .insert([{ email, source: 'guide_sidebar' }]);
-
-      if (error) throw error;
-
-      console.log("2. نجاح الاشتراك في سوبابيس");
-      alert(isAr ? "تم الاشتراك بنجاح!" : "Subscribed successfully!");
-      setEmail("");
-    } catch (err: any) {
-      console.error("خطأ:", err.message);
-      alert(isAr ? "أنت مشترك بالفعل أو حدث خطأ." : "Already subscribed or error occurred.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    if (error) throw error;
+    alert(isAr ? "تم الاشتراك بنجاح!" : "Subscribed successfully!");
+    setEmail("");
+  } catch (err: any) {
+    alert(isAr ? "حدث خطأ أو أنك مشترك بالفعل." : "Error or already subscribed.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     // تم حذف قسم Most Read من هنا لمنع التكرار في الصفحة
@@ -65,9 +60,9 @@ export default function GuideSidebar({ lang }: { lang: string }) {
     />
   </div>
 
-  <button 
-    type="submit" // نغيره إلى submit ليعمل مع الدالة handleSubscribe
-    disabled={isLoading}
+ <button 
+      type="submit" // نغيره إلى submit ليرسل البيانات رسمياً
+      disabled={isLoading}
     className="relative z-50 w-full py-3.5 gap-2 flex items-center justify-center bg-[#12AD65] text-white rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
   >
     {isLoading ? (isAr ? "جاري..." : "Loading...") : (isAr ? "اشتراك" : "Subscribe")}

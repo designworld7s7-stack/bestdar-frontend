@@ -43,25 +43,22 @@ export default function ProjectCardHome({
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      
-<div className="absolute inset-x-0 bottom-0 flex flex-col items-center text-center lg:items-start lg:text-left p-6 lg:p-8 z-20 pointer-events-none">        {/* 3. SYMMETRY: Keeps titles consistent even with short words like 'Turkey' */}
-       <h3 className="text-xl font-medium leading-tight text-white lg:text-2xl line-clamp-2 min-h-[3rem] lg:min-h-[3.5rem]">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center text-center lg:items-start lg:text-left p-6 lg:p-8 z-20 pointer-events-none">
+  
+  {/* العنوان: تقليل الارتفاع الأدنى (min-h) للموبايل لتقريب السعر من العنوان */}
+  <h3 className="text-xl font-bold leading-tight text-white lg:text-2xl line-clamp-2 min-h-fit lg:min-h-[3.5rem] mb-1">
     {title}
   </h3>
-        
-        <p style={{ color: brandGreen }} className="mt-1 lg:mt-2 text-sm font-medium">
+  
+  {/* السعر: تقليل الهامش العلوي (mt-0) وتغيير اللون للتوضيح */}
+  <p style={{ color: brandGreen }} className="mt-0 lg:mt-2 text-sm font-black tracking-tight">
     {isAr ? `تبدأ من ${price}` : `Starting from ${price}`}
   </p>
 
-       <Link 
+  {/* الزر: إضافة mx-auto لضمان التوسيط التام وتقليل mt-3 */}
+  <Link 
     href={projectLink}
-    className={clsx(
-      // التوسيط للموبايل: mx-auto مع الحفاظ على w-max
-      // الديسكتوب: يبقى lg:w-full و lg:mx-0
-      "mt-4 lg:mt-6 flex h-10 lg:h-14 w-max lg:w-full mx-auto lg:mx-0 items-center justify-center rounded-xl lg:rounded-2xl px-8 lg:px-0 text-[12px] lg:text-sm font-bold transition-all duration-300 active:scale-95 pointer-events-auto",
-      "bg-white text-black lg:group-hover:bg-black lg:group-hover:text-white shadow-lg"
-    )}
+    className="mt-3 lg:mt-6 flex h-10 lg:h-14 w-max lg:w-full mx-auto lg:mx-0 items-center justify-center rounded-xl lg:rounded-2xl px-10 lg:px-0 text-[11px] lg:text-sm font-black transition-all duration-300 active:scale-95 pointer-events-auto bg-white text-black shadow-xl"
   >
     {isAr ? "عرض المشروع" : "View Project"}
   </Link>
