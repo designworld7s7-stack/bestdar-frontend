@@ -11,6 +11,7 @@ export default function SimilarProjects({ lang }: { lang: string }) {
     {
       id: "marina-heights",
       title: "Marina Heights Residences",
+      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
       developer: "Emaar Properties",
       location: "Dubai",
       price: "$250,000",
@@ -21,6 +22,7 @@ export default function SimilarProjects({ lang }: { lang: string }) {
     {
       id: "mediterranean-villas",
       title: "Mediterranean Villas",
+      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
       developer: "Antalya Homes",
       location: "Antalya",
       price: "$650,000",
@@ -31,6 +33,7 @@ export default function SimilarProjects({ lang }: { lang: string }) {
     {
       id: "palm-jumeirah",
       title: "Palm Jumeirah Signature Villas",
+      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
       developer: "Nakheel",
       location: "Dubai",
       price: "$4,500,000",
@@ -53,13 +56,16 @@ export default function SimilarProjects({ lang }: { lang: string }) {
         {/* Carousel for mobile / Grid for desktop */}
         <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory pb-8 lg:pb-0">
           {projects.map((item) => (
-            <div key={item.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-0 snap-center">
-              <ProjectCard 
-                lang={lang}
-                {...item}
-              />
-            </div>
-          ))}
+  <div key={item.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-0 snap-center">
+    <ProjectCard 
+      {...item}
+      lang={lang}
+      /* نستخدم id كبديل مؤقت إذا لم يتوفر slug لضمان عدم توقف البناء */
+      slug={(item as any).slug || item.id} 
+      thumbnail_url={item.image}
+    />
+  </div>
+))}
         </div>
 
         {/* Swipe indicator for mobile */}
