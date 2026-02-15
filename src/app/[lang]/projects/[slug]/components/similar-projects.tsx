@@ -26,12 +26,11 @@ export default function SimilarProjects({ lang, projects = [] }: SimilarProjects
       <div className="relative group">
         {/* Carousel for mobile / Grid for desktop */}
         <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory pb-8 lg:pb-0">
-       {projects.map((item: any) => (
+      {projects.map((item: any) => (
   <div key={item.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-[30%] snap-center">
     <ProjectCard 
       {...item}
       lang={lang}
-      /* نمرر القيم المطلوبة بشكل آمن حتى لا يرفض Vercel عملية البناء */
       slug={item.slug || item.id || "project"}
       thumbnail_url={item.thumbnail_url || item.image || '/placeholder-project.jpg'}
     />
