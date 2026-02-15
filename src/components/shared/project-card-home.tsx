@@ -45,27 +45,26 @@ export default function ProjectCardHome({
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       
-      <div className="absolute inset-x-0 bottom-0 flex flex-col p-8 z-20 pointer-events-none">
-        {/* 3. SYMMETRY: Keeps titles consistent even with short words like 'Turkey' */}
-        <h3 className="text-xl font-medium leading-tight text-white lg:text-2xl line-clamp-2 min-h-[3.5rem]">
-          {title}
-        </h3>
+<div className="absolute inset-x-0 bottom-0 flex flex-col items-center text-center lg:items-start lg:text-left p-6 lg:p-8 z-20 pointer-events-none">        {/* 3. SYMMETRY: Keeps titles consistent even with short words like 'Turkey' */}
+       <h3 className="text-xl font-medium leading-tight text-white lg:text-2xl line-clamp-2 min-h-[3rem] lg:min-h-[3.5rem]">
+    {title}
+  </h3>
         
-        <p style={{ color: brandGreen }} className="mt-2 text-sm font-medium">
-          {isAr ? `تبدأ من ${price}` : `Starting from ${price}`}
-        </p>
+        <p style={{ color: brandGreen }} className="mt-1 lg:mt-2 text-sm font-medium">
+    {isAr ? `تبدأ من ${price}` : `Starting from ${price}`}
+  </p>
 
-        <Link 
-  href={projectLink}
-  className={clsx(
-    // الموبايل: ارتفاع أصغر (h-10)، عرض محدد (w-max)، وحواف جانبية (px-8)
-    // الديسكتوب (lg): يعود للارتفاع الأصلي (lg:h-14) والعرض الكامل (lg:w-full)
-    "mt-6 flex h-10 lg:h-14 w-max lg:w-full items-center justify-center rounded-xl lg:rounded-2xl px-8 lg:px-0 text-[12px] lg:text-sm font-bold transition-all duration-300 active:scale-95 pointer-events-auto",
-    "bg-white text-black lg:group-hover:bg-black lg:group-hover:text-white shadow-lg"
-  )}
->
-  {isAr ? "عرض المشروع" : "View Project"}
-</Link>
+       <Link 
+    href={projectLink}
+    className={clsx(
+      // التوسيط للموبايل: mx-auto مع الحفاظ على w-max
+      // الديسكتوب: يبقى lg:w-full و lg:mx-0
+      "mt-4 lg:mt-6 flex h-10 lg:h-14 w-max lg:w-full mx-auto lg:mx-0 items-center justify-center rounded-xl lg:rounded-2xl px-8 lg:px-0 text-[12px] lg:text-sm font-bold transition-all duration-300 active:scale-95 pointer-events-auto",
+      "bg-white text-black lg:group-hover:bg-black lg:group-hover:text-white shadow-lg"
+    )}
+  >
+    {isAr ? "عرض المشروع" : "View Project"}
+  </Link>
       </div>
     </div>
   );

@@ -49,7 +49,10 @@ export default function GuideSidebar({ lang }: { lang: string }) {
             {isAr ? "أحدث تقارير السوق في بريدك" : "Latest market trends in your inbox"}
           </p>
           
-          <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}> 
+          <form 
+  className="flex flex-col gap-3" 
+  onSubmit={handleSubscribe} // الآن الدالة ستستقبل الـ event بشكل صحيح
+> 
   <div className="relative">
     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
     <input 
@@ -62,10 +65,8 @@ export default function GuideSidebar({ lang }: { lang: string }) {
     />
   </div>
 
-  {/* 2. استخدم onClick بدلاً من الاعتماد على Submit الفورم */}
   <button 
-    type="button" // تغيير النوع إلى button لمنع أي تعارض مع المتصفح
-    onClick={handleSubscribe} // استدعاء الدالة مباشرة عند النقر
+    type="submit" // نغيره إلى submit ليعمل مع الدالة handleSubscribe
     disabled={isLoading}
     className="relative z-50 w-full py-3.5 gap-2 flex items-center justify-center bg-[#12AD65] text-white rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
   >
