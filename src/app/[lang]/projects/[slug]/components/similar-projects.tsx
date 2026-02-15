@@ -31,8 +31,7 @@ export default function SimilarProjects({ lang, projects = [] }: SimilarProjects
     <ProjectCard 
       {...item}
       lang={lang}
-      // تمرير القيم المطلوبة لتجنب خطأ الـ Missing Properties
-      slug={item.slug || item.id || "project"}
+     slug={item.slug || item.id || "project-detail"}
       thumbnail_url={item.thumbnail_url || item.image || '/placeholder-project.jpg'}
     />
   </div>
