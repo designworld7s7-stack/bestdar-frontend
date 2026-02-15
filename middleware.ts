@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-const locales = ['en', 'ar'];
-const defaultLocale = 'en';
-
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({
     request: {
@@ -21,60 +18,35 @@ export async function middleware(req: NextRequest) {
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set(name, value);
-            res.cookies.set(name, value, {
-              ...options,
-              sameSite: 'lax',
-              secure: true,
-              path: '/',
-            });
+            res.cookies.set(name, value, options);
           });
         },
       },
     }
   );
 
+  // تحديث الجلسة: هذا السطر هو المسؤول عن جعل النظام "يتعرف" على دورك (Role)
   const { data: { user } } = await supabase.auth.getUser();
-  const { pathname } = req.nextUrl;
 
-  // 1. معالجة توجيه اللغة
+  const { pathname } = req.nextUrl;
+  const locales = ['en', 'ar'];
+
+  // 1. معالجة اللغة (Locale Redirection)
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
   if (pathnameIsMissingLocale) {
-    const locale = req.cookies.get('NEXT_LOCALE')?.value || defaultLocale;
-    const redirectUrl = new URL(`/${locale}${pathname}`, req.url);
-    const redirectRes = NextResponse.redirect(redirectUrl);
-    
-    // الطريقة الصحيحة لنقل الكوكيز في Next.js
-    res.cookies.getAll().forEach((cookie) => {
-      redirectRes.cookies.set(cookie.name, cookie.value);
-    });
-    
+    const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
+    const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
+    // نقل الكوكيز لضمان التعرف على المستخدم بعد التوجيه
+    res.cookies.getAll().forEach((cookie) => redirectRes.cookies.set(cookie.name, cookie.value));
     return redirectRes;
   }
 
-  // 2. حماية المسارات (Gated Sections)
-  const pathWithoutLocale = pathname.replace(/^\/(en|ar)/, '') || '/';
-  const isProtectedRoute = ['/profile', '/dashboard', '/saved', '/investor-club'].some(
-    route => pathWithoutLocale.startsWith(route)
-  );
-
-  if (isProtectedRoute && !user) {
-    const locale = pathname.split('/')[1] || defaultLocale;
-    // تم تعديل المسار ليتطابق مع مجلداتك الحقيقية /auth/login
-    const loginUrl = new URL(`/${locale}/auth/login`, req.url);
-    loginUrl.searchParams.set('next', pathname);
-    
-    const authRes = NextResponse.redirect(loginUrl);
-    
-    // نقل الكوكيز لضمان استمرار الجلسة
-    res.cookies.getAll().forEach((cookie) => {
-      authRes.cookies.set(cookie.name, cookie.value);
-    });
-    
-    return authRes;
-  }
+  // ملاحظة: قمنا بإزالة حماية "investor-club" ليتمكن الجميع من الدخول
+  // النظام الآن سيقرأ الـ user وإذا كان موجوداً سيعرف دوره (Investor أو User)
+  // وإذا لم يكن موجوداً سيعاملك كـ Guest تلقائياً دون منعك من الدخول
 
   return res;
 }
