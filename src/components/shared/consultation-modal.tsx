@@ -3,15 +3,24 @@
 import React, { useState } from 'react';
 import { X, Clock, Globe, ShieldCheck, MessageCircle, Check, Calendar } from 'lucide-react';
 import { clsx } from 'clsx';
+// Connect to your new client file
+import { createClient } from '@/utils/supabase/client';
 
 export default function ConsultationModal({ lang, isOpen, onClose }: any) {
   // 1. ALL HOOKS MUST BE AT THE TOP
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false); // For boutique submission feel
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState(''); // Moved up
+  const [selectedCountry, setSelectedCountry] = useState('');
+  
+  // Details State
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   const isAr = lang === 'ar';
+  const supabase = createClient();
 
   // 2. THE CONDITIONAL RETURN MUST BE BELOW THE HOOKS
   if (!isOpen) return null;
@@ -23,18 +32,54 @@ export default function ConsultationModal({ lang, isOpen, onClose }: any) {
       setSelectedCountry('');
       setSelectedDate('');
       setSelectedTime('');
+      setFullName('');
+      setEmail('');
+      setPhone('');
     }, 300);
   };
+const dateMap: Record<string, string> = {
+  'Friday, Dec 12': '2026-12-12',
+  'Saturday, Dec 13': '2026-12-13',
+  'Sunday, Dec 14': '2026-12-14',
+  'Monday, Dec 15': '2026-12-15',
+};
+  const handleFinalSubmit = async () => {
+  setLoading(true);
+
+  // Translate the friendly date to a database date
+  const databaseDate = dateMap[selectedDate] || selectedDate;
+
+  const { error } = await supabase
+    .from('leads')
+    .insert([{
+      full_name: fullName,
+      email: email,
+      phone: phone,
+      source: 'consultation',
+      consultation_date: databaseDate, // Now sends "2026-12-13" instead of text
+      consultation_time: selectedTime,
+      target_city: selectedCountry,
+      country_code: selectedCountry === 'UAE' ? 'ae' : 'tr'
+    }]);
+
+  setLoading(false);
+  if (!error) {
+    setStep(3);
+  } else {
+    // Show the actual error message to help us debug
+    alert(isAr ? "Error: " + error.message : "Error: " + error.message);
+  }
+};
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[600] flex items-center justify-center p-4">
-      {/* 1. Organized Container: Fixed height prevents "skyscraper" */}
       <div className="bg-white w-full max-w-[1000px] h-[90vh] lg:h-[700px] rounded-[40px] shadow-2xl relative overflow-hidden flex flex-col lg:flex-row border-0">
         
         <button onClick={handleClose} className="absolute top-8 right-10 text-[#6B7280] hover:text-black z-20">
           <X size={24} />
         </button>
 
-        {/* SIDEBAR: Match the style from ScheduleCallPage.png */}
+        {/* SIDEBAR */}
         <div className="hidden lg:flex w-[320px] bg-[#F8F9FA] p-10 flex-col justify-between border-r border-gray-100">
           <div className="space-y-8">
             <h4 className="text-xl font-medium uppercase tracking-tight">What to expect?</h4>
@@ -54,17 +99,24 @@ export default function ConsultationModal({ lang, isOpen, onClose }: any) {
 
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-50">
             <p className="text-[12px] font-medium uppercase tracking-tighter text-[#6B7280] mb-4 text-center">Prefer WhatsApp?</p>
-            <button className="w-full bg-[#25D366] text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-medium text-[12px] uppercase tracking-tighter hover:scale-105 transition-all">
-              <MessageCircle size={16} />
-              Message Now
-            </button>
+           <a 
+  href="https://wa.me/9647759147343" 
+  target="_blank" 
+  rel="noopener noreferrer" 
+  className="w-full"
+>
+  <button className="w-full bg-[#25D366] text-white py-4 rounded-2xl flex items-center justify-center gap-3 font-medium text-[12px] uppercase tracking-tighter hover:scale-105 transition-all cursor-pointer">
+    <MessageCircle size={16} />
+    {isAr ? "راسلنا الآن" : "Message Now"}
+  </button>
+</a>
           </div>
         </div>
 
         {/* MAIN CONTENT AREA */}
         <div className="flex-1 p-6 lg:p-12 flex flex-col overflow-y-auto lg:overflow-visible">
           
-          {/* Progress Header: Organized */}
+          {/* Progress Header */}
           <div className="flex items-center justify-center gap-4 mb-10">
             <div className={clsx("flex items-center gap-2", step >= 1 ? "text-[#12AD65]" : "text-[#6B7280]")}>
               <span className={clsx("w-6 h-6 rounded-full border-2 flex items-center justify-center text-[12px] font-medium", step >= 1 ? "border-[#12AD65]" : "border-[#6B7280]")}>1</span>
@@ -127,63 +179,75 @@ export default function ConsultationModal({ lang, isOpen, onClose }: any) {
             </div>
           )}
 
-         {/* STEP 2: YOUR DETAILS */}
-   
-         {step === 2 && (
+          {/* STEP 2: YOUR DETAILS */}
+          {step === 2 && (
             <div className="flex-1 animate-in slide-in-from-right-4 duration-500 flex flex-col justify-center">
               <h2 className="text-2xl font-medium mb-8 tracking-[0.1em] uppercase text-center">Enter Details</h2>
               <div className="max-w-md mx-auto w-full space-y-4">
                 <div className="bg-gray-50 rounded-2xl p-5 shadow-sm">
                   <span className="text-[8px] font-medium text-[#4B5563] uppercase block mb-1">Full Name</span>
-                  <input type="text" placeholder="John Doe" className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none" />
+                  <input 
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    type="text" placeholder="John Doe" className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none text-black" 
+                  />
                 </div>
                 <div className="bg-gray-50 rounded-2xl p-5 shadow-sm">
                   <span className="text-[8px] font-medium text-[#4B5563] uppercase block mb-1">Email Address</span>
-                  <input type="email" placeholder="john@example.com" className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none" />
+                  <input 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email" placeholder="john@example.com" className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none text-black" 
+                  />
                 </div>
                 <div className="bg-gray-50 rounded-2xl p-5 shadow-sm">
                   <span className="text-[8px] font-medium text-[#4B5563] uppercase block mb-1">WhatsApp Number</span>
-                  <input type="tel" placeholder="+964 770 ..." className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none" />
+                  <input 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    type="tel" placeholder="+964 770 ..." className="w-full bg-transparent border-0 p-0 text-sm font-medium focus:ring-0 outline-none text-black" 
+                  />
                 </div>
-              
-
-              {/* FUNCTIONAL COUNTRY SELECTION */}
-              <div>
-                <label className="text-[9px] font-medium uppercase tracking-tighter text-[#4B5563] block mb-3 text-center mt-2">
-                  {isAr ? "دولة الاهتمام" : "Country of Interest"}
-                </label>
-                <div className="flex gap-3">
-                  {['Turkey', 'UAE'].map((country) => (
-                    <button 
-                      key={country} 
-                      type="button"
-                      onClick={() => setSelectedCountry(country)} // Set the state here
-                      className={clsx(
-                        "flex-1 py-4 rounded-2xl font-medium text-[12px] uppercase transition-all tracking-tighter shadow-sm border",
-                        selectedCountry === country 
-                          ? "bg-[#12AD65]/10 border-[#12AD65] text-[#12AD65]" // Active Style
-                          : "bg-gray-50 border-transparent text-[#4B5563] hover:bg-gray-100" // Inactive Style
-                      )}
-                    >
-                      {isAr && country === 'Turkey' ? "تركيا" : isAr && country === 'UAE' ? "الإمارات" : country}
-                    </button>
-                  ))}
+                
+                <div>
+                  <label className="text-[9px] font-medium uppercase tracking-tighter text-[#4B5563] block mb-3 text-center mt-2">
+                    {isAr ? "دولة الاهتمام" : "Country of Interest"}
+                  </label>
+                  <div className="flex gap-3">
+                    {['Turkey', 'UAE'].map((country) => (
+                      <button 
+                        key={country} 
+                        type="button"
+                        onClick={() => setSelectedCountry(country)}
+                        className={clsx(
+                          "flex-1 py-4 rounded-2xl font-medium text-[12px] uppercase transition-all tracking-tighter shadow-sm border",
+                          selectedCountry === country 
+                            ? "bg-[#12AD65]/10 border-[#12AD65] text-[#12AD65]" 
+                            : "bg-gray-50 border-transparent text-[#4B5563] hover:bg-gray-100"
+                        )}
+                      >
+                        {isAr && country === 'Turkey' ? "تركيا" : isAr && country === 'UAE' ? "الإمارات" : country}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <button 
-              disabled={!selectedCountry} // Button stays disabled until a country is picked
-              onClick={() => setStep(3)}
-              className="w-full bg-black text-white py-5 rounded-2xl font-medium text-[11px] uppercase tracking-tighter mt-10 shadow-2xl disabled:opacity-20 transition-all"
-            >
-              {isAr ? "تأكيد الموعد" : "Confirm Call"}
-            </button>
-            <button onClick={() => setStep(1)} className="w-full text-center text-[#4B5563] text-[12px] font-medium uppercase mt-6 hover:text-black">
-              {isAr ? "الرجوع لاختيار الوقت" : "Back to Time Selection"}
-            </button>
-          </div>
-        )}
+              <button 
+                disabled={!selectedCountry || !fullName || !phone || loading}
+                onClick={handleFinalSubmit} // Triggers the Supabase insert
+                className="w-full bg-black text-white py-5 rounded-2xl font-medium text-[11px] uppercase tracking-tighter mt-10 shadow-2xl disabled:opacity-20 transition-all flex items-center justify-center gap-3"
+              >
+                {loading ? (isAr ? "جاري التأكيد..." : "Confirming...") : (isAr ? "تأكيد الموعد" : "Confirm Call")}
+              </button>
+              
+              {!loading && (
+                <button onClick={() => setStep(1)} className="w-full text-center text-[#4B5563] text-[12px] font-medium uppercase mt-6 hover:text-black">
+                  {isAr ? "الرجوع لاختيار الوقت" : "Back to Time Selection"}
+                </button>
+              )}
+            </div>
+          )}
 
           {/* STEP 3: CONFIRMATION */}
           {step === 3 && (

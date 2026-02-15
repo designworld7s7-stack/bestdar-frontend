@@ -1,24 +1,49 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Wallet, MapPin, Home } from 'lucide-react';
+import { X, Wallet, MapPin, Home, Loader2 } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client'; //
 
 interface EditPreferencesModalProps {
   isAr: boolean;
   onClose: () => void;
+  preferences: any; // Add this to receive existing data
 }
 
-export default function EditPreferencesModal({ isAr, onClose }: EditPreferencesModalProps) {
-  // State to handle multiple selection logic
-  const [selectedCities, setSelectedCities] = useState(['Antalya', 'Alanya']);
-  const [selectedTypes, setSelectedTypes] = useState(['Villas', 'Apartments']);
-  const [selectedBudget, setSelectedBudget] = useState('$500k - $750k');
+export default function EditPreferencesModal({ isAr, onClose, preferences }: EditPreferencesModalProps) {
+  const supabase = createClient();
+  const [loading, setLoading] = useState(false);
+
+  // Initialize state with real data from Supabase
+  const [selectedCities, setSelectedCities] = useState<string[]>(preferences?.cities_of_interest || []);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(preferences?.property_types || []);
+  const [selectedBudget, setSelectedBudget] = useState(preferences?.budget || '');
 
   const toggleSelection = (item: string, state: string[], setter: any) => {
     if (state.includes(item)) {
       setter(state.filter(i => i !== item));
     } else {
       setter([...state, item]);
+    }
+  };
+
+  // THE SAVE LOGIC
+  const handleSave = async () => {
+    setLoading(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        budget: selectedBudget,
+        cities_of_interest: selectedCities,
+        property_types: selectedTypes
+      })
+      .eq('id', preferences.id);
+
+    if (!error) {
+      window.location.reload(); // Refresh to update the Card
+      onClose();
+    } else {
+      setLoading(false);
     }
   };
 
@@ -100,10 +125,11 @@ export default function EditPreferencesModal({ isAr, onClose }: EditPreferencesM
         {/* 3. FOOTER ACTION */}
         <div className="p-8 pt-4 border-t border-gray-50">
           <button 
-            onClick={onClose}
-            className="w-full bg-[#111111] text-white py-5 rounded-[20px] font-medium text-[14px] uppercase tracking-[0.15em] shadow-2xl hover:bg-black active:scale-[0.98] transition-all"
+            onClick={handleSave}
+            disabled={loading}
+            className="w-full bg-[#111111] text-white py-5 rounded-[20px] font-medium text-[14px] uppercase tracking-[0.15em] shadow-2xl hover:bg-black active:scale-[0.98] transition-all flex justify-center items-center gap-2"
           >
-            {isAr ? "حفظ التفضيلات" : "Save Preferences"}
+            {loading ? <Loader2 className="animate-spin" size={20} /> : (isAr ? "حفظ التفضيلات" : "Save Preferences")}
           </button>
         </div>
       </div>

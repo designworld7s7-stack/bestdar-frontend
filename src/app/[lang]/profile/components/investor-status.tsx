@@ -1,73 +1,119 @@
 'use client';
 
 import React from 'react';
-import { Award, CheckCircle2 } from 'lucide-react';
+import { Award, Sparkles, Quote } from 'lucide-react';
 
-export default function InvestorStatus({ isAr }: { isAr: boolean }) {
-  const benefits = isAr 
-    ? ["أولوية الوصول للمشاريع الجديدة", "مستشار استثماري مخصص", "خصم 1.5% على رسوم المنصة", "تقارير تحليل السوق الربع سنوية"]
-    : ["Priority access to new developments", "Dedicated investment advisor", "1.5% reduced platform fees", "Quarterly market analysis reports"];
+interface InvestorStatusProps {
+  isAr: boolean;
+  tier: string;
+  totalInvested: number; // New prop to drive the dynamic bar
+}
+
+export default function InvestorStatus({ isAr, tier, totalInvested }: InvestorStatusProps) {
+  
+  // 1. Force the tier to match your object keys (e.g., "gold" becomes "Gold")
+  const normalizedTier = tier 
+    ? (tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase()) 
+    : 'Silver';
+
+  const TIER_LIMITS = { 
+    Silver: 250000, 
+    Gold: 1000000, 
+    Platinum: 5000000 
+  };
+  
+  const TIER_CONFIG = {
+    Silver: {
+      color: '#C0C0C0',
+      title: isAr ? "رحلة النمو تبدأ هنا" : "The Journey of Growth Starts Here",
+      message: isAr 
+        ? "بصفتك عضواً فضياً، تركيزنا هو تمهيد الطريق لك..." 
+        : "As a Silver member, our focus is on paving the way for you...",
+      limit: TIER_LIMITS.Silver
+    },
+    Gold: {
+      color: '#D4AF37',
+      title: isAr ? "فهم تطلعاتك هو أولويتنا" : "Understanding Your Aspirations",
+      message: isAr 
+        ? "في الفئة الذهبية، ننتقل من توفير البيانات إلى فهم الاحتياجات..." 
+        : "In the Gold tier, we move from data to understanding...",
+      limit: TIER_LIMITS.Gold
+    },
+    // ... Platinum config
+  };
+
+  // 2. Use the normalizedTier to pull the correct data
+  const current = TIER_CONFIG[normalizedTier as keyof typeof TIER_CONFIG] || TIER_CONFIG.Silver;
+
+  // 3. Calculate percentage against the correct limit (1M for Gold)
+ 
+ const progressPercentage = current.limit > 0 
+  ? Math.min((totalInvested / current.limit) * 100, 100) 
+  : 0;
+
+console.log("Math Check:", totalInvested, "/", current.limit, "=", progressPercentage);
+ 
 
   return (
     <div className="bg-black rounded-[32px] sm:rounded-[40px] p-6 sm:p-10 lg:p-12 shadow-[0_40px_100px_rgba(0,0,0,0.15)] overflow-hidden relative">
       
-      {/* Decorative Gradient Flare */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-[#12AD65] opacity-10 blur-[100px] -mr-32 -mt-32" />
+      <div 
+        className="absolute top-0 right-0 w-80 h-80 opacity-20 blur-[120px] -mr-32 -mt-32 transition-all duration-1000" 
+        style={{ backgroundColor: current.color }}
+      />
 
       <div className="flex flex-col lg:flex-row gap-10 lg:items-center justify-between relative z-10">
         
-        {/* LEFT: Tier & Progress */}
         <div className="flex-1 space-y-8">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-[#12AD65]">
-              <Award size={16} />
-              <span className="text-[12px] sm:text-[11px] font-medium uppercase tracking-tight">
-                {isAr ? "حالة نادي المستثمرين" : "Investor Club Status"}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2" style={{ color: current.color }}>
+              <Award size={18} />
+              <span className="text-[12px] font-bold uppercase tracking-[0.2em]">
+                {isAr ? "نادي المستثمرين" : "Investor Club"}
               </span>
             </div>
-            <h2 className="text-[32px] sm:text-[42px] font-medium text-white tracking-[0.1em]">
-              {isAr ? "عضو ذهبي" : "Gold Member"}
+            <h2 className="text-[32px] sm:text-[48px] font-medium text-white tracking-tight leading-none uppercase">
+              {tier} <span className="text-gray-600">Member</span>
             </h2>
-            <p className="text-[#4B5563] text-[14px] sm:text-[16px] font-medium">
-              {isAr ? "استمتع بعروض حصرية خارج السوق ورسوم مخفضة." : "Unlock exclusive off-market deals and lower fees."}
-            </p>
           </div>
 
-          {/* Progress Bar Section */}
-          <div className="space-y-4 max-w-md">
+          {/* Dynamic Progress Bar based on investment */}
+          <div className="space-y-4 max-w-sm">
             <div className="flex justify-between items-end">
-              <div>
-                <p className="text-gray-500 text-[12px] font-medium uppercase tracking-tighter mb-1">{isAr ? "إجمالي الاستثمار" : "Total Invested"}</p>
-                <p className="text-white text-[18px] font-medium">$150,000</p>
-              </div>
-              <div className="text-right">
-                <p className="text-gray-500 text-[12px] font-medium uppercase tracking-tighter mb-1">{isAr ? "المستوى التالي" : "Next Tier"}</p>
-                <p className="text-[#6B7280] text-[14px] font-medium">$500,000</p>
-              </div>
+              <span className="text-gray-500 text-[11px] font-bold uppercase tracking-widest">
+                {isAr ? "التقدم نحو المستوى التالي" : "Progress to Next Milestone"}
+              </span>
+              <span className="text-white text-[14px] font-medium">{Math.floor(progressPercentage)}%</span>
             </div>
-            
-            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-              <div className="h-full bg-[#12AD65] w-[30%] rounded-full shadow-[0_0_15px_rgba(18,173,101,0.5)]" />
-            </div>
-            
-            <p className="text-gray-500 text-[11px] font-bold">
-              {isAr ? "$350,000 للوصول للمستوى البلاتيني" : "$350,000 to Platinum"}
-            </p>
+          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+  <div 
+    className="h-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(255,255,255,0.3)]" 
+    style={{ 
+      // Change 'tierColor' to 'current.color'
+      backgroundColor: current.color, 
+      width: `${progressPercentage}%` 
+    }} 
+  />
+</div>
           </div>
         </div>
 
-        {/* RIGHT: Benefits Card */}
-        <div className="lg:w-[400px] bg-white rounded-3xl p-8 sm:p-10 shadow-2xl">
-          <ul className="space-y-5">
-            {benefits.map((benefit, i) => (
-              <li key={i} className="flex items-start gap-4 group">
-                <CheckCircle2 className="text-[#12AD65] mt-1 shrink-0" size={18} />
-                <span className="text-gray-600 text-[14px] sm:text-[15px] font-bold leading-tight group-hover:text-black transition-colors">
-                  {benefit}
-                </span>
-              </li>
-            ))}
-          </ul>
+        {/* Personalized Message Card (No "Learn More") */}
+        <div className="lg:w-[450px] bg-white/[0.03] backdrop-blur-md rounded-[32px] p-8 sm:p-10 border border-white/10 relative">
+          <Quote className="absolute top-6 right-8 text-white/5" size={60} />
+          
+          <div className="space-y-6 relative z-10">
+            <div className="flex items-center gap-3">
+              <Sparkles size={16} style={{ color: current.color }} />
+              <h3 className="text-white text-[18px] sm:text-[20px] font-medium tracking-tight">
+                {current.title}
+              </h3>
+            </div>
+            
+            <p className="text-gray-400 text-[15px] sm:text-[16px] leading-relaxed font-light">
+              {current.message}
+            </p>
+          </div>
         </div>
 
       </div>

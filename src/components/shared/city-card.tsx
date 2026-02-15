@@ -13,15 +13,26 @@ interface CityCardProps {
 }
 
 export default function CityCard({ 
-  name, subTitle, projectCount, image, lang, country 
+  name, 
+  subTitle, 
+  projectCount, // هذا الجزء سيبقى ديناميكياً كما هو
+  image,        // تأكد أن القيمة الممرة هنا هي image_url من سوبابيس
+  lang, 
+  country 
 }: CityCardProps) {
   const isAr = lang === 'ar';
 
   return (
-    <Link 
-  href={`/${lang}/${country}?city=${name.toLowerCase()}`}
-  className="group relative block aspect-[4/5] overflow-hidden rounded-[40px] transition-all duration-700 hover:-translate-y-2"
->
+   <Link 
+      href={`/${lang}/${country}?city=${name.toLowerCase()}`}
+      className="group relative block aspect-[4/5] overflow-hidden rounded-[40px] transition-all duration-700 hover:-translate-y-2"
+    >
+      {/* سيبقى كود الصورة كما هو، فقط تأكد أن متغير image يحتوي على الرابط */}
+      <img 
+        src={image} 
+        alt={name} 
+        className="absolute inset-0 h-full w-full object-cover transition-all duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0" 
+      />
   {/* DESIGN CHANGE: Subtle Border. 6px is very thick; 2px or 3px is more 'boutique' [cite: 2026-02-04] */}
   <div className="absolute inset-0 z-20 rounded-[40px] border-[3px] border-[#12AD65] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 

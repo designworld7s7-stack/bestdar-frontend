@@ -1,10 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle2 } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client'; //
 
 export default function ClientCentric({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
+  const supabase = createClient();
+
+  // الحالة الخاصة بالصورة مع صورة احتياطية
+  const [imageUrl, setImageUrl] = useState('/about/client-handshake.jpg');
+
+  useEffect(() => {
+    async function getClientImage() {
+      const { data } = await supabase
+        .from('site_content')
+        .select('image_url')
+        .eq('section_key', 'client_centric')
+        .single();
+
+      if (data?.image_url) {
+        setImageUrl(data.image_url);
+      }
+    }
+    getClientImage();
+  }, [supabase]);
 
   const features = [
     {
@@ -23,15 +43,14 @@ export default function ClientCentric({ lang }: { lang: string }) {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           
-          {/* Featured Image: Vertical first on mobile */}
+          {/* Featured Image: Dynamic and grayscale */}
           <div className="w-full lg:w-1/2">
             <div className="relative aspect-video lg:aspect-[4/3] rounded-[40px] overflow-hidden shadow-2xl">
               <img 
-                src="/about/client-handshake.jpg" 
+                src={imageUrl} 
                 alt="Professional consultation" 
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
               />
-              {/* Subtle green glow behind image to match dark aesthetic */}
               <div className="absolute -inset-4 bg-[#12AD65]/5 blur-3xl -z-10" />
             </div>
           </div>
@@ -48,7 +67,7 @@ export default function ClientCentric({ lang }: { lang: string }) {
                 : "Every client has a unique goal. We take time to understand your needs, offer tailored project recommendations, and support you through every stage of your investment journey. No pressure, no bias — our focus is on what’s right for you."}
             </p>
 
-            {/* Feature List with Brand Green Icons */}
+            {/* Feature List */}
             <div className="space-y-6">
               {features.map((item, index) => (
                 <div key={index} className="flex items-start gap-4">

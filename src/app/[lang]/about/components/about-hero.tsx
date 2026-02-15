@@ -1,11 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calendar, MessageCircle } from 'lucide-react';
-import { useModals } from "@/context/modal-context"; //
+import { useModals } from "@/context/modal-context";
+import { createClient } from '@/utils/supabase/client'; //
+
 export default function AboutHero({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
-const { openConsultation } = useModals(); // Unified trigger
+  const { openConsultation } = useModals();
+  const supabase = createClient();
+
+  // State for the dynamic hero image
+  const [imageUrl, setImageUrl] = useState('/about/hero-boardroom.jpg'); // Fallback local image
+
+  useEffect(() => {
+    async function getHeroImage() {
+      const { data } = await supabase
+        .from('site_content')
+        .select('image_url')
+        .eq('section_key', 'about_hero')
+        .single();
+
+      if (data?.image_url) {
+        setImageUrl(data.image_url);
+      }
+    }
+    getHeroImage();
+  }, [supabase]);
+
   return (
     <section className="bg-white pt-20 lg:pt-40 pb-20">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
@@ -34,30 +56,30 @@ const { openConsultation } = useModals(); // Unified trigger
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4">
               <button 
-        onClick={openConsultation}
-        className="btn-brand flex items-center gap-3"
-      >
-        <Calendar size={18} />
-        {isAr ? "حجز استشارة" : "Book Consultation"}
-      </button>
+                onClick={openConsultation}
+                className="btn-brand flex items-center gap-3"
+              >
+                <Calendar size={18} />
+                {isAr ? "حجز استشارة" : "Book Consultation"}
+              </button>
               
               <a 
-        href="https://wa.me/9647500000000" // International format
-        target="_blank"
-        rel="noopener noreferrer"
-        className="btn-secondary flex items-center gap-3"
-      >
-        <MessageCircle size={18} className="text-[#12AD65]" />
-        {isAr ? "اتصال واتساب" : "WhatsApp Contact"}
-      </a>
+                href="https://wa.me/9647759147343"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary flex items-center gap-3"
+              >
+                <MessageCircle size={18} className="text-[#12AD65]" />
+                {isAr ? "اتصال واتساب" : "WhatsApp Contact"}
+              </a>
             </div>
           </div>
 
-          {/* Featured Image */}
+          {/* Featured Image - Now Dynamic */}
           <div className="w-full lg:w-1/2">
             <div className="relative aspect-[4/3] rounded-[40px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.08)]">
               <img 
-                src="/about/hero-boardroom.jpg" 
+                src={imageUrl} 
                 alt="Boutique Boardroom" 
                 className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
               />

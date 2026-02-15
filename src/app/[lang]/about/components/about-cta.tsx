@@ -35,7 +35,7 @@ const { openConsultation } = useModals(); // Unified trigger
       </button>
               
               <a 
-        href="https://wa.me/9647500000000" // International format
+        href="https://wa.me/9647759147343" // International format
         target="_blank"
         rel="noopener noreferrer"
         className="btn-secondary flex items-center gap-3"

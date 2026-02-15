@@ -2,6 +2,7 @@ import GuideCard from '@/components/shared/guide-card';
 
 export default function LocalGuides({ country, lang, guides }: { country: string, lang: string, guides: any[] }) {
   const isAr = lang === 'ar';
+  if (!guides || guides.length === 0) return null;
   return (
     <section className="max-w-[1440px] mx-auto px-6 lg:px-12 py-20 border-t border-gray-100">
       <h2 className="text-3xl lg:text-4xl font-medium text-black tracking-[0.1em] mb-12">

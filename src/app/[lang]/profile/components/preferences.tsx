@@ -6,22 +6,24 @@ import { Wallet, MapPin, Home, Pencil } from 'lucide-react';
 interface PreferencesProps {
   isAr: boolean;
   onEdit: () => void; 
+  preferences: any; 
 }
-export default function Preferences({ isAr, onEdit }: PreferencesProps) {
-  // Mock data based on your UI screenshot
-  const cities = isAr ? ["بغداد", "أربيل"] : ["Baghdad", "Erbil"];
-  const types = isAr ? ["فيلات", "شقق"] : ["Villas", "Apartments"];
+
+export default function Preferences({ isAr, onEdit, preferences }: PreferencesProps) {
+  // Use the NEW column names from your SQL script
+  const cities = preferences?.cities_of_interest || [];
+  const types = preferences?.property_types || [];
+  const budgetDisplay = preferences?.budget || (isAr ? "غير محدد" : "Not specified");
 
   return (
-    <div className="bg-white rounded-[32px] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-50 relative">
+    <div className="bg-white rounded-[32px] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-gray-50 relative h-full">
       <div className="flex items-center justify-between mb-10">
         <h2 className="text-[22px] font-medium text-black tracking-tight">
           {isAr ? "تفضيلاتي" : "My Preferences"}
         </h2>
-        {/* 4. Attach the function to the button */}
         <button 
           onClick={onEdit}
-          className="text-[#12AD65] hover:bg-[#E8F7F0] p-2 rounded-full transition-colors"
+          className="text-[#12AD65] hover:bg-[#E8F7F0] p-2 rounded-full transition-colors active:scale-90"
         >
           <Pencil size={20} />
         </button>
@@ -36,8 +38,8 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
               {isAr ? "نطاق الميزانية" : "Budget Range"}
             </span>
           </div>
-          <div className="bg-[#F8F9FA] px-6 py-4 rounded-2xl inline-block">
-            <span className="text-[16px] font-medium text-black">$250k - $500k</span>
+          <div className="bg-[#F8F9FA] px-6 py-4 rounded-2xl inline-block border border-gray-50">
+            <span className="text-[16px] font-bold text-black">{budgetDisplay}</span>
           </div>
         </section>
 
@@ -50,11 +52,13 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
-            {cities.map((city) => (
-              <div key={city} className="bg-[#F8F9FA] px-6 py-3 rounded-xl border border-gray-50">
+            {cities.length > 0 ? cities.map((city: string) => (
+              <div key={city} className="bg-[#F8F9FA] px-6 py-3 rounded-xl border border-gray-100">
                 <span className="text-[14px] font-bold text-black">{city}</span>
               </div>
-            ))}
+            )) : (
+              <p className="text-gray-400 text-sm italic">{isAr ? "لم يتم تحديد مدن" : "No locations set"}</p>
+            )}
           </div>
         </section>
 
@@ -67,11 +71,13 @@ export default function Preferences({ isAr, onEdit }: PreferencesProps) {
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
-            {types.map((type) => (
-              <div key={type} className="bg-[#F8F9FA] px-6 py-3 rounded-xl border border-gray-50">
-                <span className="text-[14px] font-medium text-black">{type}</span>
+            {types.length > 0 ? types.map((type: string) => (
+              <div key={type} className="bg-[#F8F9FA] px-6 py-3 rounded-xl border border-gray-100">
+                <span className="text-[14px] font-bold text-black">{type}</span>
               </div>
-            ))}
+            )) : (
+              <p className="text-gray-400 text-sm italic">{isAr ? "لم يتم تحديد أنواع" : "No types set"}</p>
+            )}
           </div>
         </section>
       </div>

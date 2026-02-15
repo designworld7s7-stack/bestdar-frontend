@@ -8,8 +8,10 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
   const isAr = params.lang === 'ar';
   const pathname = usePathname();
 
-  // Determine if we are on login or signup to show the opposite link
+  // Route detection
   const isLoginPage = pathname.includes('/login');
+  const isVerifyPage = pathname.includes('/verify');
+  const isForgotPage = pathname.includes('/forgot-password');
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 px-6 py-6 sm:px-12 sm:py-8 flex items-center justify-between bg-transparent">
@@ -33,21 +35,34 @@ export default function AuthHeader({ params }: { params: { lang: string } }) {
           {isAr ? "EN" : "عربي"}
         </Link>
 
-        {/* Dynamic Auth Toggle */}
-        <Link 
-          href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
-          className="hidden sm:block text-[12px] font-medium uppercase tracking-tighter text-black hover:text-[#12AD65] transition-colors"
-        >
-          {isLoginPage ? (isAr ? "إنشاء حساب" : "Sign Up") : (isAr ? "دخول" : "Log In")}
-        </Link>
-        
-        {/* Mobile Call to Action Button */}
-        <Link 
-          href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
-          className="sm:hidden bg-black text-white px-5 py-2.5 rounded-full text-[11px] font-medium uppercase tracking-tighter active:scale-95 transition-all"
-        >
-           {isLoginPage ? (isAr ? "سجل" : "Join") : (isAr ? "دخول" : "Login")}
-        </Link>
+        {/* Dynamic Auth Toggle - Hidden on Verify to keep user focused */}
+        {!isVerifyPage && (
+          <>
+            <Link 
+              href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
+              className="hidden sm:block text-[12px] font-medium uppercase tracking-tighter text-black hover:text-[#12AD65] transition-colors"
+            >
+              {isLoginPage ? (isAr ? "إنشاء حساب" : "Sign Up") : (isAr ? "دخول" : "Log In")}
+            </Link>
+            
+            <Link 
+              href={isLoginPage ? `/${params.lang}/auth/signup` : `/${params.lang}/auth/login`}
+              className="sm:hidden bg-black text-white px-5 py-2.5 rounded-full text-[11px] font-medium uppercase tracking-tighter active:scale-95 transition-all"
+            >
+               {isLoginPage ? (isAr ? "سجل" : "Join") : (isAr ? "دخول" : "Login")}
+            </Link>
+          </>
+        )}
+
+        {/* Help Link for Verify/Forgot flows */}
+        {(isVerifyPage || isForgotPage) && (
+          <Link 
+            href={`/${params.lang}/contact`}
+            className="text-[11px] font-bold uppercase tracking-widest text-[#12AD65] hover:text-black transition-colors"
+          >
+            {isAr ? "مساعدة؟" : "Need Help?"}
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -1,13 +1,15 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Phone, Mail, Send, Facebook, Instagram, MessageCircle } from 'lucide-react';
-
+import { createClient } from '../../../../utils/supabase/client';
 export default function Footer({ lang }: { lang: string }) {
+  const supabase = createClient();
   const isAr = lang === 'ar';
   const brandGreen = "#12AD65";
-
+const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const quickLinks = [
     { name: isAr ? "الرئيسية" : "Home", href: `/${lang}` },
     { name: isAr ? "مشاريع تركيا" : "Turkey Projects", href: `/${lang}/turkey` },
@@ -16,15 +18,45 @@ export default function Footer({ lang }: { lang: string }) {
     { name: isAr ? "الأدلة" : "Guides", href: `/${lang}/guides` },
     { name: isAr ? "اتصل بنا" : "Contact Us", href: `/${lang}/contact` },
   ];
+const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsLoading(true); // تأكد من مطابقة الاسم المستخدم هنا مع التعريف أعلاه
+    try {
+      const { error } = await supabase
+        .from('newsletter_subscribers')
+        .insert([{ email, source: 'footer' }]);
+
+      if (error) throw error;
+
+      alert(isAr ? "شكراً لاشتراكك!" : "Thank you for subscribing!");
+      setEmail("");
+    } catch (err: any) {
+      if (err.code === '23505') {
+        alert(isAr ? "هذا البريد مسجل بالفعل." : "This email is already registered.");
+      } else {
+        alert(isAr ? "حدث خطأ فني." : "A technical error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <footer className="bg-[#0A0A0A] pt-20 pb-10 px-6 lg:px-12 border-t border-white/5">
       <div className="max-w-[1440px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           
-          {/* Column 1: Brand \u0026 About */}
-          <div className="flex flex-col gap-6">
-            <img src="/logo-white.svg" alt="Best Dar" className="h-10 w-auto self-start" />
+          {/* Column 1: Brand & About */}
+        <div className="flex flex-col gap-6">
+  <Link href={`/${lang}`}>
+  <img 
+    src="/logo-white.svg" 
+    alt="Best Dar" 
+    className="h-12 w-auto object-contain" 
+  />
+</Link>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               {isAr 
                 ? "توجيه عقاري متميز للمستثمرين العراقيين في تركيا والإمارات العربية المتحدة. نصيحة موثوقة، فرص حصرية." 
@@ -69,8 +101,8 @@ export default function Footer({ lang }: { lang: string }) {
                 <div className="text-[#12AD65] transition-transform group-hover:scale-110">
                   <Mail size={20} />
                 </div>
-                <a href="mailto:info@eliteestate.iq" className="text-gray-500 hover:text-white text-sm font-bold transition-colors">
-                  info@eliteestate.iq
+                <a href="mailto:info@bestdar.iq" className="text-gray-500 hover:text-white text-sm font-bold transition-colors">
+                  info@bestdar.iq
                 </a>
               </li>
             </ul>
@@ -86,15 +118,22 @@ export default function Footer({ lang }: { lang: string }) {
                 ? "احصل على أحدث رؤى السوق وقوائم العقارات الحصرية." 
                 : "Get the latest market insights and exclusive property listings delivered to your inbox."}
             </p>
-            <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+         <form className="space-y-3" onSubmit={handleSubscribe}>
               <input 
                 type="email" 
+                required
+                value={email} // الآن المتغير email معرف
+                onChange={(e) => setEmail(e.target.value)} // الآن setEmail معرف
                 placeholder={isAr ? "بريدك الإلكتروني" : "Your Email Address"}
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-sm text-white outline-none focus:border-[#12AD65] transition-all"
               />
-              <button className="w-full btn-brand py-4 rounded-xl font-medium text-[12px] uppercase tracking-tight flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all">
-                {isAr ? "اشترك" : "Subscribe"}
-                <Send size={14} />
+              <button 
+                type="submit"
+                disabled={isLoading} // استخدام isLoading بدلاً من loading
+                className="w-full bg-[#12AD65] text-white py-4 rounded-xl font-medium text-[12px] uppercase tracking-tight flex items-center justify-center gap-3 hover:bg-white hover:text-black transition-all disabled:opacity-50"
+              >
+                {isLoading ? (isAr ? "جاري الاشتراك..." : "Subscribing...") : (isAr ? "اشترك" : "Subscribe")}
+                {!isLoading && <Send size={14} />}
               </button>
             </form>
           </div>
@@ -102,9 +141,19 @@ export default function Footer({ lang }: { lang: string }) {
 
         {/* Bottom Bar */}
         <div className="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-gray-600 text-[12px] font-bold uppercase tracking-tighter">
-            © 2025 Elite Estate. All rights reserved.
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-4 lg:gap-8">
+            <p className="text-gray-600 text-[10px] lg:text-[12px] font-bold uppercase tracking-tighter">
+              © 2026 Best Dar. All rights reserved.
+            </p>
+            
+            {/* إضافة رابط سياسة الخصوصية هنا لجوجل */}
+            <Link 
+              href={`/${lang}/privacy`} 
+              className="text-gray-600 hover:text-[#12AD65] text-[10px] lg:text-[12px] font-bold uppercase tracking-tighter transition-colors"
+            >
+              {isAr ? "سياسة الخصوصية" : "Privacy Policy"}
+            </Link>
+          </div>
           
           <div className="flex items-center gap-6 text-gray-500">
             <Link href="#" className="hover:text-white transition-colors"><Facebook size={20} /></Link>

@@ -6,10 +6,13 @@ const locales = ['en', 'ar'];
 const defaultLocale = 'en';
 
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next();
-  const { pathname } = req.nextUrl;
+  // We initialize the response first so we can append cookies to it
+  let res = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  });
 
-  // 1. Supabase Auth Setup
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -18,36 +21,44 @@ export async function middleware(req: NextRequest) {
         getAll: () => req.cookies.getAll(),
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
-            res.cookies.set(name, value, options);
+            req.cookies.set(name, value); // Update request cookies
+            res.cookies.set(name, value, options); // Update response cookies
           });
         },
       },
     }
   );
 
+  // IMPORTANT: This refreshes the session if it's expired
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 2. Language Routing Logic
+  const { pathname } = req.nextUrl;
+
+  // 1. Handle Locale Redirection
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
   if (pathnameIsMissingLocale) {
-    // Check if user has a saved language cookie, otherwise use default
     const locale = req.cookies.get('NEXT_LOCALE')?.value || defaultLocale;
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
   }
 
-  // 3. Protected Routes Logic
-  // Check if current path (minus locale) matches your protected list
-  const pathWithoutLocale = pathname.replace(/^\/(en|ar)/, '');
+  // 2. Protected Routes Logic (Boutique Security)
+  const pathWithoutLocale = pathname.replace(/^\/(en|ar)/, '') || '/';
+  
+  // These are the gated sections you mentioned
   const isProtectedRoute = ['/profile', '/investor', '/dashboard', '/saved'].some(
     route => pathWithoutLocale.startsWith(route)
   );
 
   if (isProtectedRoute && !user) {
     const locale = pathname.split('/')[1] || defaultLocale;
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url));
+    // Redirect to login if a guest tries to access gated sections
+    const redirectUrl = new URL(`/${locale}/login`, req.url);
+    // Add current path as a 'next' param so they return here after login
+    redirectUrl.searchParams.set('next', pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   return res;
@@ -55,7 +66,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next, static, etc)
+    // This matcher is perfect for Next.js 14/15
     '/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)',
   ],
 }

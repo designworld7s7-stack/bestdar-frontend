@@ -44,7 +44,7 @@ export default function HeroGuide({ id, title, description, image, date, lang }:
 
           {/* 4. BOUTIQUE BUTTON: Clean white-to-green transition */}
           <div className="inline-flex bg-white text-black px-10 py-4 rounded-full font-bold text-[12px] uppercase tracking-[0.1em] transition-all duration-500 group-hover:bg-[#12AD65] group-hover:text-white items-center gap-3">
-            {isAr ? "اقرأ المقال" : "Read Article"}
+            {isAr ? "اقرأ المقال" : "Read Guide"}
             <ArrowRight size={16} strokeWidth={3} className={isAr ? "rotate-180" : ""} />
           </div>
         </div>

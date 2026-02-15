@@ -68,3 +68,15 @@
 .dark-section p {
   @apply opacity-70;
 }
+@layer base {
+  /* إخفاء شريط التمرير لمتصفحات Chrome, Safari, و Edge */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* إخفاء شريط التمرير لمتصفح Firefox */
+  * {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}

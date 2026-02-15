@@ -8,26 +8,31 @@ import { LucideProps } from 'lucide-react'; // Import this for type safety
 // Update the interface to accept dynamic links from the database
 interface GuideSidebarProps {
   lang: string;
-  links?: { title: string; url: string }[]; // Matches your sidebar_links column
+  links?: { title: string; url: string }[]; 
+  toc?: { id: string; label: string }[]; // إضافة جدول المحتويات من قاعدة البيانات
+  whatsappNumber?: string; // جعل رقم الواتساب ديناميكياً
 }
 
-export default function GuideSidebar({ lang, links }: GuideSidebarProps) {
+export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: GuideSidebarProps) {
   const isAr = lang === 'ar';
-  
-  const toc = [
-    { id: 'introduction', label: isAr ? 'المقدمة' : 'Introduction' },
-    { id: 'why-invest', label: isAr ? 'لماذا الاستثمار في الإمارات؟' : 'Why Invest in UAE?' },
-    { id: 'legal-framework', label: isAr ? 'الإطار القانوني' : 'Legal Framework' },
-    { id: 'golden-visa', label: isAr ? 'برنامج الفيزا الذهبية' : 'Golden Visa Program' },
-    { id: 'top-locations', label: isAr ? 'أفضل مواقع الاستثمار' : 'Top Locations' },
-  ];
-
   const followLinks = [
-    { icon: <MessageCircle size={18} />, href: 'https://wa.me/yournumber', label: 'WhatsApp' },
+    { 
+      icon: <MessageCircle size={18} />, 
+      href: `https://wa.me/${whatsappNumber || '971XXXXXXXX'}`, 
+      label: 'WhatsApp'
+    },
     { icon: <Facebook size={18} />, href: 'https://facebook.com/bestdar', label: 'Facebook' },
     { icon: <Instagram size={18} />, href: 'https://instagram.com/bestdar', label: 'Instagram' },
   ];
-
+const scrollToSection = (id: string) => {
+  const element = document.getElementById(id);
+  if (element) {
+    window.scrollTo({
+      top: element.offsetTop - 120, // تعويض لارتفاع الـ Header
+      behavior: 'smooth'
+    });
+  }
+};
   return (
     <aside className="sticky top-32 space-y-12">
       {/* 1. TABLE OF CONTENTS */}
@@ -35,24 +40,19 @@ export default function GuideSidebar({ lang, links }: GuideSidebarProps) {
         <h5 className="text-[12px] font-bold uppercase tracking-tight text-[#374151] mb-6">
           {isAr ? "المحتويات" : "Contents"}
         </h5>
-        <ul className="space-y-5">
-          {toc.map((item, i) => (
-            <li key={item.id} className="group flex items-center">
-              <div className={clsx(
-                "w-[2px] h-4 transition-colors mr-5 rtl:ml-5 rtl:mr-0",
-                i === 0 ? "bg-[#12AD65]" : "bg-transparent group-hover:bg-gray-200"
-              )} />
-              <button 
-                className={clsx(
-                  "text-[13px] font-medium transition-all text-left rtl:text-right tracking-tight",
-                  i === 0 ? "text-[#12AD65] font-bold" : "text-[#4B5563] hover:text-black"
-                )}
-              >
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <ul className="space-y-4">
+  {toc.map((item, i) => (
+    <li key={item.id} className="group">
+      <button 
+        onClick={() => scrollToSection(item.id)}
+        className="text-[14px] font-semibold text-[#4B5563] hover:text-[#12AD65] transition-all duration-300 flex items-center gap-3"
+      >
+        <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#12AD65]">→</span>
+        {item.label}
+      </button>
+    </li>
+  ))}
+</ul>
       </div>
 
       {/* 2. DYNAMIC USEFUL RESOURCES: Pulling from the "Seed" */}

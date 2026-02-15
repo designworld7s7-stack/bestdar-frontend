@@ -26,7 +26,7 @@ export default function ContactActions({ isAr }: { isAr: boolean }) {
       </button>
           {/* WhatsApp Secondary Link */}
          <a 
-        href="https://wa.me/9647500000000" // Replace with your Iraqi/Turkish/UAE number
+        href="https://wa.me/9647759147343" // Replace with your Iraqi/Turkish/UAE number
         target="_blank" 
         rel="noopener noreferrer"
         className="flex items-center gap-2 text-[#4B5563] hover:text-black transition-all duration-300 text-[13px] font-medium uppercase tracking-[0.15em]"

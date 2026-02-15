@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { Lock, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { clsx } from 'clsx';
-
+import { useRouter } from 'next/navigation';
 // We update the interface to match what we pass from the database
 export default function FloorPlans({ 
   lang, 
@@ -16,7 +16,7 @@ export default function FloorPlans({
 }) {
   const isAr = lang === 'ar';
   const [activePlan, setActivePlan] = useState(0);
-
+const router = useRouter();
   // 1. Convert those raw URLs into the "Plan" objects your design needs
   const plans = databasePlans.map((url, index) => ({
     id: `plan-${index}`,
@@ -74,9 +74,12 @@ export default function FloorPlans({
                 ? "سجل لتصفح جميع المخططات التفصيلية والأبعاد الهندسية لكل وحدة." 
                 : "Register to browse all detailed floor plans and architectural dimensions."}
             </p>
-            <button className="btn-brand px-10 py-4 rounded-2xl font-medium text-[12px] uppercase tracking-tighter hover:bg-[#0f8f53] transition-all shadow-lg shadow-[#12AD65]/20">
-              {isAr ? "سجل للمشاهدة" : "Register to View Plans"}
-            </button>
+           <button 
+  onClick={() => router.push(`/${lang}/auth/signup`)}
+  className="btn-brand ..."
+>
+  {isAr ? "سجل للمشاهدة" : "Register to View Plans"}
+</button>
           </div>
         )}
 

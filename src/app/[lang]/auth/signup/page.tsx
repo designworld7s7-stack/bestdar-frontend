@@ -1,147 +1,221 @@
 'use client';
 
-import React, { useState } from 'react';
-import { MessageSquare, User, Phone, Mail, Lock } from 'lucide-react';
+import React, { useState, use } from 'react';
+import { MessageSquare, User, Phone, Mail, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
-export default function SignUpPage({ params }: { params: { lang: string } }) {
-  const isAr = params.lang === 'ar';
-  const router = useRouter(); // [cite: 2026-02-04]
+export default function SignUpPage({ params }: { params: Promise<{ lang: string }> }) {
+  
+  const resolvedParams = use(params);
+  const lang = resolvedParams.lang;
+  const isAr = lang === 'ar';
+
+  const router = useRouter();
+  const supabase = createClient();
+
+  const [method, setMethod] = useState<'email' | 'phone'>('email');
+  const [loading, setLoading] = useState(false);
   const [countryCode, setCountryCode] = useState('+964');
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  const getCountryName = (code: string) => {
-    if (code === '+964') return isAr ? "العراق" : "Iraq";
-    if (code === '+971') return isAr ? "الإمارات" : "UAE";
-    return "";
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: ''
+  });
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const fullPhone = `${countryCode}${formData.phone.replace(/\s/g, '')}`;
+
+    // Pure Passwordless Sign Up
+    const { error } = method === 'email' 
+      ? await supabase.auth.signInWithOtp({ 
+          email: formData.email,
+          options: {
+            // Redirects to your solid callback handler
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=/${lang}/profile`,
+            data: {
+              full_name: formData.fullName,
+              country: countryCode === '+964' ? 'Iraq' : 'UAE'
+            }
+          }
+        })
+      : await supabase.auth.signInWithOtp({ 
+          phone: fullPhone,
+          options: {
+            channel: 'whatsapp',
+            data: {
+              full_name: formData.fullName,
+              country: countryCode === '+964' ? 'Iraq' : 'UAE'
+            }
+          }
+        });
+
+    if (error) {
+      alert(error.message);
+      setLoading(false);
+    } else {
+      if (method === 'email') {
+        setMagicLinkSent(true);
+        setLoading(false);
+      } else {
+        router.push(`/${lang}/auth/verify?method=phone&identifier=${fullPhone}`);
+      }
+    }
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
-    e.preventDefault();
-    // In a real app, you would validate and save user data here [cite: 2026-02-04]
-    router.push(`/${params.lang}/auth/verify`); // [cite: 2026-02-07]
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/${lang}/profile`,
+      },
+    });
+    
+    if (error) {
+      alert(isAr ? "فشل إنشاء الحساب عبر جوجل" : "Google sign up failed");
+    }
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#F2F4F7] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12">
-      
-      {/* 1. BOUTIQUE CARD [cite: 2026-02-04] */}
-      <div 
-        style={{ maxWidth: '480px', width: '100%' }}
-        className="bg-white rounded-[32px] sm:rounded-[48px] p-7 sm:p-10 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.08)] flex flex-col"
-      >
+    <div className="min-h-screen w-full bg-[#F2F4F7] flex flex-col items-center justify-center p-4">
+      <div style={{ maxWidth: '480px', width: '100%' }} className="bg-white rounded-[32px] p-8 sm:p-12 shadow-2xl">
         
         <div className="text-center mb-10">
-          <h1 className="text-[28px] sm:text-[36px] font-medium text-black tracking-[0.1em] mb-3 leading-tight">
-            {isAr ? "إنشاء حسابك" : "Create Your Account"}
+          <h1 className="text-[28px] font-medium text-black tracking-tight mb-2 uppercase">
+            {isAr ? "إنشاء حساب مستثمر" : "Create Investor Account"}
           </h1>
-          <p className="text-[#4B5563] font-medium text-[14px] sm:text-[16px] leading-relaxed max-w-[300px] mx-auto">
-            {isAr ? "وصول حصري للمستثمرين العراقيين." : "Exclusive access for Iraqi investors."}
+          <p className="text-gray-500 text-sm">
+            {isAr ? "انضم إلى بست دار وابدأ استثمارك اليوم" : "Join Best Dar and start your investment journey."}
           </p>
         </div>
 
-        {/* 2. FORM INTEGRATION [cite: 2026-02-04] */}
-        <form onSubmit={handleSignUp} className="space-y-6">
-          {/* Full Name */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
-              {isAr ? "الاسم الكامل" : "Full Name"}
-            </label>
-            <div className="relative">
-              <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-              <input 
-                required
-                type="text" 
-                placeholder={isAr ? "الاسم الكامل" : "Enter your name"}
-                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none focus:ring-2 focus:ring-[#12AD65]/10" 
-              />
-            </div>
+        {magicLinkSent ? (
+          <div className="text-center space-y-6 animate-in fade-in zoom-in">
+             <div className="w-20 h-20 bg-[#12AD65]/10 rounded-full flex items-center justify-center mx-auto">
+                <Mail className="text-[#12AD65]" size={40} />
+             </div>
+             <div className="space-y-2">
+                <h2 className="text-xl font-bold text-black">{isAr ? "افتح بريدك الإلكتروني" : "Check Your Email"}</h2>
+                <p className="text-sm text-gray-500 leading-relaxed">
+                   {isAr 
+                    ? `أرسلنا رابطاً سحرياً إلى ${formData.email}. اضغط عليه لتأكيد حسابك.` 
+                    : `We sent a magic link to ${formData.email}. Click it to verify your account.`}
+                </p>
+             </div>
+             <button onClick={() => setMagicLinkSent(false)} className="text-[#12AD65] font-bold text-xs uppercase tracking-widest hover:underline">
+                {isAr ? "تغيير البريد الإلكتروني" : "Change Email Address"}
+             </button>
           </div>
-
-          {/* Phone Number */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
-              {isAr ? "رقم الهاتف" : "Phone Number"}
-            </label>
-            <div className="flex gap-3">
-              <div className="relative w-24 shrink-0">
-                <input 
-                  type="text"
-                  value={countryCode}
-                  onChange={(e) => setCountryCode(e.target.value)}
-                  className="w-full bg-[#FAFAFA] px-2 py-4 rounded-2xl text-[15px] font-bold text-center shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none"
-                />
-                <span className="absolute -bottom-5 left-0 w-full text-center text-[9px] font-medium uppercase text-[#12AD65] tracking-tighter">
-                  {getCountryName(countryCode)}
-                </span>
+        ) : (
+          <form onSubmit={handleSignUp} className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold uppercase text-gray-400 px-1">{isAr ? "الاسم الكامل" : "Full Name"}</label>
+              <div className="relative">
+                <User size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input required value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})} type="text" placeholder="John Doe" className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#12AD65]/10 font-bold" />
               </div>
-              <input 
-                required
-                type="tel" 
-                placeholder="770 000 0000" 
-                className="flex-1 bg-[#FAFAFA] px-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-              />
             </div>
-          </div>
 
-          {/* Email */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
-              {isAr ? "البريد الإلكتروني" : "Email Address"}
-            </label>
-            <div className="relative">
-              <Mail size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-              <input 
-                required
-                type="email" 
-                placeholder="name@example.com"
-                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-              />
-            </div>
-          </div>
+            {method === 'email' ? (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                <label className="text-[11px] font-bold uppercase text-gray-400 px-1">{isAr ? "البريد الإلكتروني" : "Email"}</label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input required type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} placeholder="name@example.com" className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl border border-gray-100 outline-none font-bold" />
+                </div>
+                <p className="text-[10px] text-gray-400 px-2 mt-1">
+                  {isAr ? "سنرسل رابطاً سحرياً لبريدك لتفعيل الحساب فوراً." : "We'll send a magic link to your email for instant activation."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                <label className="text-[11px] font-bold uppercase text-gray-400 px-1">
+                  {isAr ? "رقم الهاتف (واتساب)" : "Phone Number (WhatsApp)"}
+                </label>
+                <div className="flex gap-3">
+                  <div className="relative w-28 shrink-0">
+                    <input 
+                      type="text" 
+                      value={countryCode}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        if (val && !val.startsWith('+')) val = '+' + val;
+                        setCountryCode(val);
+                      }}
+                      className="w-full bg-[#FAFAFA] px-4 py-4 rounded-2xl border border-gray-100 outline-none font-bold text-[15px] text-center"
+                    />
+                  </div>
 
-          {/* Password */}
-          <div className="flex flex-col gap-2 pb-2">
-            <label className="text-[12px] font-medium uppercase tracking-tight text-[#6B7280] px-1">
-              {isAr ? "كلمة المرور" : "Password"}
-            </label>
-            <div className="relative">
-              <Lock size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-[#6B7280]" />
-              <input 
-                required
-                type="password" 
-                placeholder="••••••••"
-                className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl text-[15px] font-bold shadow-[inset_0_2px_8px_rgba(0,0,0,0.04)] border border-gray-100 outline-none" 
-              />
-            </div>
-          </div>
+                  <div className="relative flex-1">
+                    <Phone size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input 
+                      required 
+                      type="tel" 
+                      value={formData.phone} 
+                      onChange={(e) => setFormData({...formData, phone: e.target.value})} 
+                      placeholder="770 000 0000" 
+                      className="w-full bg-[#FAFAFA] pl-14 pr-6 py-4 rounded-2xl border border-gray-100 outline-none font-bold text-[15px]" 
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
-          <button 
-            type="submit"
-            className="w-full btn-brand py-5 rounded-2xl font-medium text-[13px] uppercase tracking-tight shadow-[0_20px_40px_rgba(18,173,101,0.25)] hover:bg-black transition-all active:scale-[0.98]"
-          >
-            {isAr ? "إنشاء حساب" : "Create Account"}
-          </button>
-        </form>
+            <button 
+              type="submit" 
+              disabled={loading} 
+              className="w-full bg-[#12AD65] text-white py-5 rounded-2xl font-bold uppercase tracking-widest hover:bg-black transition-all flex justify-center items-center shadow-lg shadow-[#12AD65]/20"
+            >
+              {loading ? <Loader2 className="animate-spin" /> : (isAr ? "إنشاء حساب" : "Create Account")}
+            </button>
+          </form>
+        )}
 
-        {/* 3. SECONDARY ACTIONS [cite: 2026-02-04] */}
         <div className="relative my-10 flex items-center justify-center">
-            <div className="absolute w-full border-t border-gray-100"></div>
-            <span className="relative bg-white px-6 text-[11px] font-medium uppercase tracking-[0.4em] text-[#6B7280]">OR</span>
+          <div className="absolute w-full border-t border-gray-100"></div>
+          <span className="relative bg-white px-6 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+            {isAr ? "أو" : "OR"}
+          </span>
         </div>
 
-        <button className="w-full bg-white text-gray-800 py-5 rounded-2xl font-medium text-[12px] uppercase tracking-tight flex items-center justify-center gap-4 shadow-[0_15px_40px_rgba(0,0,0,0.04)] border border-gray-100 hover:bg-gray-50 transition-all">
-          <MessageSquare size={20} className="text-[#12AD65]" />
-          <span>{isAr ? "واتساب" : "WhatsApp"}</span>
-        </button>
+        <div className="flex flex-col gap-4">
+          <button 
+            type="button"
+            onClick={() => setMethod(method === 'email' ? 'phone' : 'email')}
+            className="w-full bg-white text-black py-5 rounded-2xl font-bold border border-gray-100 hover:bg-gray-50 transition-all flex items-center justify-center gap-4 shadow-sm"
+          >
+            {method === 'email' ? <MessageSquare size={20} className="text-[#12AD65]" /> : <Mail size={20} className="text-[#12AD65]" />}
+            <span>{method === 'email' ? (isAr ? "سجل عبر واتساب" : "WhatsApp Sign Up") : (isAr ? "سجل عبر البريد" : "Email Sign Up")}</span>
+          </button>
 
-        <p className="mt-10 text-center text-[14px] font-medium text-[#4B5563]">
-          <span className="opacity-50">{isAr ? "لديك حساب بالفعل؟" : "Already have an account?"}</span>{' '}
-          <Link href={`/${params.lang}/auth/login`} className="text-[#12AD65] font-medium uppercase tracking-tighter hover:underline ml-1">
-            {isAr ? "تسجيل الدخول" : "Log In"}
+          <button 
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full bg-white text-black py-5 rounded-2xl font-bold border border-gray-100 hover:bg-gray-50 transition-all flex items-center justify-center gap-4 shadow-sm"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>{isAr ? "متابعة باستخدام جوجل" : "Continue with Google"}</span>
+          </button>
+        </div>
+
+        <p className="mt-10 text-center text-sm font-medium">
+          <span className="opacity-50">{isAr ? "لديك حساب؟" : "Already have an account?"}</span>
+          <Link href={`/${lang}/auth/login`} className="text-[#12AD65] font-bold ml-2 underline">
+            {isAr ? "دخول" : "Login"}
           </Link>
         </p>
       </div>
     </div>
-  );
+  ); 
 }

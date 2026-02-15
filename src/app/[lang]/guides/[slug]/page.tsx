@@ -52,11 +52,12 @@ const { data: relatedGuides } = await supabase
       <div className="pt-0 lg:pt-0">
         {/* Pass all hero data from the DB */}
       <GuideHero 
-  lang={lang} 
+  lang={lang}
   title={guide.title}
   subtitle={guide.subtitle}
-  image={guide.image_url} // This matches the Supabase 'image_url' column
+  image={guide.image_url} // تأكد من استخدام الرابط الصحيح
   category={guide.category}
+  guideId={guide.id} // تأكد من تمرير المعرف هنا
 />
       </div>
 
@@ -67,11 +68,19 @@ const { data: relatedGuides } = await supabase
             {/* Distribute specific content chunks to components */}
             <GuideIntro lang={lang} intro={guide.intro_text} />
             <GuideContent lang={lang} content={guide.content} />
-            <GatedSection lang={lang} data={guide.gated_content} />
+            {/* <GatedSection 
+    lang={lang} 
+    data={guide.gated_content} 
+  /> 
+*/}
           </article>
 
           <aside className="hidden lg:block w-[320px]">
-            <GuideSidebar lang={lang} links={guide.sidebar_links} />
+           <GuideSidebar 
+  lang={lang} 
+  links={guide.sidebar_links} // جلب البيانات الديناميكية من JSONB
+  whatsappNumber={guide.whatsapp_number} 
+/>
           </aside>
         </div>
 

@@ -30,17 +30,16 @@ export default function ArticleCard({
       {/* 1. ADAPTIVE IMAGE CONTAINER */}
       {/* Mobile: aspect-[4/3] for vertical space | Desktop: aspect-[16/10] for cinematic width */}
       <div className="relative aspect-[4/3] lg:aspect-[16/10] w-full overflow-hidden">
-        <Image 
-          src={image} 
-          alt={title} 
-          fill
-          className="object-cover transition-transform duration-1000 group-hover:scale-110" 
-        />
-        {/* Floating Category Badge */}
-        <div className="absolute top-4 lg:top-6 left-4 lg:left-6 bg-white/95 backdrop-blur-md text-black text-[9px] lg:text-[12px] font-medium uppercase tracking-[0.15em] py-2 px-4 lg:py-2.5 lg:px-5 rounded-xl shadow-lg">
-          {category}
-        </div>
-      </div>
+  <img 
+    src={image} 
+    alt={title} 
+    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+  />
+  {/* Floating Category Badge stays same */}
+  <div className="absolute top-4 lg:top-6 left-4 lg:left-6 bg-white/95 backdrop-blur-md text-black text-[9px] lg:text-[12px] font-medium uppercase tracking-[0.15em] py-2 px-4 lg:py-2.5 lg:px-5 rounded-xl shadow-lg">
+    {category}
+  </div>
+</div>
 
       {/* 2. ADAPTIVE CONTENT AREA */}
       {/* Mobile: p-6 (Compact) | Desktop: p-10 (Boutique) */}

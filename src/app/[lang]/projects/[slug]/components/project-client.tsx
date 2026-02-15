@@ -17,11 +17,13 @@ import SimilarProjects from './similar-projects';
 import StickyMobileBar from './sticky-mobile-bar';
 import ReservationForm from './reservation-form';
 import InterestedModal from './interested-modal';
-
+import { createClient } from '@/utils/supabase/client';
 // Global Shared Components
 import FloatingExpertBtn from '@/components/shared/floating-expert-btn';
 import BackButton from '@/components/shared/back-button';
 import ProjectCard from '@/components/shared/project-card';
+
+
 interface ProjectClientProps {
   project: any;
   lang: string;
@@ -29,6 +31,9 @@ interface ProjectClientProps {
 }
 
 export default function ProjectClient({ project, lang, similarProjects }: ProjectClientProps) {
+  // 1. يجب تعريف supabase و user و setUser هنا ليعمل الكود بالأسفل
+  const supabase = createClient(); 
+  const [user, setUser] = useState<any>(null);
   const [isInterestedOpen, setIsInterestedOpen] = useState(false);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
   const isAr = lang === 'ar';
@@ -36,12 +41,25 @@ export default function ProjectClient({ project, lang, similarProjects }: Projec
   const [activeUnit, setActiveUnit] = useState<any>(project.project_units?.[0] || null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const [selectedUnit, setSelectedUnit] = useState(project.units?.[0] || null);
+
+useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, [supabase]);
+
 useEffect(() => {
     if (project.units?.length > 0 && !selectedUnit) {
       setSelectedUnit(project.units[0]);
     }
   }, [project.units]);
-
+useEffect(() => {
+    if (project.units?.length > 0 && !selectedUnit) {
+      setSelectedUnit(project.units[0]);
+    }
+  }, [project.units]);
   return (
     <main className="bg-white min-h-screen pb-32 lg:pb-0">
       
@@ -60,10 +78,11 @@ useEffect(() => {
       />
 
       {/* Added lang and projectTitle to fix your Gallery error */}
-    <ProjectGallery 
-  images={project.images || []} // Change 'gallery_urls' to 'images'
-  lang={lang} 
-  projectTitle={project.title} 
+   <ProjectGallery 
+  lang={lang}
+  projectTitle={project.title}
+  projectId={project.id}
+  image_url={project.image_url || []} 
 />
 
       <ProjectMobileCard 
@@ -79,18 +98,20 @@ useEffect(() => {
 
       <ProjectOverview lang={lang} project={project} />
 
-     <PricingOverview 
-        units={project.units || []} 
-        onUnitSelect={(unit: any) => setSelectedUnit(unit)} 
-        selectedUnitId={selectedUnit?.id?.toString()} 
-        lang={lang} 
-      />
+    <PricingOverview 
+  lang={lang}
+  units={project.units}
+  onUnitSelect={setSelectedUnit}
+  selectedUnitId={selectedUnit?.id}
+  isGated={!user} // تفعيل القفل تلقائياً
+/>
 
       {/* 4. Payment Plan */}
       <PaymentPlan 
+  lang={lang}
   activeUnit={selectedUnit} 
-  lang={lang} 
-  onInterestClick={() => setIsReservationOpen(true)} // Or your specific function name
+  isGated={!user} // تفعيل القفل الذكي
+  onInterestClick={() => setIsInterestedOpen(true)}
 />
 
   
@@ -115,19 +136,19 @@ useEffect(() => {
   </div>
 )}
 
-      <ProjectNeighborhood 
+     <ProjectNeighborhood 
   lang={lang}
-  description={project?.neighborhood_description}
-  landmarks={project?.landmarks}
-  mapLongitude={project?.map_longitude}
-  mapLatitude={project?.map_latitude}
+  description={project.description}
+  landmarks={project.landmarks}
+  mapLongitude={project.map_longitude} // هنا الربط مع سوبابيس
+  mapLatitude={project.map_latitude}   // هنا الربط مع سوبابيس
 />
       <ProjectAmenities lang={lang} project={project} />
 
    <FloorPlans 
-  lang={lang} 
-  isGated={false} 
-  databasePlans={project.floor_plans} 
+  lang={lang}
+  databasePlans={project.floor_plans} // الربط مع بيانات سوبابيس
+  isGated={!user} // تفعيل القفل تلقائياً: إذا كان user يساوي null سيصبح isGated = true
 />
       <AboutDeveloper lang={lang} project={project} />
       <section className="bg-gray-50 py-20">
@@ -138,17 +159,17 @@ useEffect(() => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {similarProjects?.map((item) => (
   <ProjectCard 
-    key={item.id}
-    slug={item.slug}
-    title={item.title}
-    image={item.image_url}
-    price={`${item.currency || '$'} ${item.price?.toLocaleString()}`}
-    lang={lang}
-    // Add these three missing props to satisfy TypeScript
-    developer={item.developer_name || 'Boutique Developer'}
-    location={item.location || 'UAE/Turkey'}
-    deliveryDate={item.delivery_date || 'TBA'}
-  />
+  key={project.id}
+  slug={project.slug}
+  title={project.title}
+  developer={project.developer}
+  location={project.location}
+  price={project.price}
+  deliveryDate={project.delivery_date}
+  lang={lang}
+  // التغيير هنا: مرر البيانات تحت اسم thumbnail_url
+  thumbnail_url={project.thumbnail_url || project.image} 
+/>
 ))}
           </div>
         </div>
@@ -166,7 +187,7 @@ useEffect(() => {
         project={project}
         lang={lang}
       />
-   
+  
     </main>
   );
 }

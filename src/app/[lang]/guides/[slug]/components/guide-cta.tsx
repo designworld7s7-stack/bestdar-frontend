@@ -3,7 +3,7 @@
 import React from 'react';
 import { useModals } from "@/context/modal-context";
 import { ArrowRight, Calendar } from 'lucide-react';
-
+import Link from 'next/link';
 export default function GuideCTA({ lang }: { lang: string }) {
   const { openConsultation } = useModals(); // Global trigger
   const isAr = lang === 'ar';
@@ -34,10 +34,15 @@ export default function GuideCTA({ lang }: { lang: string }) {
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         
         {/* REGISTER: Now uses btn-brand with bold 13px text [cite: 2026-02-04] */}
-        <button className="w-full sm:w-auto btn-brand px-12 h-[56px] text-[13px] font-bold uppercase tracking-tight shadow-xl shadow-[#12AD65]/20 hover:scale-105 transition-all flex items-center justify-center gap-3">
-          {isAr ? "سجل الآن" : "Register Now"}
-          <ArrowRight size={18} strokeWidth={2.5} />
-        </button>
+       <Link href={`/${lang}/auth/signup`} className="w-full sm:w-auto">
+  <button 
+    type="button"
+    className="w-full sm:w-auto btn-brand px-12 h-[56px] text-[13px] font-bold uppercase tracking-tight shadow-xl shadow-[#12AD65]/20 hover:scale-105 transition-all flex items-center justify-center gap-3 cursor-pointer"
+  >
+    {isAr ? "سجل الآن" : "Register Now"}
+    <ArrowRight size={18} strokeWidth={2.5} className={isAr ? "rotate-180" : ""} />
+  </button>
+</Link>
 
         {/* SCHEDULE: High-contrast white button [cite: 2026-02-04] */}
         <button 

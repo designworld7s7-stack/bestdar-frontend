@@ -5,11 +5,7 @@ import PropertyGrid from "../(properties)/components/property-grid";
 import LocalGuides from "../(properties)/components/local-guides";
 import { createClient } from '@/utils/supabase/server';
 
-const uaeCities = [
-  { name: "Dubai", subTitle: "The City of Gold", projectCount: 85, image: "/cities/dubai.jpg" },
-  { name: "Abu Dhabi", subTitle: "Capital Luxury", projectCount: 34, image: "/cities/abudhabi.jpg" },
-  { name: "Sharjah", subTitle: "Cultural Heritage", projectCount: 12, image: "/cities/sharjah.jpg" },
-];
+// src/app/[lang]/(properties)/uae/page.tsx
 
 export default async function UaePage({ 
   params,
@@ -19,37 +15,69 @@ export default async function UaePage({
   searchParams: Promise<{ city?: string, propertyType?: string, installments?: string, delivery?: string }> 
 }) {
   const { lang } = await params;
-  const filters = await searchParams; // Await searchParams for Next.js 15
+  const filters = await searchParams;
   const isAr = lang === 'ar';
   const supabase = await createClient();
 
-  // 1. Build Query restricted to UAE ('ae')
+  // 1. Fetch UAE Projects
   let query = supabase
   .from('projects')
   .select(`
     *,
+    thumbnail_url,
     project_units!inner (
       has_installments
     )
   `)
   .eq('country_code', 'ae');
 
-if (filters.city) query = query.ilike('location', `%${filters.city}%`);
-if (filters.propertyType) query = query.ilike('property_type', filters.propertyType);
-
-// This links the button click to the units table
-if (filters.installments === 'true') {
-  query = query.eq('project_units.has_installments', true);
-}
+  if (filters.city) query = query.ilike('location', `%${filters.city}%`);
+  if (filters.propertyType) query = query.ilike('property_type', filters.propertyType);
+  if (filters.installments === 'true') {
+    query = query.eq('project_units.has_installments', true);
+  }
 
   const { data: projects } = await query.order('created_at', { ascending: false });
 
-  // 3. Fetch Guides for UAE dynamically
-  const { data: dynamicGuides } = await supabase
-    .from('guides')
-    .select('*')
-    .eq('country_code', 'ae')
-    .limit(3);
+// 1. جلب بيانات مدن الإمارات من سوبابيس
+const { data: uaeCitiesFromDb } = await supabase
+  .from('cities')
+  .select('name_en, image_url')
+  .eq('country', 'UAE');
+
+// دالة جلب الصورة بناءً على الاسم
+const getUaeCityImage = (cityName: string) => {
+  const city = uaeCitiesFromDb?.find(c => c.name_en.toLowerCase() === cityName.toLowerCase());
+  return city?.image_url || `/cities/${cityName.toLowerCase()}.jpg`; 
+};
+
+  // 2. Dynamic City Counts
+  const getCityCount = (cityName: string) => 
+    projects?.filter(p => p.location?.toLowerCase().includes(cityName.toLowerCase())).length || 0;
+
+  // 2. مصفوفة المدن المحدثة بالصور الديناميكية
+const dynamicCities = [
+  { 
+    name: "Dubai", 
+    subTitle: isAr ? "عاصمة الاستثمار" : "Investment Hub", 
+    projectCount: getCityCount("Dubai"), 
+    image: getUaeCityImage("Dubai") 
+  },
+  { 
+    name: "Abu Dhabi", 
+    subTitle: isAr ? "العاصمة" : "The Capital", 
+    projectCount: getCityCount("Abu Dhabi"), 
+    image: getUaeCityImage("Abu Dhabi") 
+  },
+  { 
+    name: "Sharjah", 
+    subTitle: isAr ? "الوجهة العائلية" : "Family Destination", 
+    projectCount: getCityCount("Sharjah"), 
+    image: getUaeCityImage("Sharjah") 
+  },
+];
+
+  // NOTE: Guides fetch disabled to focus on properties
 
   return (
     <main className="bg-white min-h-screen">
@@ -64,7 +92,7 @@ if (filters.installments === 'true') {
       <CityGrid 
         lang={lang} 
         country="uae" 
-        cities={uaeCities} 
+        cities={dynamicCities} 
       />
 
       <div className="lg:mt-8">
@@ -76,12 +104,7 @@ if (filters.installments === 'true') {
         projects={projects || []} 
       />
 
-      <LocalGuides 
-        lang={lang} 
-        country={isAr ? "الإمارات" : "UAE"} 
-        // Use dynamic guides from Supabase
-        guides={dynamicGuides || []} 
-      />
+      {/* LocalGuides section removed to focus on one guide section elsewhere */}
     </main>
   );
 }

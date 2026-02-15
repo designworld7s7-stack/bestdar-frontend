@@ -1,22 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { TrendingUp, Target, BarChart3 } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client'; //
 
 export default function ClubPrinciples({ lang }: { lang: string }) {
   const isAr = lang === 'ar';
+  const supabase = createClient();
+  
+  // State for the dynamic image
+  const [imageUrl, setImageUrl] = useState('/club-principles.jpg'); // Fallback placeholder
+
+  useEffect(() => {
+    async function getClubImage() {
+      const { data } = await supabase
+        .from('site_content')
+        .select('image_url')
+        .eq('section_key', 'investor_club')
+        .single();
+
+      if (data?.image_url) {
+        setImageUrl(data.image_url);
+      }
+    }
+    getClubImage();
+  }, [supabase]);
 
   return (
     <section className="bg-white py-20 lg:py-40">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12">
-        {/* Container: Row on Desktop, Column on Mobile */}
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-24">
           
           {/* Photo Container */}
           <div className="w-full lg:w-1/2">
             <div className="relative aspect-[4/3] lg:aspect-square overflow-hidden rounded-[40px] shadow-2xl">
               <img 
-                src="/club-principles.jpg" 
+                src={imageUrl} // Now dynamic
                 alt="Partnership" 
                 className="h-full w-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
               />
@@ -35,7 +54,7 @@ export default function ClubPrinciples({ lang }: { lang: string }) {
                 : "At Best Dar, we believe in strategic precedence. Our Investor Club is engineered to give you the ultimate edge through early access and precision data."}
             </p>
 
-            {/* Principles Icons from Frame.jpg */}
+            {/* Principles Icons */}
             <div className="flex items-center gap-8 pt-8 border-t border-gray-100">
               <div className="flex flex-col gap-2">
                 <TrendingUp className="text-[#12AD65]" size={32} />

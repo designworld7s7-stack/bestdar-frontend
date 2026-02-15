@@ -1,0 +1,11 @@
+# يسمح لجميع محركات البحث بأرشفة الموقع
+User-agent: *
+Allow: /
+
+# منع أرشفة صفحات لوحة التحكم (عند إنشائها لاحقاً) لخصوصية البيانات
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+
+# رابط خريطة الموقع (Sitemap) الذي سيتم إنشاؤه تلقائياً بواسطة Next.js لاحقاً
+Sitemap: https://your-domain.com/sitemap.xml

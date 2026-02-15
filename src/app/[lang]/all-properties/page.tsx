@@ -68,20 +68,23 @@ const { data: projects } = await query.order('created_at', { ascending: false })
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
           {projects && projects.length > 0 ? (
-            projects.map((project) => (
-              <ProjectCard 
-                key={project.id}
-                slug={project.slug}
-                title={project.title}
-                developer={project.developer_name}
-                location={project.location}
-                price={`${project.currency || '$'} ${project.price?.toLocaleString()}`}
-                image={project.image_url || '/prop-1.jpg'}
-                deliveryDate={project.delivery_date}
-                lang={lang}
-              />
-            ))
-          ) : (
+  projects.map((project) => (
+    <ProjectCard 
+      key={project.id}
+      slug={project.slug}
+      title={project.title}
+      developer={project.developer_name}
+      location={project.location}
+      price={`${project.currency || '$'} ${project.price?.toLocaleString()}`}
+      
+      // ✅ CHANGE THIS LINE: Match the prop name and the column name
+      thumbnail_url={project.thumbnail_url || '/placeholder-project.jpg'}
+      
+      deliveryDate={project.delivery_date}
+      lang={lang}
+    />
+  ))
+) : (
             <div className="col-span-full py-20 text-center text-gray-400 uppercase tracking-widest text-sm">
               {isAr ? 'لا توجد عقارات مطابقة' : 'No properties found matching your filters'}
             </div>
