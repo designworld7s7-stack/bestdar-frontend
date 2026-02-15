@@ -4,44 +4,15 @@ import React from 'react';
 import ProjectCard from '@/components/shared/project-card';
 import { MoveHorizontal } from 'lucide-react';
 
-export default function SimilarProjects({ lang }: { lang: string }) {
+interface SimilarProjectsProps {
+  lang: string;
+  projects?: any[]; // علامة الاستفهام تعني أن المشاريع اختيارية ولن ينهار الكود إذا غابت
+}
+
+export default function SimilarProjects({ lang, projects = [] }: SimilarProjectsProps) {
   const isAr = lang === 'ar';
 
-  const projects = [
-    {
-      id: "marina-heights",
-      title: "Marina Heights Residences",
-      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
-      developer: "Emaar Properties",
-      location: "Dubai",
-      price: "$250,000",
-      tag: isAr ? "جاهز للسكن" : "Ready to Move",
-      image: "/projects/marina.jpg",
-      deliveryDate: isAr ? "جاهز" : "Ready" // Added required prop
-    },
-    {
-      id: "mediterranean-villas",
-      title: "Mediterranean Villas",
-      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
-      developer: "Antalya Homes",
-      location: "Antalya",
-      price: "$650,000",
-      tag: isAr ? "تسليم 2025" : "Delivery 2025",
-      image: "/projects/villas.jpg",
-      deliveryDate: "2025" // Added required prop
-    },
-    {
-      id: "palm-jumeirah",
-      title: "Palm Jumeirah Signature Villas",
-      slug: "luxury-villa", // أضف هذا السطر لكل مشروع في المصفوفة
-      developer: "Nakheel",
-      location: "Dubai",
-      price: "$4,500,000",
-      tag: isAr ? "جاهز للسكن" : "Ready to Move",
-      image: "/projects/palm.jpg",
-      deliveryDate: isAr ? "جاهز" : "Ready" // Added required prop
-    }
-  ];
+  if (!projects || projects.length === 0) return null;
 
   return (
     <section className="w-full max-w-[1440px] mx-auto px-4 lg:px-12 py-12 lg:py-24 border-t border-gray-50">
@@ -55,16 +26,17 @@ export default function SimilarProjects({ lang }: { lang: string }) {
       <div className="relative group">
         {/* Carousel for mobile / Grid for desktop */}
         <div className="flex lg:grid lg:grid-cols-3 gap-6 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar snap-x snap-mandatory pb-8 lg:pb-0">
-        {projects.map((item: any) => ( 
-  <div key={item.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-0 snap-center">
-    <ProjectCard 
-      {...item}
-      lang={lang}
-      slug={item.slug || item.id} 
-      thumbnail_url={item.image || "/placeholder-project.jpg"} 
-    />
-  </div>
-))}
+        {projects.map((item: any) => (
+            <div key={item.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-[30%] snap-center">
+              <ProjectCard 
+                {...item}
+                lang={lang}
+                // نضمن وجود slug و thumbnail_url حتى لو كانت البيانات ناقصة
+                slug={item.slug || item.id || ""}
+                thumbnail_url={item.thumbnail_url || item.image || '/placeholder-project.jpg'}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Swipe indicator for mobile */}
