@@ -116,10 +116,13 @@ export default function LeadForm({ lang }: { lang: string }) {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-16 bg-[#F9FAFB]">
         <div className="w-full max-w-xl bg-white rounded-[48px] p-8 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)]">
           
-          <div className="mb-12">
-            <h2 className="text-4xl font-medium text-brand-black tracking-[0.1em]">
-               {success ? (isAr ? "شكراً لك!" : "Thank You!") : (isAr ? "احصل على استشارة" : "Get Personal Assistance")}
-            </h2>
+          <div className="mb-8 md:mb-12">
+  <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-brand-black tracking-normal sm:tracking-[0.1em] leading-tight break-words">
+    {success 
+      ? (isAr ? "شكراً لك!" : "Thank You!") 
+      : (isAr ? "احصل على استشارة" : "Get Personal Assistance")
+    }
+  </h2>
             <p className="text-[#4B5563] mt-3 font-medium text-sm lg:text-base">
                {success 
                 ? (isAr ? "سنتواصل معك في أقرب وقت ممكن." : "Our team will reach out to you shortly.")

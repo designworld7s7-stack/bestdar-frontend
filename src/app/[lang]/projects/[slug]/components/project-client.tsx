@@ -176,17 +176,18 @@ useEffect(() => {
       </section>
 
       <FloatingExpertBtn lang={lang} />
-      <StickyMobileBar 
-        lang={lang} 
-        onInterestClick={() => setIsInterestedOpen(true)} 
-      />
+     <StickyMobileBar 
+  lang={lang} 
+  onInterestClick={() => setIsModalOpen(true)} // تأكد أنها setIsModalOpen
+/>
 
-    <InterestedModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        project={project}
-        lang={lang}
-      />
+{/* 2. النافذة المنبثقة (المهتمين) */}
+<InterestedModal 
+  isOpen={isModalOpen} 
+  onClose={() => setIsModalOpen(false)} 
+  project={project}
+  lang={lang}
+/>
   
     </main>
   );
