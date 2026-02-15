@@ -48,9 +48,9 @@ export async function middleware(req: NextRequest) {
   const pathWithoutLocale = pathname.replace(/^\/(en|ar)/, '') || '/';
   
   // These are the gated sections you mentioned
-  const isProtectedRoute = ['/profile', '/investor', '/dashboard', '/saved'].some(
-    route => pathWithoutLocale.startsWith(route)
-  );
+  const isProtectedRoute = ['/profile', '/dashboard', '/saved'].some(
+  route => pathWithoutLocale.startsWith(route)
+);
 
   if (isProtectedRoute && !user) {
     const locale = pathname.split('/')[1] || defaultLocale;
