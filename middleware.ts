@@ -18,14 +18,18 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => req.cookies.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            req.cookies.set(name, value); // Update request cookies
-            res.cookies.set(name, value, options); // Update response cookies
-          });
-        },
-      },
+  getAll: () => req.cookies.getAll(),
+  setAll: (cookiesToSet) => {
+    cookiesToSet.forEach(({ name, value, options }) => {
+      res.cookies.set(name, value, {
+        ...options,
+        sameSite: 'lax',
+        secure: true, // ضروري جداً للروابط التي تعمل بـ https
+        path: '/',
+      });
+    });
+  },
+},
     }
   );
 
