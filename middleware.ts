@@ -16,13 +16,20 @@ export async function middleware(req: NextRequest) {
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set(name, value);
-            res.cookies.set(name, value, { ...options, path: '/', secure: true });
+           res.cookies.set(name, value, {
+  ...options,
+  path: '/',
+  secure: true,   // Mandatory for https://bestdar.com
+  sameSite: 'lax',
+  domain: 'bestdar.com' // Explicitly link to the apex domain
+});
           });
         },
       },
     }
   );
 
+  // تحديث الجلسة فوراً لاستبدال الـ code-verifier بجلسة حقيقية
   await supabase.auth.getUser();
 
   const { pathname } = req.nextUrl;
@@ -34,9 +41,14 @@ export async function middleware(req: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
     const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
-    // نقل الكوكيز لضمان بقاء الجلسة
+    
+    // نقل الكوكيز يدوياً للاستجابة الجديدة لضمان عدم ضياع الجلسة
     res.cookies.getAll().forEach((cookie) => {
-      redirectRes.cookies.set(cookie.name, cookie.value, { path: '/', secure: true });
+      redirectRes.cookies.set(cookie.name, cookie.value, { 
+        path: '/', 
+        secure: true, 
+        sameSite: 'lax' 
+      });
     });
     return redirectRes;
   }
