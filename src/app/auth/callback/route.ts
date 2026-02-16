@@ -4,22 +4,23 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') || '/en';
+  
+  // استعادة منطق التوجيه السابق
+  const next = searchParams.get('next');
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error) {
-      // بناء الاستجابة أولاً
-      const response = NextResponse.redirect(`${origin}${next}`);
+    if (!error && data?.user) {
+      // إذا كان المستخدم جديداً (سجل الآن)، وجهه للملف الشخصي
+      const isNewUser = data.user.created_at === data.user.last_sign_in_at;
+      const targetPath = next ? next : (isNewUser ? '/en/profile' : '/en');
       
-      // هنا السر: التأكد من أن الكوكيز الخاصة بـ Supabase تم تثبيتها في الاستجابة
-      // السيرفر يقوم بذلك تلقائياً عبر createClient، ولكن الـ Redirect يحتاج أحياناً لوقت
+      const response = NextResponse.redirect(`${origin}${targetPath}`);
       return response;
     }
   }
 
-  // في حال الفشل
   return NextResponse.redirect(`${origin}/en/auth/login?error=auth_failed`);
 }
