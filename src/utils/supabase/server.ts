@@ -18,13 +18,11 @@ export async function createClient() {
               name, 
               value, 
               ...options,
-              secure: true,   // ضروري للعمل على https
-              sameSite: 'lax', 
+              secure: true,   // ضروري لـ https
+              sameSite: 'lax',
               path: '/',
             })
-          } catch (error) {
-            // يتم تجاهله في Server Components
-          }
+          } catch (error) {}
         },
         remove(name: string, options: CookieOptions) {
           try {
@@ -36,9 +34,7 @@ export async function createClient() {
               sameSite: 'lax',
               path: '/',
             })
-          } catch (error) {
-            // يتم تجاهله
-          }
+          } catch (error) {}
         },
       },
     }

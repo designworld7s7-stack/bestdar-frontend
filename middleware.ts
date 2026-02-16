@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             req.cookies.set(name, value);
-            res.cookies.set(name, value, { ...options, path: '/' });
+            res.cookies.set(name, value, { ...options, path: '/', secure: true });
           });
         },
       },
@@ -27,8 +27,6 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
   const locales = ['en', 'ar'];
-
-  // التحقق من وجود اللغة في الرابط لمنع الـ 404
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
@@ -36,8 +34,10 @@ export async function middleware(req: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
     const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
-    // نقل الكوكيز لضمان عدم ضياع الجلسة عند التحويل
-    res.cookies.getAll().forEach((cookie) => redirectRes.cookies.set(cookie.name, cookie.value));
+    // نقل الكوكيز لضمان بقاء الجلسة
+    res.cookies.getAll().forEach((cookie) => {
+      redirectRes.cookies.set(cookie.name, cookie.value, { path: '/', secure: true });
+    });
     return redirectRes;
   }
 
