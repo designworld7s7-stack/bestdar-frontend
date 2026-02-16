@@ -14,15 +14,23 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll: () => req.cookies.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            req.cookies.set(name, value);
-            res.cookies.set(name, value, options);
-          });
-        },
-      },
-    }
+    getAll: () => req.cookies.getAll(),
+    setAll: (cookiesToSet) => {
+      cookiesToSet.forEach(({ name, value, options }) => {
+        // تحديث الكوكيز في الطلب لضمان تعرف السيرفر عليها فوراً
+        req.cookies.set(name, value);
+        // تحديث الكوكيز في الاستجابة مع ضبط إعدادات النطاق الحي
+        res.cookies.set(name, value, {
+          ...options,
+          domain: '.bestdar.com', // لضمان عمل الكوكيز على bestdar.com و www.bestdar.com
+          secure: true,           // ضروري جداً لروابط https
+          sameSite: 'lax',
+          path: '/',
+        });
+      });
+    },
+  },
+}
   );
 
   // تحديث الجلسة: هذا السطر هو المسؤول عن جعل النظام "يتعرف" على دورك (Role)
