@@ -16,19 +16,17 @@ export async function middleware(req: NextRequest) {
       cookies: {
     getAll: () => req.cookies.getAll(),
     setAll: (cookiesToSet) => {
-      cookiesToSet.forEach(({ name, value, options }) => {
-        // تحديث الكوكيز في الطلب لضمان تعرف السيرفر عليها فوراً
-        req.cookies.set(name, value);
-        // تحديث الكوكيز في الاستجابة مع ضبط إعدادات النطاق الحي
-        res.cookies.set(name, value, {
-          ...options,
-          
-          secure: true,           // ضروري جداً لروابط https
-          sameSite: 'lax',
-          path: '/',
-        });
-      });
-    },
+  cookiesToSet.forEach(({ name, value, options }) => {
+    req.cookies.set(name, value);
+    res.cookies.set(name, value, {
+      ...options,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+    });
+  });
+},
+    
   },
 }
   );

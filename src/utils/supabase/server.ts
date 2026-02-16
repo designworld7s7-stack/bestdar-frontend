@@ -18,13 +18,12 @@ export async function createClient() {
               name, 
               value, 
               ...options,
-              domain: '.bestdar.com', // لتوحيد الجلسة على النطاق الحي
-              secure: true,
-              sameSite: 'lax',
+              secure: true,   // ضروري للعمل على https
+              sameSite: 'lax', 
               path: '/',
             })
           } catch (error) {
-            // يمكن تجاهلها إذا تم الاستدعاء من مكون سيرفر
+            // يتم تجاهله في Server Components
           }
         },
         remove(name: string, options: CookieOptions) {
@@ -33,13 +32,12 @@ export async function createClient() {
               name, 
               value: '', 
               ...options,
-          
               secure: true,
               sameSite: 'lax',
               path: '/',
             })
           } catch (error) {
-            // يمكن تجاهلها
+            // يتم تجاهله
           }
         },
       },
