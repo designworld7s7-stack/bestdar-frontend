@@ -23,44 +23,56 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
   // Capture where the user came from (from your middleware)
   const nextRoute = searchParams.get('next') || `/${lang}`;
 
-  // 1. Updated handleLogin to use Magic Link
+  // 1. Updated handleLogin to use Magic Link with "No Sign-up" logic
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
 
-    const { error } = await supabase.auth.signInWithOtp({
+    // استخدام اسم فريد 'loginError' لتجنب مشاكل TypeScript
+    const { error: loginError } = await supabase.auth.signInWithOtp({
       email: email,
       options: {
-        // Redirect back to the dedicated callback handler
+        shouldCreateUser: false, // يمنع إنشاء حساب جديد من صفحة تسجيل الدخول
         emailRedirectTo: `${window.location.origin}/auth/callback?next=${nextRoute}`,
       },
     });
 
-    if (!error) {
+    if (!loginError) {
       setMagicLinkSent(true);
       setLoading(false);
     } else {
-      setErrorMsg(error.message);
+      // تخصيص الرسالة إذا كان المستخدم غير موجود في النظام
+      const isNotFound = loginError.message.toLowerCase().includes("not found") || loginError.status === 400;
+      const msg = isAr 
+        ? (isNotFound ? "هذا الحساب غير موجود، يرجى إنشاء حساب أولاً" : loginError.message)
+        : (isNotFound ? "Account not found. Please sign up first." : loginError.message);
+
+      setErrorMsg(msg);
       setLoading(false);
     }
   };
 
   const handleWhatsAppLogin = async () => {
     setLoading(true);
-    // Note: Update this to use dynamic user input if necessary
+    setErrorMsg(null);
     const cleanPhone = "+9647759147343".replace(/\s/g, ''); 
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error: waError } = await supabase.auth.signInWithOtp({
       phone: cleanPhone,
       options: {
-        shouldCreateUser: false, 
-        channel: 'whatsapp', // Ensure Twilio is set to WhatsApp
+        shouldCreateUser: false, // يمنع إنشاء حساب جديد عبر واتساب من هنا
+        channel: 'whatsapp',
       }
     });
 
-    if (error) {
-      setErrorMsg(isAr ? "فشل إرسال الرمز" : "Failed to send code");
+    if (waError) {
+      const isNotFound = waError.message.toLowerCase().includes("not found") || waError.status === 400;
+      const msg = isAr 
+        ? (isNotFound ? "رقم الهاتف غير مسجل، يرجى إنشاء حساب أولاً" : "فشل إرسال الرمز")
+        : (isNotFound ? "Phone number not registered. Please sign up first." : "Failed to send code");
+      
+      setErrorMsg(msg);
       setLoading(false);
     } else {
       router.push(`/${lang}/auth/verify?method=phone&identifier=${cleanPhone}`);
@@ -68,14 +80,17 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
   };
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
+    setErrorMsg(null);
+    const { error: googleError } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback?next=${nextRoute}`,
+        // ملاحظة: جوجل يقوم بإنشاء حساب تلقائياً إذا كان الإيميل غير موجود
+        // إلا إذا قمت بتقييد ذلك عبر Trigger في قاعدة البيانات.
       },
     });
     
-    if (error) alert(error.message);
+    if (googleError) setErrorMsg(googleError.message);
   };
 
   return (

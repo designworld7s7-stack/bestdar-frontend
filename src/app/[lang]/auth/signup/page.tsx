@@ -27,24 +27,25 @@ export default function SignUpPage({ params }: { params: Promise<{ lang: string 
   });
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
     const fullPhone = `${countryCode}${formData.phone.replace(/\s/g, '')}`;
-
+const redirectUrl = `${window.location.origin}/auth/callback?next=/profile`;
     // Pure Passwordless Sign Up
     const { error } = method === 'email' 
-      ? await supabase.auth.signInWithOtp({ 
-          email: formData.email,
-          options: {
-            // Redirects to your solid callback handler
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=/${lang}/profile`,
-            data: {
-              full_name: formData.fullName,
-              country: countryCode === '+964' ? 'Iraq' : 'UAE'
-            }
+    ? await supabase.auth.signInWithOtp({ 
+        email: formData.email,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: formData.fullName,
+            phone: fullPhone, // حفظ الرقم حتى عند التسجيل بالإيميل
+            role: 'investor', // تحديد الدور فوراً عند التسجيل
+            country: countryCode === '+964' ? 'Iraq' : 'UAE'
           }
-        })
+        }
+      })
       : await supabase.auth.signInWithOtp({ 
           phone: fullPhone,
           options: {
@@ -56,31 +57,41 @@ export default function SignUpPage({ params }: { params: Promise<{ lang: string 
           }
         });
 
-    if (error) {
+   if (error) {
+    // عرض رسائل خطأ مفهومة للمستخدم
+    if (error.message.includes("rate limit")) {
+      alert(isAr ? "محاولات كثيرة جداً. يرجى الانتظار قليلاً." : "Too many attempts. Please wait.");
+    } else {
       alert(error.message);
+    }
+    setLoading(false);
+  } else {
+    if (method === 'email') {
+      setMagicLinkSent(true);
       setLoading(false);
     } else {
-      if (method === 'email') {
-        setMagicLinkSent(true);
-        setLoading(false);
-      } else {
-        router.push(`/${lang}/auth/verify?method=phone&identifier=${fullPhone}`);
-      }
+      router.push(`/${lang}/auth/verify?method=phone&identifier=${fullPhone}`);
     }
-  };
+  }
+};
 
-  const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/${lang}/profile`,
+ const handleGoogleLogin = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      // نفس رابط التوجيه الموحد
+      redirectTo: `${window.location.origin}/auth/callback?next=/profile`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
       },
-    });
+    },
+  });
     
-    if (error) {
-      alert(isAr ? "فشل إنشاء الحساب عبر جوجل" : "Google sign up failed");
-    }
-  };
+   if (error) {
+    alert(isAr ? "فشل تسجيل الدخول عبر جوجل" : "Google login failed");
+  }
+};
 
   return (
     <div className="min-h-screen w-full bg-[#F2F4F7] flex flex-col items-center justify-center p-4">

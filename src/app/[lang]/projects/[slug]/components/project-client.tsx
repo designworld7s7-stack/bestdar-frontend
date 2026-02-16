@@ -107,11 +107,12 @@ useEffect(() => {
 />
 
       {/* 4. Payment Plan */}
-      <PaymentPlan 
+<PaymentPlan 
   lang={lang}
   activeUnit={selectedUnit} 
-  isGated={!user} // تفعيل القفل الذكي
-  onInterestClick={() => setIsInterestedOpen(true)}
+  isGated={!user} 
+  // قمنا بتغييرها هنا لتفتح مودال الحجز
+  onInterestClick={() => setIsReservationOpen(true)} 
 />
 
   

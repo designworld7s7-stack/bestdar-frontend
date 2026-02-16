@@ -22,10 +22,10 @@ export default function EditProfileModal({ isAr, onClose, profile }: EditProfile
     country: profile?.country || "" 
   });
 
-  const handleSave = async () => {
+const handleSave = async () => {
     setLoading(true);
 
-    // 1. Update Public Profile
+    // 1. تحديث الجدول العام
     const { error: profileError } = await supabase
       .from('profiles')
       .update({
@@ -35,19 +35,24 @@ export default function EditProfileModal({ isAr, onClose, profile }: EditProfile
       })
       .eq('id', profile.id);
 
-    // 2. Handle Identity Change (Email/Phone)
-    // If the email changed, Supabase Auth will trigger a verification flow
-    if (formData.email !== profile.email) {
-      const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
-      if (authError) console.error("Email update error:", authError.message);
+    if (profileError) {
+      alert(isAr ? "فشل تحديث البيانات: " + profileError.message : "Failed to update profile: " + profileError.message);
+      setLoading(false);
+      return;
     }
 
-    if (!profileError) {
-      window.location.reload();
-      onClose();
-    } else {
-      setLoading(false);
+  // 2. تحديث البريد الإلكتروني إذا تغير
+    if (formData.email !== profile.email) {
+      const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
+      if (authError) {
+        alert(isAr ? "خطأ في تحديث البريد: " + authError.message : "Email update error: " + authError.message);
+      } else {
+        alert(isAr ? "يرجى تأكيد البريد الإلكتروني الجديد عبر الرسالة المرسلة إليك" : "Please confirm your new email via the link sent to you.");
+      }
     }
+    // نجاح العملية
+    onClose();
+    window.location.reload(); 
   };
 
   return (

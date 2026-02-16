@@ -115,14 +115,15 @@ export default function SavedPage({ params }: { params: Promise<{ lang: string }
                 : (isAr ? "اقرأ أدلتنا الشاملة حول الاستثمار العقاري" : "Read our comprehensive guides on real estate investment.")}
             </p>
 
-            <Link 
-              href={activeTab === 'properties' ? `/${lang}/projects` : `/${lang}/guides`} 
-              className="mt-10 inline-flex h-14 items-center justify-center rounded-full bg-[#12AD65] px-10 text-[13px] font-bold uppercase tracking-widest text-white shadow-xl shadow-green-100 transition-all hover:scale-105 active:scale-95"
-            >
-              {activeTab === 'properties'
-                ? (isAr ? "استكشف المشاريع" : "Explore Projects")
-                : (isAr ? "تصفح الأدلة" : "Browse Guides")}
-            </Link>
+           <Link 
+  // قمنا بتغيير /projects إلى /all-properties ليتطابق مع الرابط الحي
+  href={activeTab === 'properties' ? `/${lang}/all-properties` : `/${lang}/guides`} 
+  className="mt-10 inline-flex h-14 items-center justify-center rounded-full bg-[#12AD65] px-10 text-[13px] font-bold uppercase tracking-widest text-white shadow-xl shadow-green-100 transition-all hover:scale-105 active:scale-95"
+>
+  {activeTab === 'properties'
+    ? (isAr ? "استكشف المشاريع" : "Explore Projects")
+    : (isAr ? "تصفح الأدلة" : "Browse Guides")}
+</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">

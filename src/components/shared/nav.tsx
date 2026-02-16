@@ -101,13 +101,18 @@ export default function Navbar({ lang }: { lang: string }) {
     setIsOpen(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setIsOpen(false);
-    router.push(`/${lang}`);
-    router.refresh(); // لضمان تحديث حالة النافبار فوراً
-  };
+ const handleLogout = async () => {
+  // 1. تسجيل الخروج من سوبابيس (يمسح الكوكيز والجلسة)
+  await supabase.auth.signOut();
+  
+  // 2. تحديث الحالة المحلية فوراً (لتغيير شكل الأزرار في النافبار)
+  setUser(null);
+  setIsOpen(false);
+  
+  // 3. الحل النهائي: إعادة توجيه كاملة للصفحة الرئيسية
+  // هذا السطر يحل مشكلة بقائك في صفحة البروفايل ويمنع الـ 404
+  window.location.href = `/${lang}`;
+};
 
   const userInitial = user?.user_metadata?.full_name 
     ? user.user_metadata.full_name.charAt(0).toUpperCase() 
