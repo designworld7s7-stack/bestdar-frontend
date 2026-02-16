@@ -32,18 +32,23 @@ export default function Navbar({ lang }: { lang: string }) {
   const isRtl = lang === 'ar';
   const brandGreen = "#12AD65";
 
-  useEffect(() => {
+ useEffect(() => {
     const fetchUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
+      // تغيير getSession إلى getUser لضمان الدقة على السيرفر الحي
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
     };
     fetchUser();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      // إذا حدث تسجيل دخول، ننعش الصفحة ليتعرف الميدل وير على الكوكيز الجديدة
+      if (_event === 'SIGNED_IN') {
+        router.refresh();
+      }
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [supabase, router]);
 
   useEffect(() => {
     const closeMenus = () => {
