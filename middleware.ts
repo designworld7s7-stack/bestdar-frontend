@@ -22,7 +22,6 @@ export async function middleware(req: NextRequest) {
   secure: true,
   sameSite: 'lax',
   // Adding the dot before the domain makes it work for both www and non-www
-  domain: '.bestdar.com' 
 });
           });
         },
@@ -58,5 +57,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)'],
+ matcher: ['/((?!_next/static|_next/image|favicon.ico|api|auth|.*\\..*).*)'],
 }

@@ -18,7 +18,6 @@ export async function createClient() {
               name, 
               value, 
               ...options,
-              domain: '.bestdar.com', // يربط الكوكي بـ www وبدون www
               secure: true,
               sameSite: 'lax',
               path: '/',
