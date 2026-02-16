@@ -3,7 +3,9 @@ import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(req: NextRequest) {
-  let res = NextResponse.next();
+  let res = NextResponse.next({
+    request: { headers: req.headers },
+  });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,6 +15,7 @@ export async function middleware(req: NextRequest) {
         getAll: () => req.cookies.getAll(),
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
+            req.cookies.set(name, value);
             res.cookies.set(name, value, { ...options, path: '/' });
           });
         },
@@ -20,8 +23,27 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  // تحديث الجلسة فقط بدون أي منطق لغة أو حماية حالياً
   await supabase.auth.getUser();
 
+  const { pathname } = req.nextUrl;
+  const locales = ['en', 'ar'];
+
+  // التحقق من وجود اللغة في الرابط لمنع الـ 404
+  const pathnameIsMissingLocale = locales.every(
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  );
+
+  if (pathnameIsMissingLocale) {
+    const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
+    const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
+    // نقل الكوكيز لضمان عدم ضياع الجلسة عند التحويل
+    res.cookies.getAll().forEach((cookie) => redirectRes.cookies.set(cookie.name, cookie.value));
+    return redirectRes;
+  }
+
   return res;
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|api|.*\\..*).*)'],
 }
