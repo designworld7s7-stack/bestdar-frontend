@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
         // تحديث الكوكيز في الاستجابة مع ضبط إعدادات النطاق الحي
         res.cookies.set(name, value, {
           ...options,
-          domain: '.bestdar.com', // لضمان عمل الكوكيز على bestdar.com و www.bestdar.com
+          
           secure: true,           // ضروري جداً لروابط https
           sameSite: 'lax',
           path: '/',

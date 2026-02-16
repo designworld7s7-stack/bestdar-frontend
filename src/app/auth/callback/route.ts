@@ -7,15 +7,13 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') || '/en';
 
   if (code) {
-    const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    
-    if (!error) {
-      // استخدام origin من الطلب يضمن التوجيه لـ https://bestdar.com
-      return NextResponse.redirect(`${origin}${next}`);
-    }
+  const supabase = await createClient();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+  
+  if (!error) {
+    // بناء رابط التوجيه بدقة
+    const redirectUrl = new URL(next, origin);
+    return NextResponse.redirect(redirectUrl);
   }
-
-  // في حال الفشل، تأكد من التوجيه للمسار الصحيح مع اللغة
-  return NextResponse.redirect(`${origin}/en/login?error=auth_failed`);
+}
 }

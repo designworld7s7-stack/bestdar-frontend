@@ -33,7 +33,7 @@ export async function createClient() {
               name, 
               value: '', 
               ...options,
-              domain: '.bestdar.com',
+          
               secure: true,
               sameSite: 'lax',
               path: '/',
