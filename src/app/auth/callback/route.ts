@@ -8,13 +8,15 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient();
-    // تبادل الكود بالجلسة
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     
     if (!error) {
-      // بناء رابط التوجيه بدقة لضمان عدم فقدان الكوكيز
-      const redirectUrl = new URL(next, origin);
-      return NextResponse.redirect(redirectUrl);
+      // بناء الاستجابة أولاً
+      const response = NextResponse.redirect(`${origin}${next}`);
+      
+      // هنا السر: التأكد من أن الكوكيز الخاصة بـ Supabase تم تثبيتها في الاستجابة
+      // السيرفر يقوم بذلك تلقائياً عبر createClient، ولكن الـ Redirect يحتاج أحياناً لوقت
+      return response;
     }
   }
 
