@@ -18,7 +18,8 @@ export async function createClient() {
               name, 
               value, 
               ...options,
-              secure: true,   // ضروري لـ https
+              domain: '.bestdar.com', // يربط الكوكي بـ www وبدون www
+              secure: true,
               sameSite: 'lax',
               path: '/',
             })
@@ -30,6 +31,7 @@ export async function createClient() {
               name, 
               value: '', 
               ...options,
+              domain: '.bestdar.com', // ضروري عند تسجيل الخروج أيضاً
               secure: true,
               sameSite: 'lax',
               path: '/',

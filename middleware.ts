@@ -19,9 +19,10 @@ export async function middleware(req: NextRequest) {
            res.cookies.set(name, value, {
   ...options,
   path: '/',
-  secure: true,   // Mandatory for https://bestdar.com
+  secure: true,
   sameSite: 'lax',
-  domain: 'bestdar.com' // Explicitly link to the apex domain
+  // Adding the dot before the domain makes it work for both www and non-www
+  domain: '.bestdar.com' 
 });
           });
         },
