@@ -23,37 +23,35 @@ export default function EditProfileModal({ isAr, onClose, profile }: EditProfile
   });
 
 const handleSave = async () => {
-    setLoading(true);
+  setLoading(true);
 
-    // 1. تحديث الجدول العام
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        full_name: formData.full_name,
-        whatsapp_number: formData.whatsapp_number,
-        country: formData.country,
-      })
-      .eq('id', profile.id);
+  // 1. تحديث البروفايل مع تصحيح اسم العمود
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      full_name: formData.full_name,
+      whatsapp_number: formData.whatsapp_number,
+      // نغير 'country' إلى الاسم الفعلي في قاعدة بياناتك
+      countries_of_interest: formData.country, 
+    })
+    .eq('id', profile.id);
 
-    if (profileError) {
-      alert(isAr ? "فشل تحديث البيانات: " + profileError.message : "Failed to update profile: " + profileError.message);
-      setLoading(false);
-      return;
-    }
+  if (profileError) {
+    // لعلاج مشكلة الـ cache التي تظهر في الصورة، يمكنك محاولة إرسال تنبيه
+    alert(isAr ? "حدث خطأ أثناء الحفظ" : "Error saving profile: " + profileError.message);
+    setLoading(false);
+    return;
+  }
 
-  // 2. تحديث البريد الإلكتروني إذا تغير
-    if (formData.email !== profile.email) {
-      const { error: authError } = await supabase.auth.updateUser({ email: formData.email });
-      if (authError) {
-        alert(isAr ? "خطأ في تحديث البريد: " + authError.message : "Email update error: " + authError.message);
-      } else {
-        alert(isAr ? "يرجى تأكيد البريد الإلكتروني الجديد عبر الرسالة المرسلة إليك" : "Please confirm your new email via the link sent to you.");
-      }
-    }
-    // نجاح العملية
-    onClose();
-    window.location.reload(); 
-  };
+  // 2. تحديث الإيميل إذا لزم الأمر
+  if (formData.email !== profile.email) {
+    await supabase.auth.updateUser({ email: formData.email });
+  }
+
+  // نجاح العملية
+  onClose();
+  window.location.reload(); 
+};
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300">
