@@ -33,22 +33,48 @@ export default function Navbar({ lang }: { lang: string }) {
   const brandGreen = "#12AD65";
 
  useEffect(() => {
-    const fetchUser = async () => {
-      // تغيير getSession إلى getUser لضمان الدقة على السيرفر الحي
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    fetchUser();
+  const fetchUserAndRole = async () => {
+    // 1. جلب المستخدم الأساسي
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      try {
+        // 2. جلب الدور من جدول profiles بناءً على الـ id (كما يظهر في صورتك 924)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, full_name')
+          .eq('id', user.id)
+          .single();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      // إذا حدث تسجيل دخول، ننعش الصفحة ليتعرف الميدل وير على الكوكيز الجديدة
-      if (_event === 'SIGNED_IN') {
-        router.refresh();
+        // 3. دمج الدور والاسم مع كائن المستخدم في الحالة (State)
+        setUser({
+          ...user,
+          role: profile?.role || 'user', // إذا لم يجد دوراً، سيعطيه دور user افتراضياً
+          display_name: profile?.full_name || user.email
+        });
+      } catch (err) {
+        console.error("Error fetching role:", err);
+        setUser(user); // العودة للمستخدم الأساسي في حال فشل جلب الدور
       }
-    });
-    return () => subscription.unsubscribe();
-  }, [supabase, router]);
+    } else {
+      setUser(null);
+    }
+  };
+
+  fetchUserAndRole();
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (_event === 'SIGNED_IN' || _event === 'TOKEN_REFRESHED') {
+      fetchUserAndRole();
+      router.refresh();
+    } else if (_event === 'SIGNED_OUT') {
+      setUser(null);
+      router.refresh();
+    }
+  });
+
+  return () => subscription.unsubscribe();
+}, [supabase, router]);
 
   useEffect(() => {
     const closeMenus = () => {
