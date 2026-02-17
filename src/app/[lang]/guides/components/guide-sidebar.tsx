@@ -18,18 +18,20 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   setIsLoading(true);
   
   try {
-    const { error } = await supabase
-      .from('newsletter_subscribers')
-      .insert([{ email, source: 'guide_sidebar' }]);
+  const { error } = await supabase
+    .from('newsletter_subscribers')
+    .insert([{ email, source: 'guide_sidebar' }]);
 
-    if (error) throw error;
-    alert(isAr ? "تم الاشتراك بنجاح!" : "Subscribed successfully!");
-    setEmail("");
-  } catch (err: any) {
-    alert(isAr ? "حدث خطأ أو أنك مشترك بالفعل." : "Error or already subscribed.");
-  } finally {
-    setIsLoading(false);
+  if (error) throw error;
+  // ... رسالة النجاح
+} catch (err: any) {
+  // إذا كان الخطأ متعلق بتكرار الإيميل (Code 23505 في Postgres)
+  if (err.code === '23505') {
+    alert(isAr ? "أنت مشترك معنا بالفعل!" : "You are already subscribed!");
+  } else {
+    alert(isAr ? "حدث خطأ، يرجى المحاولة لاحقاً." : "An error occurred, please try again.");
   }
+}
 };
 
   return (

@@ -24,15 +24,29 @@ export default function ReservationForm({ lang, unit, project }: any) {
   };
 
   if (isSuccess) {
-    return <div className="p-8 text-center text-[#12AD65] font-bold">Success! Data sent.</div>;
-  }
+  return (
+    <div className="p-8 text-center space-y-4 animate-in fade-in zoom-in duration-300">
+      <div className="flex justify-center">
+        <CheckCircle2 size={48} className="text-[#12AD65]" />
+      </div>
+      <h3 className="text-[#12AD65] font-bold text-xl">
+        {isAr ? "تم إرسال طلبك بنجاح" : "Request Sent Successfully"}
+      </h3>
+      <p className="text-gray-500 text-sm">
+        {isAr 
+          ? `سنتواصل معك بخصوص الوحدة #${unit?.id}` 
+          : `We will contact you regarding Unit #${unit?.id}`}
+      </p>
+    </div>
+  );
+}
 
   return (
    <form onSubmit={handleSubmit} className="w-full space-y-4">
        {/* Ensure every hidden input has a VALUE and a NAME */}
-      <input type="hidden" name="source" value="reservation_form" />
-      <input type="hidden" name="project_id" value={project?.id || ''} />
-      <input type="hidden" name="unit_id" value={unit?.id || ''} />
+      <input type="hidden" name="project_id" value={project?.property_ref || project?.id || ''} />
+<input type="hidden" name="unit_id" value={unit?.unit_ref || unit?.id || ''} />
+<input type="hidden" name="project_name" value={isAr ? project?.title_ar : project?.title_en} />
 
       {/* Unit Identification */}
       <div className="bg-gray-50 rounded-[22px] p-4 lg:p-8 flex justify-between items-center shadow-inner">

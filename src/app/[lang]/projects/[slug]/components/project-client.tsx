@@ -177,9 +177,12 @@ useEffect(() => {
       </section>
 
       <FloatingExpertBtn lang={lang} />
-     <StickyMobileBar 
+    <StickyMobileBar 
   lang={lang} 
-  onInterestClick={() => setIsModalOpen(true)} // تأكد أنها setIsModalOpen
+  onInterestClick={() => setIsModalOpen(true)} 
+  // قمنا بتغيير property إلى project لتطابق المتغير الموجود في ملفك
+  propertyId={project?.property_ref} 
+  propertyName={lang === 'ar' ? project?.title_ar : project?.title_en}
 />
 
 {/* 2. النافذة المنبثقة (المهتمين) */}
