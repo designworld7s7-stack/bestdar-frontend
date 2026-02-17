@@ -1,11 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // أضف useEffect
 import { Mail, ArrowRight } from 'lucide-react';
 // المسار النسبي الصحيح بناءً على هيكلة مشروعك
 import { createClient } from '../../../../utils/supabase/client'; 
 
 export default function GuideSidebar({ lang }: { lang: string }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // إذا لم يكتمل التحميل، لا تعرض شيئاً أو اعرض هيكلاً بسيطاً
+  if (!mounted) return null;
   const isAr = lang === 'ar';
   const supabase = createClient(); 
 
@@ -13,26 +20,39 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubscribe = async (e: React.FormEvent) => {
-  e.preventDefault(); // هذا سيعمل الآن لأننا سنستدعيه من onSubmit
-  if (!email) return;
-  setIsLoading(true);
+  e.preventDefault();
+  console.log("🟢 Button Clicked! Starting subscription process..."); // للتأكد من وصول النقرة
   
-  try {
-  const { error } = await supabase
-    .from('newsletter_subscribers')
-    .insert([{ email, source: 'guide_sidebar' }]);
-
-  if (error) throw error;
-  // ... رسالة النجاح
-} catch (err: any) {
-  // إذا كان الخطأ متعلق بتكرار الإيميل (Code 23505 في Postgres)
-  if (err.code === '23505') {
-    alert(isAr ? "أنت مشترك معنا بالفعل!" : "You are already subscribed!");
-  } else {
-    alert(isAr ? "حدث خطأ، يرجى المحاولة لاحقاً." : "An error occurred, please try again.");
+  if (!email) {
+    console.error("🔴 Email is empty!");
+    return;
   }
-}
+
+  setIsLoading(true);
+  console.log("🟡 Sending to Supabase for email:", email);
+
+  try {
+    const { data, error } = await supabase
+      .from('newsletter_subscribers')
+      .insert([{ email, source: 'guide_sidebar' }]);
+
+    if (error) {
+      console.error("🔴 Supabase Error:", error.message, error.code); // سيخبرنا إذا كان الجدول مفقوداً أو الصلاحيات ناقصة
+      throw error;
+    }
+
+    console.log("✅ Success! Supabase response:", data);
+    alert(isAr ? "تم الاشتراك بنجاح!" : "Subscribed successfully!");
+    setEmail("");
+  } catch (err: any) {
+    console.error("🔴 Catch Error Block:", err);
+    alert(isAr ? "حدث خطأ أو أنك مشترك بالفعل." : "Error or already subscribed.");
+  } finally {
+    setIsLoading(false);
+    console.log("⚪ Process finished.");
+  }
 };
+ 
 
   return (
     // تم حذف قسم Most Read من هنا لمنع التكرار في الصفحة

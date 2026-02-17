@@ -80,3 +80,17 @@
     scrollbar-width: none;  /* Firefox */
   }
 }
+.menu-scrollbar {
+  -ms-overflow-style: auto !important; /* IE and Edge */
+  scrollbar-width: thin !important; /* Firefox */
+}
+
+.menu-scrollbar::-webkit-scrollbar {
+  display: block !important;
+  width: 4px;
+}
+
+.menu-scrollbar::-webkit-scrollbar-thumb {
+  background: #12AD65; /* لون اللوجو الخاص بك */
+  border-radius: 10px;
+}
