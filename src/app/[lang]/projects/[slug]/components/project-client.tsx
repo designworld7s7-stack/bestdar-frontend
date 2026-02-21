@@ -36,7 +36,7 @@ export default function ProjectClient({ project, lang, similarProjects }: Projec
   displayTitle: project.displayTitle
 });
   const supabase = createClient(); 
-const [user, setUser] = useState<any>({ id: 'developer-bypass' });  
+const [user, setUser] = useState<any>(null);
   const isAr = lang === 'ar';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
@@ -59,14 +59,13 @@ console.log("🔍 DEBUG - Project Data Structure:", {
   hasAmenities: Array.isArray(project?.amenities),
   amenitiesValue: project?.amenities
 });
- /* useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-    };
-    fetchUser();
-  }, [supabase]);
-  */
+ useEffect(() => {
+  const fetchUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setUser(user);
+  };
+  fetchUser();
+}, [supabase]);
 
   // تحديث الوحدة المختارة عند تغير البيانات
   useEffect(() => {
