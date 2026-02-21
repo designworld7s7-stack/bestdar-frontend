@@ -11,8 +11,18 @@ export async function getProjectWithUnits(slug: string) {
     .from('projects')
     .select(`
       *,
+      title_ar,
+      location_ar,
+      overview_text_ar,
+      neighborhood_description_ar,
+      project_status_ar,
+      delivery_date_ar,
+      orientation_ar,
+      view_type_ar,
+      landmarks_ar,
+      dev_description_ar,
       units:project_units (*) 
-    `) // Added 'units:' before project_units
+    `) 
     .eq('slug', slug)
     .maybeSingle();
 

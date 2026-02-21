@@ -4,21 +4,22 @@ import React, { useState, useRef } from 'react';
 import { Lock, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useRouter } from 'next/navigation';
-// We update the interface to match what we pass from the database
+
 export default function FloorPlans({ 
   lang, 
   isGated = true, 
-  databasePlans = [] // This receives the URLs from Supabase
+  images = [] // نستخدم الاسم الجديد "images" الذي يمثل المصفوفة الجاهزة
 }: { 
   lang: string, 
   isGated?: boolean,
-  databasePlans: string[] 
+  images: string[] 
 }) {
   const isAr = lang === 'ar';
   const [activePlan, setActivePlan] = useState(0);
-const router = useRouter();
-  // 1. Convert those raw URLs into the "Plan" objects your design needs
-  const plans = databasePlans.map((url, index) => ({
+  const router = useRouter();
+
+  // 1. تحويل روابط الصور القادمة من السيرفر إلى كائنات المخططات مباشرة
+  const plans = images.map((url, index) => ({
     id: `plan-${index}`,
     title: isAr ? `نموذج الوحدة ${index + 1}` : `Unit Type ${index + 1}`,
     size: "TBD sqft", 
@@ -48,7 +49,7 @@ const router = useRouter();
     else if (distance < -minSwipeDistance) isAr ? nextPlan() : prevPlan();
   };
 
-  // If there are no plans in the database, don't show the section at all
+  // 2. صمام أمان: إذا لم تكن هناك خطط، لا تعرض القسم نهائياً
   if (plans.length === 0) return null;
 
   return (
@@ -75,11 +76,11 @@ const router = useRouter();
                 : "Register to browse all detailed floor plans and architectural dimensions."}
             </p>
            <button 
-  onClick={() => router.push(`/${lang}/auth/signup`)}
-  className="btn-brand ..."
->
-  {isAr ? "سجل للمشاهدة" : "Register to View Plans"}
-</button>
+             onClick={() => router.push(`/${lang}/auth/signup`)}
+             className="bg-[#12AD65] text-white px-8 py-3 rounded-xl font-medium hover:bg-[#0f8f53] transition-all"
+           >
+             {isAr ? "سجل للمشاهدة" : "Register to View Plans"}
+           </button>
           </div>
         )}
 
@@ -93,10 +94,15 @@ const router = useRouter();
           )}
         >
           <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${activePlan * 100}%)` }}>
-            {plans.map((plan) => (
+            {plans.map((plan: any) => (
               <div key={plan.id} className="min-w-full p-6 lg:p-12 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
                 <div className="w-full lg:w-3/5 aspect-square lg:aspect-video rounded-2xl overflow-hidden bg-white shadow-inner flex items-center justify-center p-4">
-                  <img src={plan.image} alt={plan.title} className="max-w-full max-h-full object-contain" />
+                  <img 
+                    src={plan.image} 
+                    alt={plan.title} 
+                    crossOrigin="anonymous" // مهم جداً لمنع مشاكل التحميل من سوبابيس
+                    className="max-w-full max-h-full object-contain" 
+                  />
                 </div>
 
                 <div className="w-full lg:w-2/5 flex flex-col gap-6 text-center lg:text-left">

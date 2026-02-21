@@ -11,32 +11,38 @@ export default function KeyFacts({ lang, project }: { lang: string; project: any
     { 
       icon: <Bed size={20} />, 
       label: isAr ? "غرف النوم" : "Bedrooms", 
-      value: project?.bedrooms || "TBD" // Dynamic from DB
+      value: project?.bedrooms || "TBD" // أرقام لا تحتاج ترجمة
     },
     { 
       icon: <Bath size={20} />, 
       label: isAr ? "الحمامات" : "Bathrooms", 
-      value: project?.bathrooms || "TBD" // Dynamic from DB
+      value: project?.bathrooms || "TBD" // أرقام لا تحتاج ترجمة
     },
     { 
       icon: <Maximize size={20} />, 
       label: isAr ? "المساحة" : "Size", 
-      value: project?.area_sqft ? `${project.area_sqft} sqft` : "TBD" // Dynamic from DB
+      value: project?.area_sqft ? `${project.area_sqft} sqft` : "TBD" 
     },
     { 
       icon: <Layers size={20} />, 
       label: isAr ? "الطابق" : "Floor", 
-      value: project?.total_floors || (isAr ? "متوفر" : "Available") // Dynamic from DB
+      value: project?.total_floors || (isAr ? "متوفر" : "Available") 
     },
     { 
       icon: <Eye size={20} />, 
       label: isAr ? "الإطلالة" : "View", 
-      value: project?.view_type || (isAr ? "بانورامي" : "Panoramic") // Dynamic from DB
+      // 👇 التعديل هنا: يقرأ العربي أولاً، ثم الإنجليزي، ثم النص الافتراضي
+      value: isAr 
+        ? (project?.view_type_ar || project?.view_type || "بانورامي") 
+        : (project?.view_type || "Panoramic") 
     },
     { 
       icon: <Compass size={20} />, 
       label: isAr ? "الاتجاه" : "Orientation", 
-      value: project?.orientation || "North-East" // Dynamic from DB
+      // 👇 التعديل هنا: يقرأ العربي أولاً، ثم الإنجليزي، ثم النص الافتراضي
+      value: isAr 
+        ? (project?.orientation_ar || project?.orientation || "شمال شرقي") 
+        : (project?.orientation || "North-East") 
     },
   ];
 
