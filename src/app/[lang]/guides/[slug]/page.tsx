@@ -1,6 +1,8 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
+
+// استيراد مكوناتك
 import GuideHero from './components/guide-hero';
 import GuideIntro from './components/guide-intro';
 import GuideContent from './components/guide-content';
@@ -10,54 +12,83 @@ import RelatedCarousel from './components/related-carousel';
 import GuideCTA from './components/guide-cta';
 import ExpertAction from './components/expert-action';
 
-// 1. Dynamic Metadata
+const calculateReadingTime = (text: string) => {
+  if (!text) return 1;
+  const words = text.trim().split(/\s+/).length;
+  return Math.ceil(words / 220);
+};
+// 1. Dynamic Metadata (تدعم اللغتين)
 export async function generateMetadata({ params }: any) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   const supabase = await createClient();
-  const { data: guide } = await supabase.from('guides').select('title').eq('slug', slug).single();
+  const { data: guide } = await supabase.from('guides').select('title, title_ar').eq('slug', slug).single();
   
+  // تحديد العنوان حسب اللغة
+  const isAr = lang === 'ar';
+  const displayTitle = isAr ? (guide?.title_ar || guide?.title) : guide?.title;
+
   return { 
-    title: guide ? `Best Dar | ${guide.title}` : 'Best Dar | Guide' 
+    title: displayTitle ? `Best Dar | ${displayTitle}` : 'Best Dar | Guide' 
   };
 }
 
 export default async function GuideDetailsPage({ params }: any) {
-  const { lang, slug } = await params; // Await params for Next.js 15
+  const { lang, slug } = await params; 
   const supabase = await createClient();
-
-  // 2. Fetch the guide data from the "Seed"
-  const { data: guide, error: guideError } = await supabase
-  .from('guides')
-  .select('*')
-  .eq('slug', slug)
-  .single();
-
-// 2. SAFETY CHECK: If guide is null or error occurs, trigger 404
-if (guideError || !guide) {
-  notFound(); 
-}
-
-// 3. Now it is safe to access guide.country_code
-const { data: relatedGuides } = await supabase
-  .from('guides')
-  .select('*')
-  .neq('slug', slug) // Exclude current article
-  .limit(3);
   
-  // If no guide is found, show 404
-  if (!guide) notFound();
+  const isAr = lang === 'ar';
 
+  // 2. Fetch the guide data
+  const { data: guide, error: guideError } = await supabase
+    .from('guides')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+
+  // SAFETY CHECK
+  if (guideError || !guide) {
+    notFound(); 
+  }
+
+  // 3. Fetch Related Guides
+  // (يمكنك لاحقاً تعديل هذا السطر ليجلب المقالات من نفس الـ country_code أو category)
+  const { data: relatedGuides } = await supabase
+    .from('guides')
+    .select('*')
+    .neq('slug', slug)
+    .limit(3);
+
+  // ------------------------------------------------------------------
+  // 🎯 منطق الترجمة الذكي: تجهيز المتغيرات قبل تمريرها للمكونات
+  // إذا كانت اللغة عربية ولم يكن هناك نص عربي، سيتم عرض الإنجليزي كخيار بديل
+  // ------------------------------------------------------------------
+  const displayTitle = isAr ? (guide.title_ar || guide.title) : guide.title;
+  const displaySubtitle = isAr ? (guide.subtitle_ar || guide.subtitle) : guide.subtitle;
+  const displayIntro = isAr ? (guide.intro_text_ar || guide.intro_text) : guide.intro_text;
+  const displayContent = isAr ? (guide.content_ar || guide.content) : guide.content;
+  const displaySidebarLinks = isAr ? (guide.sidebar_links_ar || guide.sidebar_links) : guide.sidebar_links;
+  
+  // لا تنسَ الـ Callout الذي أضفناه اليوم! 
+  // يمكنك تمريره لـ GuideContent أو أي مكون تراه مناسباً
+  const displayCallout = isAr ? (guide.callout_ar || guide.callout) : guide.callout;
+
+  // 3. ثانياً: الآن فقط يمكننا حساب وقت القراءة (لأن displayContent أصبح موجوداً)
+  // ونقوم بتحويله إلى String ليتطابق مع الـ Interface الخاص بك
+  const timeInMinutes = calculateReadingTime(displayContent);
+  const readingTime = isAr ? `${timeInMinutes} دقائق قراءة` : `${timeInMinutes} min read`;
+  
   return (
-    <main className="relative min-h-screen bg-white">
+    // أضفنا خاصية dir لدعم اتجاه النص من اليمين لليسار في حال كانت اللغة عربية
+    <main className="relative min-h-screen bg-white" dir={isAr ? 'rtl' : 'ltr'}>
       <div className="pt-0 lg:pt-0">
-        {/* Pass all hero data from the DB */}
-      <GuideHero 
+       <GuideHero 
   lang={lang}
-  title={guide.title}
-  subtitle={guide.subtitle}
-  image={guide.image_url} // تأكد من استخدام الرابط الصحيح
+  title={displayTitle}
+  subtitle={displaySubtitle}
+  image={guide.image_url} 
   category={guide.category}
-  guideId={guide.id} // تأكد من تمرير المعرف هنا
+  guideId={guide.id}
+  readingTime={readingTime} // 👈 أضفنا هذا السطر
 />
       </div>
 
@@ -65,27 +96,24 @@ const { data: relatedGuides } = await supabase
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-32 py-12 lg:py-24">
           
           <article className="flex-1 max-w-4xl">
-            {/* Distribute specific content chunks to components */}
-            <GuideIntro lang={lang} intro={guide.intro_text} />
-            <GuideContent lang={lang} content={guide.content} />
-            {/* <GatedSection 
-    lang={lang} 
-    data={guide.gated_content} 
-  /> 
-*/}
+            <GuideIntro lang={lang} intro={displayIntro} />
+            
+            {/* يمكنك تمرير الـ Callout هنا إذا قمت بتحديث مكون GuideContent لاستقباله */}
+            <GuideContent lang={lang} content={displayContent} callout={displayCallout} />
+            
+            {/* <GatedSection lang={lang} data={guide.gated_content} /> */}
           </article>
 
           <aside className="hidden lg:block w-[320px]">
-           <GuideSidebar 
-  lang={lang} 
-  links={guide.sidebar_links} // جلب البيانات الديناميكية من JSONB
-  whatsappNumber={guide.whatsapp_number} 
-/>
+            <GuideSidebar 
+              lang={lang} 
+              links={displaySidebarLinks} // 👈 نمرر الروابط الصحيحة للغة
+              whatsappNumber={guide.whatsapp_number} 
+            />
           </aside>
         </div>
 
         <div className="border-t border-gray-50 pt-10 pb-32 lg:pb-0">
-          {/* Use tags or country_code to find related guides */}
           <RelatedCarousel lang={lang} guides={relatedGuides || []} />
           <GuideCTA lang={lang} />
         </div>
