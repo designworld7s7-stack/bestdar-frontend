@@ -1,32 +1,26 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Calendar, MessageCircle } from 'lucide-react';
 import { useModals } from "@/context/modal-context";
-import { createClient } from '@/utils/supabase/client'; //
 
-export default function AboutHero({ lang }: { lang: string }) {
+// 🌟 1. إضافة الـ Interface لتعريف البيانات القادمة من السيرفر
+interface AboutHeroProps {
+  lang: string;
+  dynamicData?: { text?: string; image?: string };
+}
+
+export default function AboutHero({ lang, dynamicData }: AboutHeroProps) {
   const isAr = lang === 'ar';
   const { openConsultation } = useModals();
-  const supabase = createClient();
 
-  // State for the dynamic hero image
-  const [imageUrl, setImageUrl] = useState('/about/hero-boardroom.jpg'); // Fallback local image
-
-  useEffect(() => {
-    async function getHeroImage() {
-      const { data } = await supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'about_hero')
-        .single();
-
-      if (data?.image_url) {
-        setImageUrl(data.image_url);
-      }
-    }
-    getHeroImage();
-  }, [supabase]);
+  // 🌟 2. استخدام الصورة الديناميكية فوراً بدون تأخير (أو الصورة الافتراضية)
+  const imageUrl = dynamicData?.image || '/about/hero-boardroom.jpg';
+  
+  // 🌟 3. استخدام النص الديناميكي القادم من لوحة التحكم كوصف للقسم (مع بقاء نصك الأصلي كاحتياطي)
+  const descriptionText = dynamicData?.text || (isAr 
+    ? "نحن نوجه المشترين خطوة بخطوة - من اختيار العقار المناسب إلى إتمام الاستثمار بأمان وثقة."
+    : "We guide buyers step-by-step — from choosing the right property to completing the investment safely and securely.");
 
   return (
     <section className="bg-white pt-20 lg:pt-40 pb-20">
@@ -47,10 +41,9 @@ export default function AboutHero({ lang }: { lang: string }) {
               )}
             </h1>
 
-            <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed mb-12 max-w-xl">
-              {isAr 
-                ? "نحن نوجه المشترين خطوة بخطوة - من اختيار العقار المناسب إلى إتمام الاستثمار بأمان وثقة."
-                : "We guide buyers step-by-step — from choosing the right property to completing the investment safely and securely."}
+            {/* 🌟 4. حقن النص الديناميكي هنا (استخدمنا whitespace-pre-line لدعم الأسطر المتعددة) */}
+            <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed mb-12 max-w-xl whitespace-pre-line">
+              {descriptionText}
             </p>
 
             {/* CTA Buttons */}
@@ -75,7 +68,7 @@ export default function AboutHero({ lang }: { lang: string }) {
             </div>
           </div>
 
-          {/* Featured Image - Now Dynamic */}
+          {/* Featured Image - Now Dynamic from Server */}
           <div className="w-full lg:w-1/2">
             <div className="relative aspect-[4/3] rounded-[40px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.08)]">
               <img 

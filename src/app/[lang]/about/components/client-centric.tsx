@@ -1,30 +1,22 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { CheckCircle2 } from 'lucide-react';
-import { createClient } from '@/utils/supabase/client'; //
 
-export default function ClientCentric({ lang }: { lang: string }) {
+// 🌟 1. إضافة الـ Interface لتعريف البيانات القادمة من السيرفر
+interface ClientCentricProps {
+  lang: string;
+  dynamicData?: { text?: string; image?: string };
+}
+
+export default function ClientCentric({ lang, dynamicData }: ClientCentricProps) {
   const isAr = lang === 'ar';
-  const supabase = createClient();
 
-  // الحالة الخاصة بالصورة مع صورة احتياطية
-  const [imageUrl, setImageUrl] = useState('/about/client-handshake.jpg');
+  // 🌟 2. استخدام الصورة الديناميكية فوراً من السيرفر (أو الصورة الاحتياطية)
+  const imageUrl = dynamicData?.image || '/about/client-handshake.jpg';
 
-  useEffect(() => {
-    async function getClientImage() {
-      const { data } = await supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'client_centric')
-        .single();
-
-      if (data?.image_url) {
-        setImageUrl(data.image_url);
-      }
-    }
-    getClientImage();
-  }, [supabase]);
+  // 🌟 3. استخدام النص الديناميكي القادم من لوحة التحكم (مع الاحتفاظ بنصك الأصلي كبديل)
+  const descriptionText = dynamicData?.text || (isAr 
+    ? "لكل عميل هدف فريد. نحن نأخذ الوقت الكافي لفهم احتياجاتك، ونقدم توصيات مخصصة للمشاريع، وندعمك في كل مرحلة من رحلتك الاستثمارية. لا ضغط، لا تحيز — تركيزنا على ما هو مناسب لك."
+    : "Every client has a unique goal. We take time to understand your needs, offer tailored project recommendations, and support you through every stage of your investment journey. No pressure, no bias — our focus is on what’s right for you.");
 
   const features = [
     {
@@ -61,10 +53,9 @@ export default function ClientCentric({ lang }: { lang: string }) {
               {isAr ? "نهج يركز على العميل" : "Client-Centric Approach"}
             </h2>
 
-            <p className="text-[#4B5563] text-sm lg:text-lg font-medium leading-relaxed mb-10 max-w-xl">
-              {isAr 
-                ? "لكل عميل هدف فريد. نحن نأخذ الوقت الكافي لفهم احتياجاتك، ونقدم توصيات مخصصة للمشاريع، وندعمك في كل مرحلة من رحلتك الاستثمارية. لا ضغط، لا تحيز — تركيزنا على ما هو مناسب لك."
-                : "Every client has a unique goal. We take time to understand your needs, offer tailored project recommendations, and support you through every stage of your investment journey. No pressure, no bias — our focus is on what’s right for you."}
+            {/* 🌟 4. حقن النص الديناميكي هنا (استخدمنا whitespace-pre-line) */}
+            <p className="text-[#4B5563] text-sm lg:text-lg font-medium leading-relaxed mb-10 max-w-xl whitespace-pre-line">
+              {descriptionText}
             </p>
 
             {/* Feature List */}

@@ -42,7 +42,8 @@ export default function UaeSection({ lang, projects }: UaeSectionProps) {
                 // Using the best practice column we just set up
                 thumbnail_url={project.thumbnail_url} 
                 lang={lang} 
-              />
+               delivery_date={project.delivery_date} // 👈 تأكد من إضافة هذا السطر
+/>
             </div>
           ))}
         </div>

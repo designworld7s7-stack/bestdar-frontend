@@ -7,11 +7,13 @@ export default function GuideHeader({ data, update }: any) {
   
   // 1. ضع تصنيفات الواجهة الأمامية هنا (لتعديلها بسهولة مستقبلاً)
   const FRONTEND_CATEGORIES = [
-    { id: 'buying-guide', en: 'Buying Guide', ar: 'دليل الشراء' },
-    { id: 'investment', en: 'Investment Insights', ar: 'رؤى استثمارية' },
-    { id: 'legal', en: 'Legal Advice', ar: 'نصائح قانونية' },
-    { id: 'neighborhoods', en: 'Neighborhoods', ar: 'دليل الأحياء' },
-  ];
+  { id: 'market-trends', en: 'Market Trends', ar: 'اتجاهات السوق' },
+  { id: 'legal-guide', en: 'Legal Guide', ar: 'الدليل القانوني' },
+  { id: 'lifestyle', en: 'Lifestyle', ar: 'أسلوب الحياة' },
+  { id: 'investment-strategy', en: 'Investment Strategy', ar: 'استراتيجية الاستثمار' },
+  { id: 'citizenship', en: 'Citizenship', ar: 'الجنسية والإقامة' },
+  { id: 'buying-tips', en: 'Buying Tips', ar: 'نصائح الشراء' },
+];
 
   // 2. دالة توليد الـ Slug التلقائي
   const handleTitleChange = (value: string) => {

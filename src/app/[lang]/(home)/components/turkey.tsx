@@ -42,7 +42,9 @@ export default function TurkeySection({ lang, projects }: TurkeySectionProps) {
                 // Mapping explicitly to the new best-practice column
                 thumbnail_url={project.thumbnail_url} 
                 lang={lang} 
-              />
+                delivery_date={project.delivery_date} // 👈 تأكد من إضافة هذا السطر
+/>
+             
             </div>
           ))}
         </div>

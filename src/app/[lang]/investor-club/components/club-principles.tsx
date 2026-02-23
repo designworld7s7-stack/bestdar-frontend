@@ -4,27 +4,19 @@ import React, { useEffect, useState } from 'react';
 import { TrendingUp, Target, BarChart3 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client'; //
 
-export default function ClubPrinciples({ lang }: { lang: string }) {
+interface ClubPrinciplesProps {
+  lang: string;
+  dynamicData?: { text?: string; image?: string };
+}
+
+export default function ClubPrinciples({ lang, dynamicData }: ClubPrinciplesProps) {
   const isAr = lang === 'ar';
-  const supabase = createClient();
   
-  // State for the dynamic image
-  const [imageUrl, setImageUrl] = useState('/club-principles.jpg'); // Fallback placeholder
-
-  useEffect(() => {
-    async function getClubImage() {
-      const { data } = await supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'investor_club')
-        .single();
-
-      if (data?.image_url) {
-        setImageUrl(data.image_url);
-      }
-    }
-    getClubImage();
-  }, [supabase]);
+  // 2. استخدام الصورة مباشرة من السيرفر (مع ترك صورتك الافتراضية كحماية)
+  const imageUrl = dynamicData?.image || '/club-principles.jpg';
+  
+  // (اختياري) يمكنك استخدام النص الديناميكي أيضاً في أي مكان في تصميمك بالأسفل
+  const sectionText = dynamicData?.text;
 
   return (
     <section className="bg-white py-20 lg:py-40">

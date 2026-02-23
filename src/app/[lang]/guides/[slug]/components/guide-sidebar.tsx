@@ -1,28 +1,59 @@
 'use client';
 
-import { Facebook, Instagram, MessageCircle } from 'lucide-react';
-import { clsx } from 'clsx';
-import React, { ReactElement } from 'react';
-import { LucideProps } from 'lucide-react'; 
+import React, { useState, useEffect, ReactElement } from 'react';
+import { Facebook, Instagram, MessageCircle, LucideProps } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 interface GuideSidebarProps {
   lang: string;
-  links?: { title: string; url: string }[]; 
+  links?: { title: string; url: string }[]; // هذه هي الروابط المفيدة (Useful Resources)
   toc?: { id: string; label: string }[]; 
   whatsappNumber?: string; 
 }
 
-export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: GuideSidebarProps) {
+export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }: GuideSidebarProps) {
   const isAr = lang === 'ar';
+  const supabase = createClient();
   
+  // قمنا بتغيير اسم الحالة إلى socialData لتجنب التعارض مع links (Useful Resources)
+  const [socialData, setSocialData] = useState<any>({});
+
+  // 1. جلب بيانات التواصل من سوبابيس
+  useEffect(() => {
+    const fetchSocialLinks = async () => {
+      const { data } = await supabase
+        .from('site_content')
+        .select('section_key, content_en')
+        .filter('section_key', 'ilike', 'contact_%');
+
+      if (data) {
+        const linksObj = data.reduce((acc: any, item: any) => {
+          acc[item.section_key] = item.content_en;
+          return acc;
+        }, {});
+        setSocialData(linksObj);
+      }
+    };
+    fetchSocialLinks();
+  }, [supabase]);
+
+  // 2. إعداد روابط المتابعة (Social Links)
   const followLinks = [
     { 
-      icon: <MessageCircle size={18} />, 
-      href: `https://wa.me/${whatsappNumber || '971XXXXXXXX'}`, 
-      label: 'WhatsApp'
+      label: "WhatsApp", 
+      icon: <MessageCircle />, 
+      href: `https://wa.me/${(socialData.contact_whatsapp || '9647759147343').replace(/\D/g, '')}` 
     },
-    { icon: <Facebook size={18} />, href: 'https://facebook.com/bestdar', label: 'Facebook' },
-    { icon: <Instagram size={18} />, href: 'https://instagram.com/bestdar', label: 'Instagram' },
+    { 
+      label: "Facebook", 
+      icon: <Facebook />, 
+      href: socialData.contact_facebook || 'https://web.facebook.com/profile.php?id=100083809742358' 
+    },
+    { 
+      label: "Instagram", 
+      icon: <Instagram />, 
+      href: socialData.contact_instagram || 'https://www.instagram.com/best_dar/' 
+    },
   ];
 
   const scrollToSection = (id: string) => {
@@ -36,7 +67,6 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
   };
 
   return (
-    // أضفنا الكلاسات هنا لعمل "كارت" بظل خفيف وخلفية بيضاء مع حواف دائرية وبادينج (p-8)
     <aside className="sticky top-32 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-50 rounded-3xl p-8 space-y-12" dir={isAr ? 'rtl' : 'ltr'}>
       
       {/* 1. TABLE OF CONTENTS */}
@@ -50,9 +80,8 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
               <li key={item.id} className="group">
                 <button 
                   onClick={() => scrollToSection(item.id)}
-                  className="text-[14px] font-semibold text-[#4B5563] hover:text-[#12AD65] transition-all duration-300 flex items-center gap-3"
+                  className="text-[14px] font-semibold text-[#4B5563] hover:text-[#12AD65] transition-all duration-300 flex items-center gap-3 w-full text-start"
                 >
-                  {/* تغيير اتجاه السهم بناءً على اللغة */}
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#12AD65]">
                     {isAr ? '←' : '→'}
                   </span>
@@ -64,14 +93,14 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
         </div>
       )}
 
-      {/* 2. DYNAMIC USEFUL RESOURCES */}
-      {links && links.length > 0 && (
+      {/* 2. USEFUL RESOURCES (الروابط القادمة من الـ Props) */}
+      {usefulLinks && usefulLinks.length > 0 && (
         <div className="pt-8 border-t border-gray-100">
           <h5 className="text-[12px] font-bold uppercase tracking-tight text-[#374151] mb-6">
             {isAr ? "روابط مفيدة" : "Useful Resources"}
           </h5>
           <ul className="space-y-4">
-            {links.map((link, i) => (
+            {usefulLinks.map((link, i) => (
               <li key={i}>
                 <a 
                   href={link.url}
@@ -85,7 +114,7 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
         </div>
       )}
 
-      {/* 3. FOLLOW US */}
+      {/* 3. FOLLOW US (الروابط القادمة من سوبابيس) */}
       <div className="pt-8 border-t border-gray-100">
         <h5 className="text-[11px] font-bold uppercase tracking-tight text-[#374151] mb-6">
           {isAr ? "تابعنا" : "Follow Best Dar"}
@@ -95,6 +124,8 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
             <a 
               key={i}
               href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="h-11 w-11 rounded-full bg-white shadow-[0_4px_15px_rgba(0,0,0,0.05)] flex items-center justify-center text-[#374151] hover:text-[#12AD65] hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               aria-label={social.label}
             >
@@ -106,7 +137,6 @@ export default function GuideSidebar({ lang, links, toc = [], whatsappNumber }: 
           ))}
         </div>
       </div>
-
     </aside>
   );
 }

@@ -1,49 +1,39 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Check } from 'lucide-react';
 import { clsx } from 'clsx';
-import { createClient } from '@/utils/supabase/client';
 
-export default function TierScene({ lang }: { lang: string }) {
+// 1. تعريف الطرود (Interfaces)
+interface TierData {
+  text?: string;
+  image?: string;
+}
+
+interface TierSceneProps {
+  lang: string;
+  dynamicTiers?: {
+    silver: TierData;
+    gold: TierData;
+    platinum: TierData;
+  };
+}
+
+export default function TierScene({ lang, dynamicTiers }: TierSceneProps) {
   const isAr = lang === 'ar';
-  const supabase = createClient();
 
-  // الحالة تشمل الصور والأسماء مع قيم افتراضية لضمان عدم توقف الموقع
-  const [tierData, setTierData] = useState({
-    silver: { img: '/avatars/silver.jpg', name: 'Ahmed Al-Mansoori' },
-    gold: { img: '/avatars/gold.jpg', name: 'Sarah J. Yassine' },
-    platinum: { img: '/avatars/platinum.jpg', name: 'Dr. Khalid Karim' }
-  });
+  // 🌟 الحل الجذري والنهائي لمشكلة التداخل (فصلنا الكلاسات تماماً ليفهمها Tailwind 100%)
+  // في الإنجليزي: الفضية تتجه لليسار (-12). في العربي: الفضية أصبحت على اليمين فيجب أن تتجه لليمين (12) لتبتعد عن المركز.
+  const silverDepthClass = isAr 
+    ? "lg:scale-[0.85] z-10 lg:translate-x-12" 
+    : "lg:scale-[0.85] z-10 lg:-translate-x-12";
 
-  useEffect(() => {
-    async function fetchTierData() {
-      // جلب الصور والأسماء (الأعمدة الجديدة) في طلب واحد
-      const { data, error } = await supabase
-        .from('site_content')
-        .select('section_key, image_url, content_en, content_ar')
-        .in('section_key', ['tier_silver', 'tier_gold', 'tier_platinum']);
+  const goldDepthClass = "lg:scale-[0.95] z-20 shadow-xl";
 
-      if (!error && data) {
-        const updated = { ...tierData };
-        data.forEach(row => {
-          // استخراج المفتاح (silver, gold, platinum) من الـ section_key
-          const key = row.section_key.replace('tier_', '') as keyof typeof tierData;
-          
-          updated[key] = {
-            // تحديث الصورة (نفس منطقك القديم)
-            img: row.image_url || updated[key].img,
-            // تحديث الاسم ديناميكياً بناءً على اللغة
-            name: isAr 
-              ? (row.content_ar || updated[key].name) 
-              : (row.content_en || updated[key].name)
-          };
-        });
-        setTierData(updated);
-      }
-    }
-    fetchTierData();
-  }, [supabase, isAr]);
+  // في الإنجليزي: البلاتينية تتجه لليمين (12). في العربي: البلاتينية أصبحت على اليسار فيجب أن تتجه لليسار (-12).
+  const platinumDepthClass = isAr 
+    ? "lg:scale-[1.1] z-30 shadow-2xl border-[3px] lg:-translate-x-12" 
+    : "lg:scale-[1.1] z-30 shadow-2xl border-[3px] lg:translate-x-12";
 
   return (
     <section className="relative bg-white py-24 lg:py-40 overflow-hidden">
@@ -64,16 +54,15 @@ export default function TierScene({ lang }: { lang: string }) {
             badge={isAr ? "مستوى الدخول" : "Entry Level"}
             requirement="200k – 499k"
             color="#C0C0C0"
-            investor={tierData.silver.name} // اسم ديناميكي من سوبابيس
-            image={tierData.silver.img}    // صورة ديناميكية من سوبابيس
+            investor="Huda Salim" 
+            image={dynamicTiers?.silver?.image || "/silver-investor.jpg"} 
             benefits={[
               isAr ? "عروض الأوف ماركت (بعد 96 ساعة)" : "Off-market offers (96h delay)",
               isAr ? "خصومات قياسية" : "Standard market discounts",
               isAr ? "رد واتساب اعتيادي" : "Standard WhatsApp respond",
               isAr ? "تقرير سوق واحد سنوياً" : "1 market report per year"
             ]}
-            depthClass="lg:scale-[0.85] lg:-translate-x-12 z-10"
-            isAr={isAr}
+depthClass={isAr ? "lg:scale-[0.85] z-10 lg:translate-x-12" : "lg:scale-[0.85] z-10 lg:-translate-x-12"}            isAr={isAr}
           />
 
           <TierCard 
@@ -81,15 +70,15 @@ export default function TierScene({ lang }: { lang: string }) {
             badge={isAr ? "مستثمر نشط" : "Active Investor"}
             requirement="500k – 999k"
             color="#D4AF37"
-            investor={tierData.gold.name} // اسم ديناميكي
-            image={tierData.gold.img}    // صورة ديناميكية
+            investor="Sarah J. Yassine"
+            image={dynamicTiers?.gold?.image || "/gold-investor.jpg"} 
             benefits={[
               isAr ? "عروض الأوف ماركت (بعد 48 ساعة)" : "Off-market offers (48h delay)",
               isAr ? "خصومات أكبر من السيلفر" : "Higher discounts than Silver",
               isAr ? "رد واتساب سريع" : "Fast WhatsApp respond",
               isAr ? "تقريرين للسوق سنوياً" : "2 market reports per year"
             ]}
-            depthClass="lg:scale-[0.95] z-20 shadow-xl"
+            depthClass={goldDepthClass}
             isAr={isAr}
           />
 
@@ -98,8 +87,8 @@ export default function TierScene({ lang }: { lang: string }) {
             badge={isAr ? "شريك استراتيجي" : "Strategic Partner"}
             requirement="1M+"
             color="#12AD65"
-            investor={tierData.platinum.name} // اسم ديناميكي
-            image={tierData.platinum.img}    // صورة ديناميكية
+            investor="Dr. Khalid Karim"
+            image={dynamicTiers?.platinum?.image || "/platinum-investor.jpg"} 
             benefits={[
               isAr ? "أول من يعلم بعروض الأوف ماركت" : "First to know off-market offers",
               isAr ? "أكبر الخصومات الحصرية" : "Biggest exclusive discounts",
@@ -107,8 +96,7 @@ export default function TierScene({ lang }: { lang: string }) {
               isAr ? "مساعدة قانونية مجانية" : "Free legal assistance",
               isAr ? "4 تقارير سوقية ربع سنوية" : "4 quarterly market reports"
             ]}
-            depthClass="lg:scale-[1.1] lg:translate-x-12 z-30 shadow-2xl border-[3px]"
-            isAr={isAr}
+depthClass={isAr ? "lg:scale-[1.1] z-30 shadow-2xl border-[3px] lg:-translate-x-12" : "lg:scale-[1.1] z-30 shadow-2xl border-[3px] lg:translate-x-12"}            isAr={isAr}
           />
 
         </div>
@@ -117,6 +105,7 @@ export default function TierScene({ lang }: { lang: string }) {
   );
 }
 
+// 2. مكون البطاقة
 function TierCard({ rank, badge, requirement, color, investor, image, benefits, depthClass, isAr }: any) {
   return (
     <div className={clsx(
@@ -144,12 +133,11 @@ function TierCard({ rank, badge, requirement, color, investor, image, benefits, 
 
       <div className="pt-8 border-t border-gray-100 flex items-center gap-4">
         <div className="h-12 w-12 rounded-full bg-gray-100 border border-gray-200 overflow-hidden">
-          {/* الحفاظ على تأثير الـ grayscale كما طلبت */}
          <img 
-  src={image} 
-  alt={investor} 
-  className="w-full h-full object-cover transition-all duration-700 grayscale group-hover:grayscale-0" 
-/>
+            src={image} 
+            alt={investor} 
+            className="w-full h-full object-cover transition-all duration-700 grayscale hover:grayscale-0" 
+          />
         </div>
         <div>
           <p className="text-[8px] font-medium uppercase tracking-tight mb-1">

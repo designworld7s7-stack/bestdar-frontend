@@ -35,28 +35,39 @@ export async function generateMetadata({ params }: any) {
 export default async function GuideDetailsPage({ params }: any) {
   const { lang, slug } = await params; 
   const supabase = await createClient();
-  
   const isAr = lang === 'ar';
 
-  // 2. Fetch the guide data
+  // 1. جلب بيانات الدليل (Guide Data)
   const { data: guide, error: guideError } = await supabase
     .from('guides')
     .select('*')
     .eq('slug', slug)
     .single();
 
-  // SAFETY CHECK
+  // التحقق من وجود الدليل
   if (guideError || !guide) {
     notFound(); 
   }
 
-  // 3. Fetch Related Guides
-  // (يمكنك لاحقاً تعديل هذا السطر ليجلب المقالات من نفس الـ country_code أو category)
-  const { data: relatedGuides } = await supabase
-    .from('guides')
-    .select('*')
-    .neq('slug', slug)
-    .limit(3);
+  // 2. تفعيل التتبع وجلب البيانات الجانبية بالتوازي
+  // قمنا بإضافة trackingResult لنعرف حالة العملية في الـ Terminal
+  const [{ data: relatedGuides }, trackingResult] = await Promise.all([
+    supabase.from('guides').select('*').neq('slug', slug).limit(3),
+    
+    // تسجيل الزيارة في جدول page_views
+    supabase.from('page_views').insert([{
+      content_id: guide.id.toString(), // تحويله لنص لضمان التوافق
+      content_type: 'guide',
+      page_path: `/${lang}/guides/${slug}`
+    }])
+  ]);
+
+  // 3. فحص نتيجة التتبع في الـ Terminal (للمراقبة فقط)
+  if (trackingResult.error) {
+    console.error("❌ GUIDE TRACKING ERROR:", trackingResult.error.message);
+  } else {
+    console.log("✅ GUIDE VIEW RECORDED:", slug);
+  }
 
   // ------------------------------------------------------------------
   // 🎯 منطق الترجمة الذكي: تجهيز المتغيرات قبل تمريرها للمكونات

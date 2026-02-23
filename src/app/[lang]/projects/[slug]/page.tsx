@@ -33,7 +33,7 @@ async function fetchStorageFiles(bucket: string, path: string) {
       supabase.storage.from(bucket).getPublicUrl(`${cleanPath}/${file.name}`).data.publicUrl
     );
 }
-
+export const revalidate = 0;
 export default async function ProjectPage({ 
   params 
 }: { 
@@ -42,16 +42,38 @@ export default async function ProjectPage({
   const { lang, slug } = await params;
   const isAr = lang === 'ar';
   
+  // 1. جلب بيانات المشروع
   const project = await getProjectWithUnits(slug);
   if (!project) return notFound();
 
+  console.log("🚀 DEBUG: Component is running for slug:", slug);
+
+  // 2. إعداد المسارات
   const galleryPath = project.image_url || slug;
   const floorPath = project.floor_plan_urls || `${slug}-floorplans`;
 
-  const [galleryImages, floorPlans] = await Promise.all([
+  const supabase = await createClient();
+
+  // 3. تشغيل كل شيء بالتوازي (بما في ذلك التتبع)
+  // وضعنا التتبع هنا مرة واحدة فقط ليكون الكود أنظف
+  const [galleryImages, floorPlans, trackingResult] = await Promise.all([
     fetchStorageFiles('project-images', galleryPath),
-    fetchStorageFiles('project-images', floorPath)
+    fetchStorageFiles('project-images', floorPath),
+    
+    // عملية التتبع
+    supabase.from('page_views').insert([{
+      content_id: project.id,
+      content_type: 'project',
+      page_path: `/${lang}/projects/${slug}`
+    }])
   ]);
+
+  // 4. فحص نتيجة التتبع (هذا سيظهر في Terminal الـ VS Code حتماً)
+  if (trackingResult.error) {
+    console.error("❌ TRACKING ERROR:", trackingResult.error.message);
+  } else {
+    console.log("✅ VIEW RECORDED FOR:", slug);
+  }
 
   const similarProjects = await getSimilarProjects(project.country_code, slug);
 

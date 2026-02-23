@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, Mail, Phone, MessageSquare, Landmark, Wallet, ChevronDown, CheckCircle2 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { createClient } from '@/utils/supabase/client'; //
+import { createClient } from '@/utils/supabase/client';
 
-// --- Custom Dropdown Component ---
+// --- Custom Dropdown Component (No changes here) ---
 function CustomSelect({ label, options, icon: Icon, onSelect, value, isAr }: any) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -42,12 +42,23 @@ function CustomSelect({ label, options, icon: Icon, onSelect, value, isAr }: any
   );
 }
 
-export default function LeadForm({ lang }: { lang: string }) {
+// 1. أضفنا dynamicData للواجهة
+interface LeadFormProps {
+  lang: string;
+  dynamicData?: { text?: string; image?: string };
+}
+
+export default function LeadForm({ lang, dynamicData }: LeadFormProps) {
   const isAr = lang === 'ar';
   const supabase = createClient();
 
-  // --- Dynamic Photo State ---
-  const [bgImage, setBgImage] = useState('/lead-bg.jpg'); // Fallback
+  // 2. استخدام البيانات الديناميكية أو القيم الافتراضية
+  const bgImage = dynamicData?.image || '/lead-bg.jpg';
+  const brandingText = dynamicData?.text || (isAr 
+    ? "\"نحن لا نجد العقارات فحسب، بل نصنع موروثات استثمارية.\"" 
+    : "\"We don't just find properties. We craft investment legacies.\"");
+
+  // --- Form States ---
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,18 +70,7 @@ export default function LeadForm({ lang }: { lang: string }) {
     message: ''
   });
 
-  // Fetch Background Photo
-  useEffect(() => {
-    async function fetchBrandingPhoto() {
-      const { data } = await supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'lead_form_side')
-        .single();
-      if (data?.image_url) setBgImage(data.image_url);
-    }
-    fetchBrandingPhoto();
-  }, [supabase]);
+  // تم حذف الـ useEffect الذي كان يجلب الصورة لأن البيانات تأتي الآن من السيرفر مباشرة
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,32 +97,35 @@ export default function LeadForm({ lang }: { lang: string }) {
 
   return (
     <section className="flex flex-col lg:flex-row min-h-[850px] bg-white overflow-hidden">
+      
       {/* Left Branding Side: Dynamic Photo */}
       <div className="relative w-full lg:w-1/2 bg-black flex flex-col justify-end p-12 lg:p-20 overflow-hidden">
         <div className="absolute inset-0 opacity-40 grayscale">
+          {/* 3. استخدام الصورة الديناميكية */}
           <img src={bgImage} alt="Boutique Interior" className="h-full w-full object-cover transition-opacity duration-1000" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
         
         <div className="relative z-10">
-          <p className="text-3xl lg:text-4xl font-medium text-white leading-tight italic tracking-[0.1em]">
-            {isAr ? "\"نحن لا نجد العقارات فحسب، بل نصنع موروثات استثمارية.\"" : "\"We don't just find properties. We craft investment legacies.\""}
+          {/* 4. استخدام النص الديناميكي مع دعم الأسطر المتعددة */}
+          <p className="text-3xl lg:text-4xl font-medium text-white leading-tight italic tracking-[0.1em] whitespace-pre-line">
+            {brandingText}
           </p>
           <div className="h-2 w-20 bg-[#12AD65] mt-8" />
         </div>
       </div>
 
-      {/* Form Side */}
+      {/* Form Side (No changes needed here) */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-16 bg-[#F9FAFB]">
         <div className="w-full max-w-xl bg-white rounded-[48px] p-8 lg:p-14 shadow-[0_40px_100px_rgba(0,0,0,0.04)]">
           
           <div className="mb-8 md:mb-12">
-  <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-brand-black tracking-normal sm:tracking-[0.1em] leading-tight break-words">
-    {success 
-      ? (isAr ? "شكراً لك!" : "Thank You!") 
-      : (isAr ? "احصل على استشارة" : "Get Personal Assistance")
-    }
-  </h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-brand-black tracking-normal sm:tracking-[0.1em] leading-tight break-words">
+              {success 
+                ? (isAr ? "شكراً لك!" : "Thank You!") 
+                : (isAr ? "احصل على استشارة" : "Get Personal Assistance")
+              }
+            </h2>
             <p className="text-[#4B5563] mt-3 font-medium text-sm lg:text-base">
                {success 
                 ? (isAr ? "سنتواصل معك في أقرب وقت ممكن." : "Our team will reach out to you shortly.")

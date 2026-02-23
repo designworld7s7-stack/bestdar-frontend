@@ -1,29 +1,19 @@
-'use client';
+import React from 'react';
 
-import React, { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
+// 🌟 1. إضافة الـ Interface لتعريف البيانات القادمة من السيرفر
+interface OurStoryProps {
+  lang: string;
+  dynamicData?: { text?: string; image?: string };
+}
 
-export default function OurStory({ lang }: { lang: string }) {
+export default function OurStory({ lang, dynamicData }: OurStoryProps) {
   const isAr = lang === 'ar';
-  const supabase = createClient();
 
-  // الحالة الخاصة بالصورة الديناميكية مع صورة احتياطية افتراضية
-  const [imageUrl, setImageUrl] = useState('/about/skyscraper-view.jpg');
+  // 🌟 2. استخدام الصورة الديناميكية فوراً (مع إبقاء صورتك كاحتياطي)
+  const imageUrl = dynamicData?.image || '/about/skyscraper-view.jpg';
 
-  useEffect(() => {
-    async function getStoryImage() {
-      const { data } = await supabase
-        .from('site_content')
-        .select('image_url')
-        .eq('section_key', 'our_story')
-        .single();
-
-      if (data?.image_url) {
-        setImageUrl(data.image_url);
-      }
-    }
-    getStoryImage();
-  }, [supabase]);
+  // 🌟 3. استخراج النص الديناميكي
+  const storyText = dynamicData?.text;
 
   return (
     <section className="bg-[#F8F9FA] py-24 lg:py-40">
@@ -42,20 +32,28 @@ export default function OurStory({ lang }: { lang: string }) {
               </div>
 
               <div className="space-y-6">
-                <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed">
-                  {isAr 
-                    ? "تأسست بيست دار برؤية واضحة لسد الفجوة بين المستثمرين العراقيين والأسواق العقارية الدولية، حيث بدأنا رحلتنا للقضاء على حالة عدم اليقين المرتبطة غالباً بالاستثمارات العابرة للحدود."
-                    : "Founded with a clear vision to bridge the gap between Iraqi investors and international real estate markets, we started our journey to eliminate the uncertainty often associated with cross-border investments."}
-                </p>
-
-                <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed">
-                  {isAr 
-                    ? "لقد أدركنا أن العديد من المشترين واجهوا معلومات مضللة ونقصاً في الشفافية. أصبحت مهمتنا بسيطة: توفير مسار آمن ومعتمد ومهني للمستثمرين لبناء الثروة في تركيا والإمارات."
-                    : "We recognized that many buyers faced misinformation and lack of transparency. Our mission became simple: to provide a safe, verified, and professional pathway for investors to build wealth in Turkey and the UAE."}
-                </p>
+                {/* 🌟 4. إذا كان هناك نص من لوحة التحكم، نعرضه (مع دعم الأسطر)، وإلا نعرض النص الأصلي */}
+                {storyText ? (
+                  <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed whitespace-pre-line">
+                    {storyText}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed">
+                      {isAr 
+                        ? "تأسست بيست دار برؤية واضحة لسد الفجوة بين المستثمرين العراقيين والأسواق العقارية الدولية، حيث بدأنا رحلتنا للقضاء على حالة عدم اليقين المرتبطة غالباً بالاستثمارات العابرة للحدود."
+                        : "Founded with a clear vision to bridge the gap between Iraqi investors and international real estate markets, we started our journey to eliminate the uncertainty often associated with cross-border investments."}
+                    </p>
+                    <p className="text-gray-500 text-sm lg:text-lg font-medium leading-relaxed">
+                      {isAr 
+                        ? "لقد أدركنا أن العديد من المشترين واجهوا معلومات مضللة ونقصاً في الشفافية. أصبحت مهمتنا بسيطة: توفير مسار آمن ومعتمد ومهني للمستثمرين لبناء الثروة في تركيا والإمارات."
+                        : "We recognized that many buyers faced misinformation and lack of transparency. Our mission became simple: to provide a safe, verified, and professional pathway for investors to build wealth in Turkey and the UAE."}
+                    </p>
+                  </>
+                )}
               </div>
 
-              {/* اقتباس مميز */}
+              {/* اقتباس مميز (تركناه ثابتاً ليحافظ على جمالية التصميم بغض النظر عن النص الديناميكي) */}
               <div className="pl-6 border-l-4 border-[#12AD65] italic py-2">
                 <p className="text-black text-base lg:text-xl font-bold leading-relaxed">
                   {isAr 
@@ -66,7 +64,7 @@ export default function OurStory({ lang }: { lang: string }) {
             </div>
           </div>
 
-          {/* الصورة المعمارية - أصبحت ديناميكية الآن */}
+          {/* الصورة المعمارية - أصبحت ديناميكية وتأتي من السيرفر فوراً */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
             <div className="relative aspect-square lg:aspect-[4/5] rounded-[40px] overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.06)]">
               <img 
