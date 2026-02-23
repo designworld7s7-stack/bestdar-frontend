@@ -15,48 +15,58 @@ export async function middleware(req: NextRequest) {
         getAll: () => req.cookies.getAll(),
         setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
-            req.cookies.set(name, value);
-           res.cookies.set(name, value, {
-  ...options,
-  path: '/',
-  secure: true,
-  sameSite: 'lax',
-  // Adding the dot before the domain makes it work for both www and non-www
-});
+            res.cookies.set(name, value, { ...options, path: '/', secure: true, sameSite: 'lax' });
           });
         },
       },
     }
   );
 
-  // تحديث الجلسة فوراً لاستبدال الـ code-verifier بجلسة حقيقية
-  await supabase.auth.getUser();
-
+  // 1. استرجاع المستخدم (ضروري للأمان)
+  const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = req.nextUrl;
-  const locales = ['en', 'ar'];
-  const pathnameIsMissingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  );
 
-  if (pathnameIsMissingLocale) {
-    const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
-    const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
-    
-    // نقل الكوكيز يدوياً للاستجابة الجديدة لضمان عدم ضياع الجلسة
-    res.cookies.getAll().forEach((cookie) => {
-      redirectRes.cookies.set(cookie.name, cookie.value, { 
-        path: '/', 
-        secure: true, 
-        sameSite: 'lax' 
+  // --- [الجزء الأول: حماية صفحة الأدمن] ---
+  
+  // إذا حاول دخول الأدمن وهو غير مسجل دخول
+  if (pathname.startsWith('/admin') && !user) {
+    return NextResponse.redirect(new URL('/login', req.url));
+  }
+
+  // إذا كان مسجلاً للدخول وحاول دخول صفحة الـ Login مرة أخرى، أعده للأدمن
+  if (pathname === '/login' && user) {
+    return NextResponse.redirect(new URL('/admin', req.url));
+  }
+
+  // --- [الجزء الثاني: نظام اللغات (Locale Routing)] ---
+
+  // نستثني روابط الأدمن والـ Login من إضافة /en/ أو /ar/ تلقائياً لتبقى نظيفة
+  const isAuthRoute = pathname.startsWith('/admin') || pathname.startsWith('/login');
+  
+  if (!isAuthRoute) {
+    const locales = ['en', 'ar'];
+    const pathnameIsMissingLocale = locales.every(
+      (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    );
+
+    if (pathnameIsMissingLocale) {
+      const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
+      const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
+      
+      // مزامنة الكوكيز لضمان بقاء الجلسة
+      res.cookies.getAll().forEach((cookie) => {
+        redirectRes.cookies.set(cookie.name, cookie.value, { 
+          path: '/', secure: true, sameSite: 'lax' 
+        });
       });
-    });
-    return redirectRes;
+      return redirectRes;
+    }
   }
 
   return res;
 }
 
 export const config = {
-  // أضفنا "login" بجانب "admin" في قائمة الاستثناءات
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|api|auth|admin|login|.*\\..*).*)'],
+  // التعديل الجوهري: أزلنا admin و login من الاستثناءات لكي يراقبهم الـ Middleware
+  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico|.*\\..*).*)'],
 }
