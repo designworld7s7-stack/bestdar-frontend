@@ -1,7 +1,7 @@
 import ProjectsClient from './components/ProjectsClient';
 import { createClient } from '@/utils/supabase/server';
 // استيراد الدستور لضمان توحيد المسارات بين الرفع والعرض
-import { MEDIA_CONFIG } from './components/ProjectMedia'; 
+import { MEDIA_CONFIG } from "@/lib/api"; // أو المسار النسبي: "../../../lib/api"
 
 const getGalleryFolder = (slug: string) => 
   slug?.trim().toLowerCase().replace(/-+$/, '') || '';

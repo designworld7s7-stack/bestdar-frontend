@@ -4,16 +4,9 @@ import React, { useState } from 'react';
 import { ImageIcon, Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { Section, Input } from '../../components/UI';
-
+import { MEDIA_CONFIG } from '@/lib/api';
 // 1. التعديل الجوهري: تحويل الوجهة إلى الباكت الذي أثبت نجاحه
-export const MEDIA_CONFIG = {
-  bucket: 'project-images', // غيرنا الاسم من 'media' ليتطابق مع المجلد الذي يعمل عندك
-  getGalleryFolder: (slug: string) => slug?.trim().toLowerCase().replace(/-+$/, '') || '',
-  getFloorFolder: (slug: string) => {
-    const cleanSlug = slug?.trim().toLowerCase().replace(/-+$/, '') || '';
-    return cleanSlug ? `${cleanSlug}-floorplans` : '';
-  },
-};
+
 
 interface ProjectMediaProps {
   formData: any;
