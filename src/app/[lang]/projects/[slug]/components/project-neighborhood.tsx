@@ -140,20 +140,23 @@ useEffect(() => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {safeLandmarks?.map((item: any, idx: number) => (
-              <div key={idx} className="group bg-white p-6 rounded-[32px] flex items-center gap-5 shadow-[0_15px_40px_rgba(0,0,0,0.02)] border border-gray-50 transition-all hover:bg-[#12AD65] hover:border-[#12AD65]">
-                <div className="text-[#12AD65] bg-[#12AD65]/5 p-4 rounded-2xl group-hover:bg-white/20 group-hover:text-white transition-colors shrink-0">
-                  {getIcon(item.type)}
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-white/70 transition-colors">
-                    {item.name}
-                  </p>
-                  <p className="text-lg font-black text-black group-hover:text-white transition-colors">{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+  {safeLandmarks?.map((item: any, idx: number) => (
+    <div key={idx} className="group bg-white p-6 rounded-[32px] flex items-center gap-5 shadow-[0_15px_40px_rgba(0,0,0,0.02)] border border-gray-50 transition-all hover:bg-[#12AD65] hover:border-[#12AD65]">
+      <div className="text-[#12AD65] bg-[#12AD65]/5 p-4 rounded-2xl group-hover:bg-white/20 group-hover:text-white transition-colors shrink-0">
+        {getIcon(item.type)}
+      </div>
+      <div>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest group-hover:text-white/70 transition-colors">
+          {item.name}
+        </p>
+        {/* التعديل هنا: سيعرض القيمة المدخلة في سوبابيس سواء كانت "10 MIN" أو "5 KM" */}
+        <p className="text-xl font-black text-black group-hover:text-white transition-colors uppercase">
+          {item.time} 
+        </p>
+      </div>
+    </div>
+  ))}
+</div>
         </div>
 
         {/* جانب الخريطة */}
