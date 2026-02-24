@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // استيراد المحسن الذكي للصور
 import { useModals } from "@/context/modal-context";
 
-// 1. Add dynamicData to the props interface
 interface HeroProps {
   lang: string;
   dynamicData?: { text?: string; image?: string };
@@ -14,10 +14,8 @@ export default function Hero({ lang, dynamicData }: HeroProps) {
   const isAr = lang === 'ar';
   const { openConsultation } = useModals();
 
-  // 2. Use dynamic data with your original fallbacks
   const heroImage = dynamicData?.image || '/hero-bg.jpg';
   
-  // 3. Set the dynamic title (Fallback to your original text if DB is empty)
   const heroTitle = dynamicData?.text || (isAr 
     ? "اشتري عقارات في تركيا والإمارات بكل ثقة وشفافية" 
     : "Buy Real Estate in Turkey & UAE With Trust, Transparency, and Expertise");
@@ -26,31 +24,31 @@ export default function Hero({ lang, dynamicData }: HeroProps) {
     <section className="relative w-full min-h-[80vh] flex items-center lg:min-h-screen overflow-hidden">
       
       {/* Background Image Container */}
-      <div className="absolute inset-0 bg-black"> {/* Black base ensures white text is always visible */}
+      <div className="absolute inset-0 bg-black z-0"> 
         
-        {/* The Image: Removed 'hidden lg:block' so it shows on mobile too */}
-        <img 
-          key={heroImage}
+        {/* المكون الذكي للصور - تم استبدال img بـ Image */}
+        <Image 
           src={heroImage} 
           alt="Luxury Cityscape" 
-          className="absolute inset-0 h-full w-full object-cover brightness-[0.45] transition-opacity duration-1000" 
-          fetchPriority="high"
+          fill // يملأ كامل مساحة السيكشن
+          priority // خاصية "الأولوية القصوى" لضمان أسرع تحميل ممكن للصورة الرئيسية
+          quality={90} // نرفع الجودة قليلاً هنا للحفاظ على هيبة الفخامة
+          className="object-cover brightness-[0.45] transition-opacity duration-1000" 
+          sizes="100vw" // تأخذ كامل عرض الشاشة دائماً
         />
         
-        {/* The Signature Gradient Overlay - Now visible on all screens for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        {/* التدرج اللوني فوق الصورة */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-6 pt-32 pb-20 lg:px-12 lg:pt-0">
+      <div className="relative z-20 mx-auto w-full max-w-[1440px] px-6 pt-32 pb-20 lg:px-12 lg:pt-0">
         <div className="flex w-full flex-col items-center text-center lg:items-start lg:text-start lg:max-w-3xl">
           
-          {/* 4. Inject the dynamic title here. Added whitespace-pre-line so "Enter" keys in your dashboard text area work beautifully */}
           <h1 className="text-[36px] lg:text-[72px] font-medium leading-[1.1] text-white uppercase tracking-[0.05em] whitespace-pre-line">
             {heroTitle}
           </h1>
 
-          {/* Changed text-gray-600 to text-white/80 for mobile */}
           <p className="mt-8 text-base lg:text-lg font-medium text-white/80 max-w-xl">
             {isAr 
               ? "نساعد المشترين العراقيين على الاستثمار بأمان وثقة." 
@@ -60,7 +58,7 @@ export default function Hero({ lang, dynamicData }: HeroProps) {
           <div className="mt-12 flex w-full flex-col gap-4 sm:flex-row lg:justify-start">
             <Link 
               href={`/${lang}/all-properties`}
-              className="btn-brand px-10 text-center"
+              className="btn-brand px-10 text-center flex items-center justify-center"
             >
               {isAr ? "استكشف العقارات" : "Explore Properties"}
             </Link>

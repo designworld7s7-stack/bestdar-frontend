@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image'; // استيراد المكون الذكي
 import SocialActions from '@/components/shared/social-actions';
 
 interface GalleryProps {
   lang: string;
   projectTitle: string;
-  // قمنا بتغييرها من image_url إلى images لتستقبل المصفوفة الجاهزة من السيرفر
   images: string[]; 
   projectId: string;
 }
@@ -14,21 +14,19 @@ interface GalleryProps {
 export default function ProjectGallery({ lang, projectTitle, images, projectId }: GalleryProps) {
   const [activeIdx, setActiveIdx] = useState(0);
 
-  // إذا لم تكن هناك صور، لا نعرض شيئاً (يمنع ظهور مساحات فارغة)
   if (!images || images.length === 0) return null;
 
   return (
     <section className="w-full max-w-[1440px] mx-auto lg:px-12">
-      {/* الصورة الرئيسية الكبيرة */}
-      <div className="relative aspect-[4/3] lg:aspect-[21/9] w-full overflow-hidden lg:rounded-[40px] bg-gray-100 shadow-2xl">
-        <img 
-          // الصور الآن روابط مباشرة تنتهي بـ .jpg أو .webp قادمة من السيرفر
+      {/* الصورة الرئيسية الكبيرة - تم استخدام fill لضمان التغطية الكاملة */}
+      <div className="relative aspect-[4/3] lg:aspect-[21/9] w-full overflow-hidden lg:rounded-[40px] bg-neutral-900 shadow-2xl">
+        <Image 
           src={images[activeIdx]} 
-          crossOrigin="anonymous" 
           alt={projectTitle}
-          className="w-full h-full object-cover transition-opacity duration-500"
-          // في حال فشل تحميل صورة معينة، نتجنب كسر الواجهة
-          onError={(e) => (e.currentTarget.style.display = 'none')} 
+          fill // يجعل الصورة تملأ الحاوية الأب (التي تملك relative)
+          priority // يخبر Next.js أن هذه الصورة أهم صورة في الصفحة ليحملها فوراً
+          className="object-cover transition-opacity duration-500"
+          sizes="(max-width: 1440px) 100vw, 1440px" // يساعد المتصفح في اختيار الحجم المناسب
         />
         
         <div className="absolute top-6 right-6 lg:top-10 lg:right-10 z-20">
@@ -48,11 +46,12 @@ export default function ProjectGallery({ lang, projectTitle, images, projectId }
                 : 'border-transparent opacity-40 grayscale hover:opacity-100 hover:grayscale-0'
             }`}
           >
-            <img 
+            <Image 
               src={img}
-              crossOrigin="anonymous" 
-              className="w-full h-full object-cover" 
-              alt={`Thumb ${idx}`} 
+              alt={`Thumbnail ${idx}`} 
+              fill
+              sizes="(max-width: 1024px) 112px, 192px" // مقاسات الصور المصغرة بدقة
+              className="object-cover" 
             />
           </button>
         ))}

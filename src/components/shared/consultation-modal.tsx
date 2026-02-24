@@ -129,55 +129,93 @@ const dateMap: Record<string, string> = {
             </div>
           </div>
 
-          {/* STEP 1: DATE & TIME */}
-          {step === 1 && (
-            <div className="flex-1 flex flex-col animate-in fade-in duration-500">
-              <div className="flex flex-col lg:flex-row gap-8 flex-1">
-                <div className="flex-1">
-                  <label className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563] block mb-4">Select Date</label>
-                  <div className="space-y-2">
-                    {['Friday, Dec 12', 'Saturday, Dec 13', 'Sunday, Dec 14', 'Monday, Dec 15'].map((date) => (
-                      <button 
-                        key={date}
-                        onClick={() => setSelectedDate(date)}
-                        className={clsx(
-                          "w-full text-left p-4 rounded-2xl text-xs font-medium transition-all border-0",
-                          selectedDate === date ? "btn-brand shadow-lg shadow-[#12AD65]/20" : "bg-gray-50 text-gray-500 hover:bg-gray-100"
-                        )}
-                      >{date}</button>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <label className="text-[12px] font-medium uppercase tracking-tighter text-[#4B5563] block mb-4">Select Time</label>
-                  {selectedDate ? (
-                    <div className="grid grid-cols-2 gap-3">
-                      {['10:00 AM', '11:30 AM', '2:00 PM', '4:30 PM', '5:00 PM', '6:30 PM'].map((time) => (
-                        <button 
-                          key={time}
-                          onClick={() => setSelectedTime(time)}
-                          className={clsx(
-                            "py-4 rounded-2xl text-[12px] font-medium transition-all border-0 shadow-sm",
-                            selectedTime === time ? "btn-brand" : "bg-gray-50 text-[#4B5563]"
-                          )}
-                        >{time}</button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="h-full bg-gray-50/50 rounded-3xl flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-gray-100">
-                       <Calendar className="text-gray-200 mb-2" size={32} />
-                       <p className="text-[12px] font-medium text-[#6B7280] uppercase leading-relaxed">Choose date first</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+      {/* STEP 1: DATE & TIME */}
+{step === 1 && (
+  <div className="flex-1 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-8 flex-1">
+      
+      {/* 📅 SECTION: SELECT DATE (Horizontal Scroll/Grid) */}
+      <div className="w-full">
+        <label className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF] block mb-5">
+          {isAr ? "اختر اليوم" : "Select Date"}
+        </label>
+        
+        {/* شبكة الأيام: 4 أعمدة في الموبايل و 7 في الديسكتوب لتغطية الأسبوع */}
+        <div className="grid grid-cols-4 lg:grid-cols-7 gap-3">
+          {[
+            { d: 'Fri', n: '12' }, { d: 'Sat', n: '13' }, { d: 'Sun', n: '14' },
+            { d: 'Mon', n: '15' }, { d: 'Tue', n: '16' }, { d: 'Wed', n: '17' }, { d: 'Thu', n: '18' }
+          ].map((item) => {
+            const dateString = `${item.d}, Dec ${item.n}`;
+            return (
               <button 
-                disabled={!selectedTime}
-                onClick={() => setStep(2)}
-                className="w-full btn-brand py-5 rounded-2xl font-medium text-[11px] uppercase tracking-tighter mt-8 disabled:opacity-20 transition-all"
-              >Continue</button>
-            </div>
-          )}
+                key={dateString}
+                onClick={() => setSelectedDate(dateString)}
+                className={clsx(
+                  "flex flex-col items-center justify-center p-4 rounded-[20px] transition-all duration-300 border",
+                  selectedDate === dateString 
+                    ? "bg-[#12AD65] border-[#12AD65] shadow-lg shadow-[#12AD65]/30 scale-105" 
+                    : "bg-white border-gray-100 hover:border-[#12AD65]/30 hover:bg-gray-50"
+                )}
+              >
+                <span className={clsx("text-[10px] uppercase font-bold mb-1", selectedDate === dateString ? "text-white/70" : "text-gray-400")}>
+                  {item.d}
+                </span>
+                <span className={clsx("text-lg font-black", selectedDate === dateString ? "text-white" : "text-black")}>
+                  {item.n}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ⏰ SECTION: SELECT TIME (Grouped Grid) */}
+      <div className="w-full">
+        <label className="text-[11px] font-bold uppercase tracking-widest text-[#9CA3AF] block mb-5">
+          {isAr ? "الوقت المتاح" : "Available Slots"}
+        </label>
+        
+        {selectedDate ? (
+          <div className="grid grid-cols-3 lg:grid-cols-4 gap-3">
+            {['10:00 AM', '11:00 AM', '12:00 PM', '1:30 PM', '2:00 PM', '3:30 PM', '4:00 PM', '5:30 PM', '6:00 PM', '7:30 PM', '8:00 PM', '9:30 PM'].map((time) => (
+              <button 
+                key={time}
+                onClick={() => setSelectedTime(time)}
+                className={clsx(
+                  "py-4 rounded-2xl text-[11px] font-extrabold transition-all border transition-all duration-300",
+                  selectedTime === time 
+                    ? "bg-black text-white border-black shadow-xl" 
+                    : "bg-gray-50 text-gray-600 border-transparent hover:bg-gray-100"
+                )}
+              >
+                {time}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="h-40 bg-gray-50/50 rounded-[32px] flex flex-col items-center justify-center p-8 text-center border-2 border-dashed border-gray-100">
+             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-3">
+                <Calendar className="text-[#12AD65]" size={20} />
+             </div>
+             <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+               {isAr ? "الرجاء اختيار اليوم أولاً" : "Pick a date to see times"}
+             </p>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* ACTION BUTTON */}
+    <button 
+      disabled={!selectedTime}
+      onClick={() => setStep(2)}
+      className="w-full bg-[#12AD65] text-white py-5 rounded-[24px] font-black text-[12px] uppercase tracking-[0.2em] mt-10 disabled:opacity-20 disabled:grayscale transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-[#12AD65]/20"
+    >
+      {isAr ? "متابعة" : "Continue"}
+    </button>
+  </div>
+)}
 
           {/* STEP 2: YOUR DETAILS */}
           {step === 2 && (
