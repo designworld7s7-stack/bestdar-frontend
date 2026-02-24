@@ -1,15 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    // تفعيل صيغ الصور الحديثة لسرعة أكبر
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'your-supabase-project-id.supabase.co', // استبدل هذا بالمعرف الخاص بك
+        // هذا هو النطاق الذي تسبب في الخطأ
+        hostname: 'kvpjixibtnxmocwnldwe.supabase.co',
+        port: '',
         pathname: '/storage/v1/object/public/**',
       },
     ],
   },
-  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
