@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 import { ImageIcon, Loader2 } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 import { Section, Input } from '../../components/UI';
-import { MEDIA_CONFIG } from '@/lib/api';
-// 1. التعديل الجوهري: تحويل الوجهة إلى الباكت الذي أثبت نجاحه
+import { MEDIA_CONFIG } from "@/constants/media";// 1. التعديل الجوهري: تحويل الوجهة إلى الباكت الذي أثبت نجاحه
 
 
 interface ProjectMediaProps {

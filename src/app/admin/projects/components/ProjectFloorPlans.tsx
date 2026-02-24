@@ -5,7 +5,7 @@ import { LayoutGrid, Plus, Loader2 } from 'lucide-react';
 import { Section, Input } from '../../components/UI';
 import { createClient } from '@/utils/supabase/client';
 // استيراد الدستور لضمان توحيد المسارات
-import { MEDIA_CONFIG } from './ProjectMedia'; 
+import { MEDIA_CONFIG } from "@/constants/media"; // تأكد من المسار الجديد
 
 interface ProjectFloorPlansProps {
   formData: any;
