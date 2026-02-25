@@ -37,12 +37,14 @@ export default function UaeSection({ lang, projects }: UaeSectionProps) {
         <div className="flex lg:grid lg:grid-cols-3 gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar lg:overflow-visible lg:pb-0">
           {projects?.map((project) => (
             <div key={project.id} className="min-w-[85%] sm:min-w-[45%] lg:min-w-full snap-center">
-              <ProjectCardHome 
-                {...project} 
-                // Using the best practice column we just set up
-                thumbnail_url={project.thumbnail_url} 
-                lang={lang} 
-               delivery_date={project.delivery_date} // 👈 تأكد من إضافة هذا السطر
+             <ProjectCardHome 
+  {...project} 
+  // المزامنة مع الأعمدة الصحيحة في Supabase [cite: 2026-02-25]
+  title={project.title}
+  title_ar={project.title_ar} // 👈 هذا هو السطر السحري الذي أضفناه للترجمة [cite: 2026-02-25]
+  thumbnail_url={project.thumbnail_url} 
+  lang={lang} 
+  delivery_date={project.delivery_date} 
 />
             </div>
           ))}
