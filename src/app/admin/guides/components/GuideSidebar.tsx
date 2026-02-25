@@ -12,7 +12,8 @@ export default function GuideSidebar({ data, update }: any) {
 
   // --- دالة الإضافة الذكية (تضيف للغتين بضغطة واحدة) ---
  const handleQuickAddProject = (project: { title: string; title_ar: string; slug: string }) => {
-  const projectUrl = `/projects/${project.slug}`; // ✅ نستخدم الـ slug هنا بدلاً من الـ URL اليدوي
+  // ✅ بناء الرابط باستخدام الـ slug الحقيقي من سوبابيس
+  const projectUrl = `/projects/${project.slug}`; 
 
   // إضافة للمقالات الإنجليزية
   update('sidebar_links', [...enLinks, { title: project.title, url: projectUrl }]);
