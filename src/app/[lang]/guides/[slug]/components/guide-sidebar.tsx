@@ -95,21 +95,24 @@ export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }
 
       {/* 2. USEFUL RESOURCES (النسخة المحدثة والذكية) */}
 {usefulLinks.map((link, i) => {
-  // 1. تنظيف الرابط من أي أخطاء undefined سابقة
-  const cleanPath = link.url?.replace('undefined', '');
-  
-  // 2. إضافة كود اللغة (ar أو en) لضمان المسار الصحيح
-  const finalUrl = cleanPath?.startsWith('/') ? `/${lang}${cleanPath}` : cleanPath;
+  // 🛠️ تنظيف الرابط وتصحيحه تلقائياً
+  const rawUrl = link.url || '';
+  const cleanUrl = rawUrl.replace('undefined', '');
+  const finalUrl = cleanUrl.startsWith('/') ? `/${lang}${cleanUrl}` : cleanUrl;
+
+  // 🛠️ اختيار العنوان الصحيح للظهور
+  const displayTitle = link.title || (isAr ? "عرض المشروع" : "View Project");
+
+  if (!cleanUrl || cleanUrl === `/${lang}/projects/`) return null;
 
   return (
     <li key={i}>
       <a 
         href={finalUrl}
-        className="text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] transition-colors flex items-center justify-between group"
+        className="flex items-center justify-between text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] group"
       >
-        {/* إظهار العنوان المخزن أو نص افتراضي */}
-        <span>{link.title || (isAr ? "عرض المشروع" : "View Project")}</span>
-        <span className="transition-transform group-hover:translate-x-1">
+        <span>{displayTitle}</span>
+        <span className="group-hover:translate-x-1 transition-transform">
           {isAr ? '←' : '→'}
         </span>
       </a>
