@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ShieldCheck } from 'lucide-react';
+import { MessageSquareQuote } from 'lucide-react';
 // import ExpertAction from './expert-action';
 
 // 1. أضفنا callout إلى الواجهة (Interface) ليتعرف عليها TypeScript
@@ -20,10 +21,11 @@ export default function GuideContent({ lang, content, callout }: GuideContentPro
       
       {/* 1. المحتوى الديناميكي الرئيسي */}
       <section 
-        className="prose prose-lg max-w-none 
-        prose-headings:text-black prose-headings:font-medium prose-headings:uppercase prose-headings:tracking-widest
-        prose-p:text-gray-500 prose-p:leading-relaxed
-        prose-li:text-gray-600 prose-strong:text-black"
+       className={`prose prose-lg max-w-none 
+  prose-headings:text-black prose-headings:font-bold prose-headings:tracking-tight
+  prose-p:text-gray-600 prose-p:leading-relaxed
+  prose-li:text-gray-600 prose-strong:text-black
+  ${isAr ? 'prose-rtl text-right' : 'text-left'}`}
       >
         {content ? (
           <div dangerouslySetInnerHTML={{ __html: content }} />

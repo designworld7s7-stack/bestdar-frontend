@@ -4,7 +4,7 @@ import React from 'react';
 
 interface GuideIntroProps {
   lang: string;
-  intro?: string; // Data fetched from the 'intro_text' column
+  intro?: string; // البيانات القادمة من حقل 'intro_text'
 }
 
 export default function GuideIntro({ lang, intro }: GuideIntroProps) {
@@ -13,22 +13,33 @@ export default function GuideIntro({ lang, intro }: GuideIntroProps) {
   return (
     <section className="py-12 lg:py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="max-w-4xl">
-        {/* 1. Section Title */}
-        <h2 className="text-3xl lg:text-5xl font-medium text-black mb-8 tracking-[0.1em] uppercase">
+        {/* 1. عنوان القسم - ثابت */}
+        <h2 className={`text-3xl lg:text-5xl font-medium text-black mb-8 tracking-[0.1em] uppercase ${isAr ? 'font-arabic' : 'font-sans'}`}>
           {isAr ? "المقدمة" : "Introduction"}
         </h2>
 
-        {/* 2. Dynamic Intro Text */}
+        {/* 2. النص الديناميكي للمقدمة مع دعم التنسيق (HTML) */}
         <div className="space-y-6">
-          <p className="text-lg lg:text-2xl text-gray-500 leading-relaxed font-medium">
-            {intro || (isAr 
-              ? "استكشف أساسيات سوق العقارات من خلال هذا الدليل الشامل." 
-              : "Explore the essentials of the property market through this comprehensive guide.")
-            }
-          </p>
+          {intro ? (
+            <div 
+              className={`
+                text-lg lg:text-2xl text-gray-500 leading-relaxed font-medium
+                prose prose-slate max-w-none
+                ${isAr ? 'prose-rtl text-right' : 'text-left'}
+              `}
+              dangerouslySetInnerHTML={{ __html: intro }} 
+            />
+          ) : (
+            <p className="text-lg lg:text-2xl text-gray-500 leading-relaxed font-medium">
+              {isAr 
+                ? "استكشف أساسيات سوق العقارات من خلال هذا الدليل الشامل." 
+                : "Explore the essentials of the property market through this comprehensive guide."
+              }
+            </p>
+          )}
           
-          {/* Optional: You can add a second column in DB if you want a sub-text */}
-          <p className="text-base lg:text-lg text-[#4B5563] leading-relaxed tracking-[0.05em]">
+          {/* النص التوضيحي الثاني - يمكن بقاؤه ثابتاً أو جعله اختيارياً */}
+          <p className={`text-base lg:text-lg text-[#4B5563] leading-relaxed tracking-[0.05em] ${isAr ? 'text-right' : 'text-left'}`}>
             {isAr ? (
               "لقد تم إعداد هذا المحتوى ليوفر لك رؤية واضحة حول فرص الاستثمار المتاحة."
             ) : (
