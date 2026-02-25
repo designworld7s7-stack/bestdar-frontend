@@ -14,19 +14,27 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
   const [selectedSlug, setSelectedSlug] = useState('');
   const supabase = createClient();
 
-  useEffect(() => {
-    async function fetchProjects() {
-      // نجلب فقط البيانات الضرورية للرابط
-      const { data } = await supabase
-        .from('projects')
-        .select('id, slug, title_en, title_ar')
-        .order('created_at', { ascending: false });
-      
-      if (data) setProjects(data);
-      setLoading(false);
-    }
-    fetchProjects();
-  }, []);
+ useEffect(() => {
+  async function fetchProjects() {
+    // تم التعديل لجلب 'title' و 'title_ar'
+    const { data, error } = await supabase
+      .from('projects')
+      .select('id, slug, title, title_ar') 
+      .order('created_at', { ascending: false });
+    
+    if (data) setProjects(data);
+    if (error) console.error("Error fetching projects:", error);
+    setLoading(false);
+  }
+  fetchProjects();
+}, []);
+
+// في جزء الـ return، تأكد من استخدام p.title
+{projects.map((p) => (
+  <option key={p.id} value={p.slug}>
+    {p.title} | {p.title_ar} {/* ✅ تم تغيير title_en إلى title */}
+  </option>
+))}
 
   const handleAdd = () => {
     const project = projects.find(p => p.slug === selectedSlug);

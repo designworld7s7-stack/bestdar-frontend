@@ -21,12 +21,13 @@ export default function GuideContent({ lang, content, callout }: GuideContentPro
       
       {/* 1. المحتوى الديناميكي الرئيسي */}
       <section 
-       className={`prose prose-lg max-w-none 
-  prose-headings:text-black prose-headings:font-bold prose-headings:tracking-tight
-  prose-p:text-gray-600 prose-p:leading-relaxed
-  prose-li:text-gray-600 prose-strong:text-black
-  ${isAr ? 'prose-rtl text-right' : 'text-left'}`}
-      >
+className={`
+    prose prose-lg max-w-none 
+    prose-p:text-gray-600 prose-p:leading-relaxed 
+    prose-p:my-6 {/* 👈 هذا السطر سيجبر المسافات على الظهور */}
+    ${isAr ? 'prose-rtl text-right' : 'text-left'}
+  `}
+>
         {content ? (
           <div dangerouslySetInnerHTML={{ __html: content }} />
         ) : (
