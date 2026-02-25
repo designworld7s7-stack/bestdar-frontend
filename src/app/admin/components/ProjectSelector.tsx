@@ -19,13 +19,11 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
   async function fetchProjects() {
     const { data, error } = await supabase
       .from('projects')
-      // ✅ نطلب الأعمدة الأربعة التي أكدت وجودها
-      .select('id, title, title_ar, slug') 
+      .select('*') // ✅ جلب كل الأعمدة لضمان عدم نقص أي حقل
       .order('created_at', { ascending: false });
     
+    console.log("Projects Loaded:", data); // 👈 افتح F12 في المتصفح وتأكد من ظهور Panorama Prime هنا
     if (data) setProjects(data);
-    if (error) console.error("Database Fetch Error:", error);
-    setLoading(false);
   }
   fetchProjects();
 }, []);
@@ -38,14 +36,14 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
 ))}
 
  const handleAdd = () => {
-  // نبحث عن المشروع باستخدام الـ slug المختار في الـ select
+  // ✅ البحث عن المشروع بدقة باستخدام الـ slug المختار
   const project = projects.find(p => p.slug === selectedSlug);
   
   if (project) {
     onSelect({
-      title: project.title,    // "Panorama Prime"
-      title_ar: project.title_ar, // "بانوراما برايم"
-      slug: project.slug       // "panorama-prime"
+      title: project.title || 'Untitled Project', // نستخدم title كما هو في سوبابيس
+      title_ar: project.title_ar || 'مشروع بدون عنوان',
+      slug: project.slug || project.id.toString()
     });
     setSelectedSlug('');
   }

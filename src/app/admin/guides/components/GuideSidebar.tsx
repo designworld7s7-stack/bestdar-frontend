@@ -11,15 +11,20 @@ export default function GuideSidebar({ data, update }: any) {
   const arLinks = Array.isArray(data.sidebar_links_ar) ? data.sidebar_links_ar : [];
 
   // --- دالة الإضافة الذكية (تضيف للغتين بضغطة واحدة) ---
- const handleQuickAddProject = (project: { title: string; title_ar: string; slug: string }) => {
-  // ✅ بناء الرابط باستخدام الـ slug الحقيقي من سوبابيس
-  const projectUrl = `/projects/${project.slug}`; 
+ const handleQuickAddProject = (project: any) => {
+  const url = `/projects/${project.slug}`;
 
-  // إضافة للمقالات الإنجليزية
-  update('sidebar_links', [...enLinks, { title: project.title, url: projectUrl }]);
+  // حفظ النسخة الإنجليزية بالعنوان الإنجليزي
+  update('sidebar_links', [...(data.sidebar_links || []), { 
+    title: project.title, // 👈 هنا نضمن حفظ Panorama Prime
+    url: url 
+  }]);
 
-  // إضافة للمقالات العربية
-  update('sidebar_links_ar', [...arLinks, { title: project.title_ar, url: projectUrl }]);
+  // حفظ النسخة العربية بالعنوان العربي
+  update('sidebar_links_ar', [...(data.sidebar_links_ar || []), { 
+    title: project.title_ar, // 👈 هنا نضمن حفظ بانوراما برايم
+    url: url 
+  }]);
 };
 
   // --- دوال التحكم التقليدية ---
