@@ -93,7 +93,7 @@ console.log("DATABASE CHECK:", {
 
  <ProjectGallery 
   images={project.galleryImages}
-  galleryOrder={project.gallery_order} // تمرير الترتيب من بيانات المشروع
+  galleryOrder={project.gallery_order} // ✨ تأكد من إضافة هذا السطر
   projectTitle={project.displayTitle}
   lang={lang}
   projectId={project.id}
