@@ -91,10 +91,11 @@ console.log("DATABASE CHECK:", {
   onInterestClick={() => setIsModalOpen(true)} 
 />
 
-  <ProjectGallery 
-  images={safeGallery} // تأكد أن الاسم هنا 'images'
+ <ProjectGallery 
+  images={project.galleryImages}
+  galleryOrder={project.gallery_order} // تمرير الترتيب من بيانات المشروع
+  projectTitle={project.displayTitle}
   lang={lang}
-  projectTitle={project.title}
   projectId={project.id}
 />
 
