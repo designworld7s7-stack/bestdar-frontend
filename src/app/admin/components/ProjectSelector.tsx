@@ -1,82 +1,66 @@
 'use client';
-
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { Link2, Loader2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
-interface ProjectSelectorProps {
-  // ✅ تحديث النوع ليتطابق مع الدالة التي يتوقعها الأب
-  onSelect: (project: { title: string; title_ar: string; slug: string }) => void;
-}
-
-export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
+export default function ProjectSelector({ onSelect }: any) {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSlug, setSelectedSlug] = useState('');
+  const [selectedId, setSelectedId] = useState(''); // سنستخدم ID كقيمة للاختيار لضمان الدقة
   const supabase = createClient();
 
- useEffect(() => {
-  async function fetchProjects() {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*') // نجلب كل شيء لضمان عدم نقص أي عمود
-      .order('created_at', { ascending: false });
-    
-    // تأكد من ظهور البيانات هنا في الكونسول (مثل الصورة 1037)
-    console.log("Full Project Data:", data); 
-    if (data) setProjects(data);
-  }
-  fetchProjects();
-}, []);
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('projects')
+          .select('id, title, title_ar, slug')
+          .order('created_at', { ascending: false });
 
-// في جزء الـ return، تأكد من استخدام p.title
-{projects.map((p) => (
-  <option key={p.id} value={p.slug}>
-    {p.title} | {p.title_ar} {/* ✅ تم تغيير title_en إلى title */}
-  </option>
-))}
+        if (error) throw error;
+        if (data) setProjects(data);
+      } catch (err) {
+        console.error("Critical Fetch Error:", err);
+      } finally {
+        setLoading(false); // ✅ يضمن توقف الـ Loading في كل الحالات
+      }
+    }
+    fetchProjects();
+  }, []);
 
- const handleAdd = () => {
-  // البحث عن المشروع المختار باستخدام الـ id أو الـ slug لضمان الدقة
-  const project = projects.find(p => String(p.id) === selectedSlug || p.slug === selectedSlug);
-  
-  if (project) {
-    // ✅ التأكد من تمرير 'title' و 'slug' كما هي في الصورة 1038
-    onSelect({
-      title: project.title || 'Untitled', 
-      title_ar: project.title_ar || 'بدون عنوان',
-      slug: project.slug || String(project.id) // إذا ضاع الـ slug نستخدم الـ id كأمان
-    });
-    setSelectedSlug(''); // تصفير الاختيار بعد الإضافة
-  }
-};
+  const handleAdd = () => {
+    const project = projects.find(p => String(p.id) === selectedId);
+    if (project) {
+      onSelect({
+        title: project.title || 'Untitled',
+        title_ar: project.title_ar || 'بدون عنوان',
+        slug: project.slug || String(project.id)
+      });
+      setSelectedId('');
+    }
+  };
 
-  if (loading) return <Loader2 className="animate-spin text-[#12AD65] size-5" />;
+  if (loading) return <div className="p-4 text-center text-sm text-gray-500">Loading projects...</div>;
 
   return (
-    <div className="flex items-end gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-      <div className="flex-1 space-y-2">
-        <label className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-1">
-          <Link2 size={12} /> Quick Link to Project
-        </label>
-        <select 
-          value={selectedSlug}
-          onChange={(e) => setSelectedSlug(e.target.value)}
-          className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 ring-[#12AD65]/20 transition-all"
-        >
-          <option value="">-- Choose a Project --</option>
+    <div className="flex gap-2">
+      <select 
+        className="flex-1 p-2 border rounded-xl text-sm"
+        value={selectedId}
+        onChange={(e) => setSelectedId(e.target.value)}
+      >
+        <option value="">-- Choose a Project --</option>
         {projects.map((p) => (
-  <option key={p.id} value={p.slug || p.id}>
-    {p.title} | {p.title_ar} {/* ✅ سيظهر النص الإنجليزي الآن بدلاً من الفراغ */}
-  </option>
-))}
-        </select>
-      </div>
-      <button
-        type="button"
+          <option key={p.id} value={p.id}>
+            {p.title || 'No Title'} | {p.title_ar || 'بدون عنوان'}
+          </option>
+        ))}
+      </select>
+      <button 
         onClick={handleAdd}
-        disabled={!selectedSlug}
-        className="bg-[#12AD65] hover:bg-[#0f8e52] disabled:bg-slate-300 text-white p-2.5 rounded-xl transition-all shadow-lg shadow-[#12AD65]/20"
+        disabled={!selectedId}
+        className="p-2 bg-[#12AD65] text-white rounded-xl disabled:opacity-50"
       >
         <Plus size={20} />
       </button>
