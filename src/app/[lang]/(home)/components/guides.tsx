@@ -35,13 +35,16 @@ export default function GuidesSection({ lang, guides }: { lang: string, guides: 
  {guides.map((guide) => (
   <div key={guide.id} className="w-full h-full">
     <GuideCard 
-      id={guide.slug}
-      title={guide.title}
-      description={guide.excerpt}
-      // DYNAMIC: Ensure this uses 'guide' from the loop
-      image={guide.image_url} 
-      lang={lang} 
-    />
+  id={guide.slug}
+  title={guide.title}
+  // ✅ تمرير العنوان العربي من قاعدة البيانات
+  title_ar={guide.title_ar} 
+  description={guide.excerpt}
+  // ✅ تمرير المقتطف العربي (تأكد أن الحقل في سوبابيس اسمه excerpt_ar)
+  description_ar={guide.excerpt_ar} 
+  image={guide.image_url} 
+  lang={lang} 
+/>
   </div>
 ))}
       </div>

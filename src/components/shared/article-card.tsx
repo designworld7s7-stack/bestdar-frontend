@@ -9,7 +9,9 @@ import Image from 'next/image';
 interface ArticleCardProps {
   id: string;
   title: string;
+  title_ar?: string; // إضافة حقل العنوان العربي
   excerpt: string;
+  excerpt_ar?: string; // إضافة حقل المقتطف العربي
   image: string;
   category: string;
   date: string;
@@ -18,9 +20,22 @@ interface ArticleCardProps {
 }
 
 export default function ArticleCard({ 
-  id, title, excerpt, image, category, date, location, lang 
+  id, 
+  title, 
+  title_ar, 
+  excerpt, 
+  excerpt_ar, 
+  image, 
+  category, 
+  date, 
+  location, 
+  lang 
 }: ArticleCardProps) {
   const isAr = lang === 'ar';
+
+  // تحديد النص المراد عرضه بناءً على اللغة المتوفرة
+  const displayTitle = isAr && title_ar ? title_ar : title;
+  const displayExcerpt = isAr && excerpt_ar ? excerpt_ar : excerpt;
 
   return (
     <Link 
@@ -58,13 +73,14 @@ export default function ArticleCard({
         </div>
 
         {/* Title: Size scales from 1.25rem to 1.5rem */}
-        <h3 className="text-xl lg:text-2xl font-medium text-black leading-tight mb-3 lg:mb-4 tracking-tight transition-colors duration-300 group-hover:text-[#12AD65]">
-          {title}
+      <h3 className="text-xl lg:text-2xl font-medium text-black leading-tight mb-3 lg:mb-4 tracking-tight transition-colors duration-300 group-hover:text-[#12AD65]">
+          {/* ✅ تم استبدال "guide.title" بـ "displayTitle" لحل الخطأ */}
+          {displayTitle}
         </h3>
 
-        {/* Excerpt: Visible on desktop, hidden or shortened on small mobile screens */}
         <p className="text-gray-500 text-sm lg:text-[15px] leading-relaxed mb-6 lg:mb-10 line-clamp-2 lg:line-clamp-3 font-medium">
-          {excerpt}
+          {/* ✅ تم استبدال "excerpt" بـ "displayExcerpt" لضمان الترجمة */}
+          {displayExcerpt}
         </p>
 
         {/* Action: Boutique Arrow */}

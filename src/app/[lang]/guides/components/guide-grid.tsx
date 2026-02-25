@@ -16,17 +16,21 @@ export default function GuideGrid({ initialGuides, lang }: { initialGuides: any[
       {/* 3-Column Grid for Desktop */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
         {visibleGuides.map((guide) => (
-          <ArticleCard 
-            key={guide.id}
-            id={guide.slug}
-            title={guide.title}
-            excerpt={guide.excerpt}
-            image={guide.image_url || "/images/guides/placeholder.jpg"} 
-            category={guide.category}
-            lang={lang}
-            date={new Date(guide.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}
-            location={guide.country_code === 'tr' ? (isAr ? 'تركيا' : 'Turkey') : (isAr ? 'الإمارات' : 'UAE')}
-          />
+         <ArticleCard 
+  key={guide.id}
+  id={guide.slug}
+  title={guide.title}
+  // ✅ تمرير العنوان العربي
+  title_ar={guide.title_ar} 
+  excerpt={guide.excerpt}
+  // ✅ تمرير المقتطف العربي
+  excerpt_ar={guide.excerpt_ar} 
+  image={guide.image_url || "/images/guides/placeholder.jpg"} 
+  category={guide.category}
+  lang={lang}
+  date={new Date(guide.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}
+  location={guide.country_code === 'tr' ? (isAr ? 'تركيا' : 'Turkey') : (isAr ? 'الإمارات' : 'UAE')}
+/>
         ))}
       </div>
 
