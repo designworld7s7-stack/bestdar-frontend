@@ -17,14 +17,14 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
 
  useEffect(() => {
   async function fetchProjects() {
-    // تم التعديل لجلب 'title' و 'title_ar'
     const { data, error } = await supabase
       .from('projects')
+      // ✅ تأكد من وجود كلمة title هنا بين الفواصل
       .select('id, slug, title, title_ar') 
       .order('created_at', { ascending: false });
     
+    if (error) console.error("Error:", error);
     if (data) setProjects(data);
-    if (error) console.error("Error fetching projects:", error);
     setLoading(false);
   }
   fetchProjects();
@@ -37,15 +37,15 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
   </option>
 ))}
 
-  const handleAdd = () => {
+ const handleAdd = () => {
   const project = projects.find(p => p.slug === selectedSlug);
   if (project) {
-    // مرر الكائن كاملاً لضمان عدم وجود حقول undefined
-    interface ProjectSelectorProps {
-  // ✅ تحديث الأنواع لتقبل الحقول الإضافية
-  onSelect: (item: { title: string; title_ar: string; slug: string }) => void;
-}
-    setSelectedSlug(''); 
+    onSelect({
+      title: project.title,    // سيقرأ "Panorama Prime" الآن
+      title_ar: project.title_ar,
+      slug: project.slug       // سيقرأ "panorama-prime"
+    });
+    setSelectedSlug('');
   }
 };
 
