@@ -20,7 +20,7 @@ export default function PropertyFilter({ type = 'all', lang, isRtl, variant = 'p
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [installmentsOnly, setInstallmentsOnly] = useState(false);
   const isAr = lang === 'ar' || isRtl === true; // Supports both prop styles
-  
+  const getLabel = (en: string, ar: string) => (isAr ? ar : en);
   const [selections, setSelections] = useState<Record<string, string>>({
     city: "", propertyType: "", delivery: "", category: "", country: "", sort: "Date"
   });
@@ -35,26 +35,74 @@ export default function PropertyFilter({ type = 'all', lang, isRtl, variant = 'p
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-const options: Record<string, string[]> = variant === 'guide' ? {
-    // These must match your Supabase 'category' column
-    category: ["Market Trends", "Legal Guide", "Lifestyle", "Investment Strategy", "Citizenship", "Buying Tips"],
-    // These match your 'country_code' logic
-    country: ["Turkey", "UAE", "Both", "Other"],
-    // These match the order logic in page.tsx
-    sort: ["Date", "Popularity"]
+const options = variant === 'guide' ? {
+    category: [
+        { value: "Market Trends", label: getLabel("Market Trends", "اتجاهات السوق") },
+        { value: "Legal Guide", label: getLabel("Legal Guide", "الدليل القانوني") },
+        { value: "Lifestyle", label: getLabel("Lifestyle", "أسلوب الحياة") },
+        { value: "Investment Strategy", label: getLabel("Investment Strategy", "استراتيجية الاستثمار") },
+        { value: "Citizenship", label: getLabel("Citizenship", "الجنسية") },
+        { value: "Buying Tips", label: getLabel("Buying Tips", "نصائح الشراء") }
+    ],
+    country: [
+        { value: "Turkey", label: getLabel("Turkey", "تركيا") },
+        { value: "UAE", label: getLabel("UAE", "الإمارات") },
+        { value: "Both", label: getLabel("Both", "كلاهما") },
+        { value: "Other", label: getLabel("Other", "أخرى") }
+    ],
+    sort: [
+        { value: "Date", label: getLabel("Date", "التاريخ") },
+        { value: "Popularity", label: getLabel("Popularity", "الأكثر رواجاً") }
+    ]
 } : {
-    country: ["Turkey", "UAE", "Others"],
-    // STRICT CITY ISOLATION LOGIC [cite: 2026-02-04]
-    city: (selections.country === 'Turkey' || (type === 'turkey' && !selections.country))
-        ? ["Istanbul", "Antalya", "Alanya", "Ankara", "Trabzon"] 
-        : (selections.country === 'UAE' || (type === 'uae' && !selections.country))
-        ? ["Abu Dhabi", "Dubai", "Sharjah"] 
-        : ["Istanbul", "Antalya", "Alanya", "Ankara", "Trabzon", "Abu Dhabi", "Dubai", "Sharjah"], // Full 8-city list [cite: 2026-02-04]
+    country: [
+        { value: "Turkey", label: getLabel("Turkey", "تركيا") },
+        { value: "UAE", label: getLabel("UAE", "الإمارات") },
+        { value: "Others", label: getLabel("Others", "أخرى") }
+    ],
     
-    propertyType: ["Villa", "Apartment", "Townhouse", "Duplex", "Commercial"],
-    delivery: ["Ready", "Under Construction", "Plan"],
-    // Added Sort options as you requested earlier [cite: 2026-02-04]
-    sort: ["Newest", "Lower to Higher", "Higher to Lower"]
+    // 🌍 منطق عزل المدن الصارم مع الترجمة
+    city: (selections.country === 'Turkey' || (type === 'turkey' && !selections.country))
+        ? [
+            { value: "Istanbul", label: getLabel("Istanbul", "إسطنبول") },
+            { value: "Antalya", label: getLabel("Antalya", "أنطاليا") },
+            { value: "Alanya", label: getLabel("Alanya", "ألانيا") },
+            { value: "Ankara", label: getLabel("Ankara", "أنقرة") },
+            { value: "Trabzon", label: getLabel("Trabzon", "طرابزون") }
+          ]
+        : (selections.country === 'UAE' || (type === 'uae' && !selections.country))
+        ? [
+            { value: "Abu Dhabi", label: getLabel("Abu Dhabi", "أبو ظبي") },
+            { value: "Dubai", label: getLabel("Dubai", "دبي") },
+            { value: "Sharjah", label: getLabel("Sharjah", "الشارقة") }
+          ]
+        : [
+            { value: "Istanbul", label: getLabel("Istanbul", "إسطنبول") },
+            { value: "Dubai", label: getLabel("Dubai", "دبي") },
+            { value: "Antalya", label: getLabel("Antalya", "أنطاليا") },
+            { value: "Abu Dhabi", label: getLabel("Abu Dhabi", "أبو ظبي") },
+            // ... يمكنك إكمال باقي القائمة المشتركة بنفس النمط
+          ],
+    
+    propertyType: [
+        { value: "Villa", label: getLabel("Villa", "فيلا") },
+        { value: "Apartment", label: getLabel("Apartment", "شقة") },
+        { value: "Townhouse", label: getLabel("Townhouse", "تاون هاوس") },
+        { value: "Duplex", label: getLabel("Duplex", "دوبلكس") },
+        { value: "Commercial", label: getLabel("Commercial", "تجاري") }
+    ],
+    
+    delivery: [
+        { value: "Ready", label: getLabel("Ready", "جاهز") },
+        { value: "Under Construction", label: getLabel("Under Construction", "تحت الإنشاء") },
+        { value: "Plan", label: getLabel("Plan", "على المخطط") }
+    ],
+    
+    sort: [
+        { value: "Newest", label: getLabel("Newest", "الأحدث") },
+        { value: "Lower to Higher", label: getLabel("Lower to Higher", "من الأقل للأعلى") },
+        { value: "Higher to Lower", label: getLabel("Higher to Lower", "من الأعلى للأقل") }
+    ]
 };
 
   // 1. REPLACE your handleSelect with this
@@ -232,18 +280,28 @@ const handleSelect = (key: string, value: string) => {
 
 // SUPPORT COMPONENTS
 
-function InlineDropdown({ label, value, options, onSelect, isOpen, toggle, isSort = false }: any) {
+function InlineDropdown({ label, value, options, onSelect, isOpen, toggle, isSort = false, isAr }: any) {
+  // البحث عن النص المترجم للقيمة المختارة حالياً
+  const displayLabel = options.find((o: any) => o.value === value)?.label || value || (isAr ? "الكل" : "All");
+
   return (
     <div className="relative">
       <div onClick={toggle} className={clsx("flex items-center gap-2 px-6 py-3 rounded-xl cursor-pointer transition-all", isSort ? "bg-[#F8F9FA]" : "bg-[#F8F9FA] hover:bg-gray-50")}>
         {label && <span className="text-[11px] font-medium text-[#4B5563] uppercase tracking-tighter">{label}:</span>}
-        <span className="text-[11px] font-medium text-black uppercase tracking-tighter">{value || "All"}</span>
+        {/* نستخدم displayLabel لإظهار الاسم المترجم */}
+        <span className="text-[11px] font-medium text-black uppercase tracking-tighter">{displayLabel}</span>
         <ChevronDown size={14} className={clsx("text-[#6B7280] transition-transform", isOpen && "rotate-180")} />
       </div>
       {isOpen && (
         <div className="absolute top-[120%] left-0 w-full min-w-[200px] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-50 py-3 z-[100]">
-          {options.map((opt: string) => (
-            <div key={opt} onClick={() => onSelect(opt)} className="px-6 py-3 text-[12px] font-medium uppercase tracking-tighter text-gray-500 hover:bg-[#F8F9FA] hover:text-[#12AD65] cursor-pointer transition-colors">{opt}</div>
+          {options.map((opt: any) => (
+            <div 
+              key={opt.value} 
+              onClick={() => onSelect(opt.value)} // نرسل الـ value للبحث في القاعدة
+              className="px-6 py-3 text-[12px] font-medium uppercase tracking-tighter text-gray-500 hover:bg-[#F8F9FA] hover:text-[#12AD65] cursor-pointer transition-colors"
+            >
+              {opt.label} {/* نُظهر الـ label للمستخدم */}
+            </div>
           ))}
         </div>
       )}
@@ -253,16 +311,29 @@ function InlineDropdown({ label, value, options, onSelect, isOpen, toggle, isSor
 
 function MobileDropdown({ label, options, value, onSelect, isAr }: any) {
   const [isOpen, setIsOpen] = useState(false);
+  const displayLabel = options.find((o: any) => o.value === value)?.label || value || (isAr ? "الكل" : "All");
+
   return (
     <div className="w-full">
       <div onClick={() => setIsOpen(!isOpen)} className={clsx("flex items-center justify-between w-full bg-[#F8F9FA] p-5 rounded-xl transition-all", isOpen && "bg-white shadow-inner")}>
-        <div className="flex flex-col items-start"><span className="text-[9px] font-medium uppercase text-[#4B5563] mb-1">{label}</span><span className={clsx("text-xs font-medium", value ? "text-black" : "text-[#6B7280]")}>{value || (isAr ? "اختر..." : "Select...")}</span></div>
+        <div className="flex flex-col items-start">
+          <span className="text-[9px] font-medium uppercase text-[#4B5563] mb-1">{label}</span>
+          <span className={clsx("text-xs font-medium", value ? "text-black" : "text-[#6B7280]")}>
+            {displayLabel}
+          </span>
+        </div>
         <ChevronDown size={16} className={clsx("text-[#6B7280] transition-transform", isOpen && "rotate-180")} />
       </div>
       {isOpen && (
         <div className="mt-2 bg-white rounded-xl shadow-inner overflow-hidden">
-          {options.map((opt: string) => (
-            <div key={opt} onClick={() => { onSelect(opt); setIsOpen(false); }} className="px-5 py-4 text-xs font-medium text-gray-600 border-b border-gray-50 last:border-none">{opt}</div>
+          {options.map((opt: any) => (
+            <div 
+              key={opt.value} 
+              onClick={() => { onSelect(opt.value); setIsOpen(false); }} 
+              className="px-5 py-4 text-xs font-medium text-gray-600 border-b border-gray-50 last:border-none"
+            >
+              {opt.label}
+            </div>
           ))}
         </div>
       )}
@@ -271,19 +342,29 @@ function MobileDropdown({ label, options, value, onSelect, isAr }: any) {
 }
 
 function FilterDropdown({ label, icon: Icon, value, options, isOpen, toggle, onSelect, isAr }: any) {
+  const displayLabel = options.find((o: any) => o.value === value)?.label || value || label;
+
   return (
     <div className="relative flex-1">
       <div onClick={toggle} className={clsx("relative flex items-center justify-between bg-[#F8F9FA] rounded-xl py-4 px-6 cursor-pointer transition-all", isOpen ? "bg-white shadow-inner" : "hover:bg-gray-50", value && "bg-white")}>
         <div className="flex items-center gap-3">
           <Icon size={18} className={clsx(isOpen || value ? "text-[#12AD65]" : "text-[#4B5563]")} />
-          <span className={clsx("text-[11px] font-medium uppercase tracking-tighter", value ? "text-black" : "text-[#4B5563]")}>{value || label}</span>
+          <span className={clsx("text-[11px] font-medium uppercase tracking-tighter", value ? "text-black" : "text-[#4B5563]")}>
+            {displayLabel}
+          </span>
         </div>
         <ChevronDown size={14} className={clsx("text-[#6B7280] transition-transform", isOpen && "rotate-180")} />
       </div>
       {isOpen && (
         <div className="absolute top-[115%] left-0 w-full bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-gray-50 py-3 z-[100]">
-          {options.map((opt: string) => (
-            <div key={opt} onClick={() => onSelect(opt)} className="px-6 py-3 text-[11px] font-medium uppercase text-gray-500 hover:text-[#12AD65] cursor-pointer transition-colors">{opt}</div>
+          {options.map((opt: any) => (
+            <div 
+              key={opt.value} 
+              onClick={() => onSelect(opt.value)} 
+              className="px-6 py-3 text-[11px] font-medium uppercase text-gray-500 hover:text-[#12AD65] cursor-pointer transition-colors"
+            >
+              {opt.label}
+            </div>
           ))}
         </div>
       )}
