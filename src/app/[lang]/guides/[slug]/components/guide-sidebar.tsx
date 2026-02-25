@@ -95,15 +95,16 @@ export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }
 
       {/* 2. USEFUL RESOURCES (النسخة المحدثة والذكية) */}
 {usefulLinks.map((link, i) => {
-  // 🛠️ تنظيف الرابط وتصحيحه تلقائياً
+  // تنظيف الرابط من كلمة undefined التي تظهر في الصورة 1032
   const rawUrl = link.url || '';
   const cleanUrl = rawUrl.replace('undefined', '');
   const finalUrl = cleanUrl.startsWith('/') ? `/${lang}${cleanUrl}` : cleanUrl;
 
-  // 🛠️ اختيار العنوان الصحيح للظهور
+  // إظهار العنوان المخزن أو كلمة بديلة ذكية
   const displayTitle = link.title || (isAr ? "عرض المشروع" : "View Project");
 
-  if (!cleanUrl || cleanUrl === `/${lang}/projects/`) return null;
+  // إذا كان الرابط فارغاً تماماً لا تظهره (لمنع السهم الوحيد في الصورة 1036)
+  if (!cleanUrl || cleanUrl.endsWith('/')) return null;
 
   return (
     <li key={i}>
@@ -112,7 +113,7 @@ export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }
         className="flex items-center justify-between text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] group"
       >
         <span>{displayTitle}</span>
-        <span className="group-hover:translate-x-1 transition-transform">
+        <span className="transition-transform group-hover:translate-x-1">
           {isAr ? '←' : '→'}
         </span>
       </a>

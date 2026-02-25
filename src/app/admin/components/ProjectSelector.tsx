@@ -19,10 +19,11 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
   async function fetchProjects() {
     const { data, error } = await supabase
       .from('projects')
-      .select('*') // ✅ جلب كل الأعمدة لضمان عدم نقص أي حقل
+      .select('*') // نجلب كل شيء لضمان عدم نقص أي عمود
       .order('created_at', { ascending: false });
     
-    console.log("Projects Loaded:", data); // 👈 افتح F12 في المتصفح وتأكد من ظهور Panorama Prime هنا
+    // تأكد من ظهور البيانات هنا في الكونسول (مثل الصورة 1037)
+    console.log("Full Project Data:", data); 
     if (data) setProjects(data);
   }
   fetchProjects();
@@ -36,14 +37,14 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
 ))}
 
  const handleAdd = () => {
-  // ✅ البحث عن المشروع بدقة باستخدام الـ slug المختار
-  const project = projects.find(p => p.slug === selectedSlug);
+  // البحث عن المشروع المختار
+  const project = projects.find(p => String(p.slug) === selectedSlug || String(p.id) === selectedSlug);
   
   if (project) {
     onSelect({
-      title: project.title || 'Untitled Project', // نستخدم title كما هو في سوبابيس
-      title_ar: project.title_ar || 'مشروع بدون عنوان',
-      slug: project.slug || project.id.toString()
+      title: project.title,    // سيقرأ "Panorama Prime" الآن
+      title_ar: project.title_ar,
+      slug: project.slug || String(project.id) // إذا لم يوجد slug نستخدم الـ id لمنع 404
     });
     setSelectedSlug('');
   }
@@ -63,11 +64,11 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
           className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 ring-[#12AD65]/20 transition-all"
         >
           <option value="">-- Choose a Project --</option>
-          {projects.map((p) => (
-            <option key={p.id} value={p.slug}>
-              {p.title_en} | {p.title_ar}
-            </option>
-          ))}
+         {projects.map((p) => (
+  <option key={p.id} value={p.slug || p.id}>
+    {p.title} | {p.title_ar} {/* سيظهر النصين الآن بدلاً من الفراغ في الصورة 1033 */}
+  </option>
+))}
         </select>
       </div>
       <button
