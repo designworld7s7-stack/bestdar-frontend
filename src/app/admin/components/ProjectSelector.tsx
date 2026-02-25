@@ -37,16 +37,17 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
 ))}
 
  const handleAdd = () => {
-  // البحث عن المشروع المختار
-  const project = projects.find(p => String(p.slug) === selectedSlug || String(p.id) === selectedSlug);
+  // البحث عن المشروع المختار باستخدام الـ id أو الـ slug لضمان الدقة
+  const project = projects.find(p => String(p.id) === selectedSlug || p.slug === selectedSlug);
   
   if (project) {
+    // ✅ التأكد من تمرير 'title' و 'slug' كما هي في الصورة 1038
     onSelect({
-      title: project.title,    // سيقرأ "Panorama Prime" الآن
-      title_ar: project.title_ar,
-      slug: project.slug || String(project.id) // إذا لم يوجد slug نستخدم الـ id لمنع 404
+      title: project.title || 'Untitled', 
+      title_ar: project.title_ar || 'بدون عنوان',
+      slug: project.slug || String(project.id) // إذا ضاع الـ slug نستخدم الـ id كأمان
     });
-    setSelectedSlug('');
+    setSelectedSlug(''); // تصفير الاختيار بعد الإضافة
   }
 };
 
@@ -64,9 +65,9 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
           className="w-full p-2.5 rounded-xl border border-slate-200 bg-white text-sm outline-none focus:ring-2 ring-[#12AD65]/20 transition-all"
         >
           <option value="">-- Choose a Project --</option>
-         {projects.map((p) => (
+        {projects.map((p) => (
   <option key={p.id} value={p.slug || p.id}>
-    {p.title} | {p.title_ar} {/* سيظهر النصين الآن بدلاً من الفراغ في الصورة 1033 */}
+    {p.title} | {p.title_ar} {/* ✅ سيظهر النص الإنجليزي الآن بدلاً من الفراغ */}
   </option>
 ))}
         </select>

@@ -95,28 +95,21 @@ export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }
 
       {/* 2. USEFUL RESOURCES (النسخة المحدثة والذكية) */}
 {usefulLinks.map((link, i) => {
-  // تنظيف الرابط من كلمة undefined التي تظهر في الصورة 1032
-  const rawUrl = link.url || '';
-  const cleanUrl = rawUrl.replace('undefined', '');
-  const finalUrl = cleanUrl.startsWith('/') ? `/${lang}${cleanUrl}` : cleanUrl;
+  // تنظيف الرابط من كلمة undefined التي تظهر في صورة 1032
+  const cleanUrl = link.url?.replace('undefined', '');
+  const finalUrl = cleanUrl?.startsWith('/') ? `/${lang}${cleanUrl}` : cleanUrl;
 
-  // إظهار العنوان المخزن أو كلمة بديلة ذكية
+  // إظهار العنوان الحقيقي الذي حفظناه في الداشبورد
   const displayTitle = link.title || (isAr ? "عرض المشروع" : "View Project");
 
-  // إذا كان الرابط فارغاً تماماً لا تظهره (لمنع السهم الوحيد في الصورة 1036)
   if (!cleanUrl || cleanUrl.endsWith('/')) return null;
 
   return (
-    <li key={i}>
-      <a 
-        href={finalUrl}
-        className="flex items-center justify-between text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] group"
-      >
-        <span>{displayTitle}</span>
-        <span className="transition-transform group-hover:translate-x-1">
-          {isAr ? '←' : '→'}
-        </span>
+    <li key={i} className="flex items-center justify-between group py-2 border-b border-gray-50 last:border-0">
+      <a href={finalUrl} className="text-sm font-semibold text-gray-700 hover:text-[#12AD65] transition-colors">
+        {displayTitle}
       </a>
+      <span className="text-gray-300 group-hover:text-[#12AD65]">{isAr ? '←' : '→'}</span>
     </li>
   );
 })}
