@@ -5,7 +5,8 @@ import { createClient } from '@/utils/supabase/client';
 import { Link2, Loader2, Plus } from 'lucide-react';
 
 interface ProjectSelectorProps {
-  onSelect: (item: { title: string; url: string }) => void;
+  // ✅ تحديث النوع ليتطابق مع الدالة التي يتوقعها الأب
+  onSelect: (project: { title: string; title_ar: string; slug: string }) => void;
 }
 
 export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
@@ -37,15 +38,16 @@ export default function ProjectSelector({ onSelect }: ProjectSelectorProps) {
 ))}
 
   const handleAdd = () => {
-    const project = projects.find(p => p.slug === selectedSlug);
-    if (project) {
-      onSelect({
-        title: project.title_en, // سيتم تخزينه ككائن يحتوي اللغتين لاحقاً إذا أردت
-        url: `/projects/${project.slug}`
-      });
-      setSelectedSlug(''); // تصفير الاختيار بعد الإضافة
-    }
-  };
+  const project = projects.find(p => p.slug === selectedSlug);
+  if (project) {
+    // مرر الكائن كاملاً لضمان عدم وجود حقول undefined
+    interface ProjectSelectorProps {
+  // ✅ تحديث الأنواع لتقبل الحقول الإضافية
+  onSelect: (item: { title: string; title_ar: string; slug: string }) => void;
+}
+    setSelectedSlug(''); 
+  }
+};
 
   if (loading) return <Loader2 className="animate-spin text-[#12AD65] size-5" />;
 

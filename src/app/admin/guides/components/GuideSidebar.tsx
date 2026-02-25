@@ -11,15 +11,15 @@ export default function GuideSidebar({ data, update }: any) {
   const arLinks = Array.isArray(data.sidebar_links_ar) ? data.sidebar_links_ar : [];
 
   // --- دالة الإضافة الذكية (تضيف للغتين بضغطة واحدة) ---
-  const handleQuickAddProject = (project: any) => {
-    // 1. إضافة للمقالات الإنجليزية
-    const newEnLink = { title: project.title_en, url: `/projects/${project.slug}` };
-    update('sidebar_links', [...enLinks, newEnLink]);
+ const handleQuickAddProject = (project: { title: string; title_ar: string; slug: string }) => {
+  const projectUrl = `/projects/${project.slug}`; // ✅ نستخدم الـ slug هنا بدلاً من الـ URL اليدوي
 
-    // 2. إضافة للمقالات العربية
-    const newArLink = { title: project.title_ar, url: `/projects/${project.slug}` };
-    update('sidebar_links_ar', [...arLinks, newArLink]);
-  };
+  // إضافة للمقالات الإنجليزية
+  update('sidebar_links', [...enLinks, { title: project.title, url: projectUrl }]);
+
+  // إضافة للمقالات العربية
+  update('sidebar_links_ar', [...arLinks, { title: project.title_ar, url: projectUrl }]);
+};
 
   // --- دوال التحكم التقليدية ---
   const addLinkEn = () => update('sidebar_links', [...enLinks, { title: '', url: '' }]);

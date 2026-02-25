@@ -93,26 +93,39 @@ export default function GuideSidebar({ lang, links: usefulLinks = [], toc = [] }
         </div>
       )}
 
-      {/* 2. USEFUL RESOURCES (الروابط القادمة من الـ Props) */}
-      {usefulLinks && usefulLinks.length > 0 && (
-        <div className="pt-8 border-t border-gray-100">
-          <h5 className="text-[12px] font-bold uppercase tracking-tight text-[#374151] mb-6">
-            {isAr ? "روابط مفيدة" : "Useful Resources"}
-          </h5>
-          <ul className="space-y-4">
-            {usefulLinks.map((link, i) => (
-              <li key={i}>
-                <a 
-                  href={link.url}
-                  className="text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] transition-colors block leading-tight"
-                >
-                  {link.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {/* 2. USEFUL RESOURCES (النسخة المحدثة والذكية) */}
+{usefulLinks && usefulLinks.length > 0 && (
+  <div className="pt-8 border-t border-gray-100">
+    <h5 className="text-[12px] font-bold uppercase tracking-tight text-[#374151] mb-6">
+      {isAr ? "روابط مفيدة" : "Useful Resources"}
+    </h5>
+    <ul className="space-y-4">
+      {usefulLinks.map((link, i) => {
+        // ✨ المنطق الجديد للروابط:
+        // إذا كان الرابط يبدأ بـ / (رابط داخلي)، نقوم بإضافة كود اللغة تلقائياً
+        const isInternal = link.url?.startsWith('/');
+        const finalUrl = isInternal ? `/${lang}${link.url}` : link.url;
+
+        return (
+          <li key={i}>
+            <a 
+              href={finalUrl}
+              // نستخدم target="_blank" فقط للروابط الخارجية
+              target={isInternal ? "_self" : "_blank"}
+              rel="noopener noreferrer"
+              className="text-[13px] font-medium text-[#4B5563] hover:text-[#12AD65] transition-colors flex items-center justify-between group"
+            >
+              <span className="leading-tight">{link.title}</span>
+              <span className="opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
+                {isAr ? '←' : '→'}
+              </span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)}
 
       {/* 3. FOLLOW US (الروابط القادمة من سوبابيس) */}
       <div className="pt-8 border-t border-gray-100">
