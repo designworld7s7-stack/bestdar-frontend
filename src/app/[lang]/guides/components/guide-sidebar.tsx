@@ -72,20 +72,21 @@ export default function GuideSidebar({ lang }: { lang: string }) {
             </h3>
           </div>
           
-          <div className="space-y-6">
-            {mostRead.map((guide, idx) => (
-              <Link 
-                key={guide.slug} 
-                href={`/${lang}/guides/${guide.slug}`}
-                className="group flex gap-4 items-start"
-              >
-                <span className="text-gray-700 font-bold text-lg leading-none mt-1 group-hover:text-[#12AD65] transition-colors">
-                  0{idx + 1}
-                </span>
-                <p className="text-gray-400 text-sm font-medium leading-snug group-hover:text-white transition-colors">
-                  {isAr ? guide.title_ar : guide.title_en}
-                </p>
-              </Link>
+         <div className="space-y-8">
+  {mostRead.map((guide, idx) => (
+    <Link 
+      key={guide.slug} 
+      href={`/${lang}/guides/${guide.slug}`}
+      className="group flex gap-5 items-start no-underline"
+    >
+      <span className="text-gray-300 font-black text-2xl leading-none opacity-30 group-hover:text-[#12AD65] group-hover:opacity-100 transition-all">
+        {idx + 1}
+      </span>
+      <p className="text-white text-[15px] font-bold leading-snug group-hover:text-[#12AD65] transition-colors">
+        {/* هنا نضع العنوان الديناميكي وليس النص الثابت */}
+        {isAr ? guide.title_ar : guide.title_en}
+      </p>
+    </Link>
             ))}
           </div>
         </div>
@@ -115,17 +116,12 @@ export default function GuideSidebar({ lang }: { lang: string }) {
             </div>
 
             <button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full py-4 flex items-center justify-center bg-[#12AD65] text-white rounded-xl font-bold hover:bg-[#15c271] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
-            >
-              {isLoading ? (isAr ? "جاري..." : "Subscribing...") : (
-                <>
-                  {isAr ? "اشترك الآن" : "Subscribe Now"}
-                  <ArrowRight size={16} className={`mx-2 transition-transform group-hover:translate-x-1 ${isAr ? "rotate-180 group-hover:-translate-x-1" : ""}`} />
-                </>
-              )}
-            </button>
+  type="submit"
+  disabled={isLoading}
+  className="relative z-[110] w-full py-4 bg-[#12AD65] text-white rounded-xl font-bold cursor-pointer hover:brightness-110 active:scale-95 transition-all"
+>
+  {isLoading ? (isAr ? "جاري..." : "Loading...") : (isAr ? "اشتراك" : "Subscribe")}
+</button>
           </form>
         </div>
         
