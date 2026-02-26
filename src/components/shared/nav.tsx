@@ -8,21 +8,23 @@ import { Menu, X, ChevronRight, User, Bookmark, LogOut, ShieldCheck } from 'luci
 import { clsx } from 'clsx';
 import { createClient } from '@/utils/supabase/client';
 
-const navLinks = [
-  { name: 'Turkey', href: '/turkey' },
-  { name: 'UAE', href: '/uae' },
-  { name: 'Investor Club', href: '/investor-club' },
-  { name: 'Guides', href: '/guides' },
-  { name: 'Contact', href: '/contact' },
-  { name: 'About Us', href: '/about' },
-];
+
 
 export default function Navbar({ lang }: { lang: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
-  
+  const isAr = lang === 'ar';
+
+  const navLinks = [
+  { name: isAr ? "تركيا" : "Turkey", href: `/${lang}/turkey` },
+  { name: isAr ? "الإمارات" : "UAE", href: `/${lang}/uae` },
+  { name: isAr ? "نادي المستثمرين" : "Investor Club", href: `/${lang}/investor-club` },
+  { name: isAr ? "الأدلة" : "Guides", href: `/${lang}/guides` },
+  { name: isAr ? "اتصل بنا" : "Contact", href: `/${lang}/contact` },
+  { name: isAr ? "من نحن" : "About Us", href: `/${lang}/about` },
+];
   // الحالة الديناميكية الحقيقية
   const [user, setUser] = useState<any>(null);
 
@@ -122,7 +124,10 @@ export default function Navbar({ lang }: { lang: string }) {
 
   return (
     <>
-<nav className="sticky top-0 z-[100] w-full bg-white/70 backdrop-blur-xl saturate-150 shadow-premium">
+<nav 
+      dir={isAr ? "rtl" : "ltr"} 
+      className="sticky top-0 z-[100] w-full bg-white/70 backdrop-blur-xl saturate-150 shadow-premium"
+    >
   <div className="mx-auto flex h-20 max-w-[1440px] items-center justify-between px-6 lg:px-12">
     
     {/* الجانب الأيسر: زر المنيو والشعار */}

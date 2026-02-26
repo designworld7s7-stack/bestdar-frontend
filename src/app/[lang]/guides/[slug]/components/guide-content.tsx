@@ -21,10 +21,12 @@ export default function GuideContent({ lang, content, callout }: GuideContentPro
       
       {/* 1. المحتوى الديناميكي الرئيسي */}
       <section 
-className={`
+  className={`
     prose prose-lg max-w-none 
     prose-p:text-gray-600 prose-p:leading-relaxed 
-    prose-p:my-6 {/* 👈 هذا السطر سيجبر المسافات على الظهور */}
+    prose-p:mb-8 {/* مسافة كافية أسفل كل فقرة [cite: 2026-02-27] */}
+    prose-h3:mt-16 prose-h3:mb-6 prose-h3:text-black prose-h3:font-bold {/* إبراز العناوين بوضوح [cite: 2026-02-27] */}
+    prose-li:text-gray-600 prose-li:mb-4 {/* مسافات بين نقاط القائمة [cite: 2026-02-27] */}
     ${isAr ? 'prose-rtl text-right' : 'text-left'}
   `}
 >
