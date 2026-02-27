@@ -83,8 +83,8 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // ✅ يجب أن يتطابق هذا الرابط تماماً مع ما أضفته في لوحة تحكم Supabase [cite: 2026-02-27]
-      redirectTo: `${window.location.origin}/${lang}/auth/callback`,
+      // ✅ التعديل: إزالة ${lang} لأن المجلد الآن في الـ Root [cite: 2026-02-27]
+      redirectTo: `${window.location.origin}/auth/callback`,
     },
   });
   if (error) console.error(error.message);
