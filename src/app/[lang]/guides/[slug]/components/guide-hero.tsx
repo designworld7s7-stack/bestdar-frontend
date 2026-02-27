@@ -66,13 +66,15 @@ export default function GuideHero({
         </div>
 
         <div className="max-w-5xl">
-          <h1 className="text-4xl lg:text-7xl font-medium text-white leading-[1.1] tracking-[0.1em] mb-8 drop-shadow-2xl uppercase">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="text-lg lg:text-2xl text-white/80 font-medium leading-relaxed max-w-3xl drop-shadow-lg">
-              {subtitle}
-            </p>
+<h1 className="text-[26px] sm:text-4xl lg:text-7xl font-medium text-white leading-[1.2] lg:leading-[1.1] tracking-normal lg:tracking-[0.1em] mb-8 drop-shadow-2xl uppercase break-words">
+  {title}
+</h1>
+
+{/* الوصف - تم ضبطه ليناسب شاشة الجوال [cite: 2026-02-27] */}
+{subtitle && (
+  <p className="text-base lg:text-2xl text-white/80 font-medium leading-relaxed max-w-3xl drop-shadow-lg">
+    {subtitle}
+  </p>
           )}
         </div>
       </div>

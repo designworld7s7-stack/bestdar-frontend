@@ -44,11 +44,11 @@ export default function GuideHero({ lang }: { lang: string }) {
 
       {/* 3. Main Title & Description */}
       <div className="max-w-4xl">
-        <h1 className="text-4xl lg:text-7xl font-medium text-black leading-[1.1] tracking-[0.1em] mb-8">
-          {isAr 
-            ? "الاستثمار في عقارات الإمارات: الدليل الكامل للمواطنين العراقيين" 
-            : "Investing in UAE Real Estate: The Complete Guide for Iraqi Citizens"}
-        </h1>
+       <h1 className="text-[28px] sm:text-3xl lg:text-7xl font-medium text-black leading-[1.2] lg:leading-[1.1] tracking-tight lg:tracking-[0.1em] mb-8 break-words">
+  {isAr 
+    ? "الاستثمار في عقارات الإمارات: الدليل الكامل للمواطنين العراقيين" 
+    : "Investing in UAE Real Estate: The Complete Guide for Iraqi Citizens"}
+</h1>
         <p className="text-lg lg:text-xl text-gray-500 font-medium leading-relaxed max-w-3xl">
           {isAr
             ? "اكتشف كيفية تأمين ثروتك، والحصول على الإقامة، والتنقل في أسواق العقارات في دبي وأبو ظبي بثقة."
