@@ -79,11 +79,11 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
     }
   };
 
-  const handleGoogleLogin = async () => {
+ const handleGoogleLogin = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // ✅ التعديل: إزالة ${lang} لأن المجلد الآن في الـ Root [cite: 2026-02-27]
+      // ✅ التوجه للمسار العام (Root) لمنع الـ 404 [cite: 2026-02-27]
       redirectTo: `${window.location.origin}/auth/callback`,
     },
   });

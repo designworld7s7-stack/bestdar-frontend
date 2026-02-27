@@ -5,22 +5,20 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
   
-  // 1. اكتشاف اللغة من الكوكيز أو المسار الافتراضي [cite: 2026-02-27]
+  // 1. جلب اللغة من الكوكيز (للمستخدمين)
   const lang = request.cookies.get('NEXT_LOCALE')?.value || 'en';
-  
-  // 2. تحديد صفحة التوجيه (الأدمن باللغة الصحيحة) [cite: 2026-02-27]
-  const next = searchParams.get('next') || `/${lang}/admin`;
 
   if (code) {
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error && data?.session) {
-      // 3. التوجيه النهائي للمسار المترجم [cite: 2026-02-27]
-      return NextResponse.redirect(`${origin}${next}`);
+    if (!error) {
+      // ✅ النجاح: جوجل للمستخدمين فقط، لذا نرسلهم للرئيسية المترجمة [cite: 2026-02-27]
+      return NextResponse.redirect(`${origin}/${lang}`);
     }
   }
 
-  // في حال الفشل، العودة لصفحة الدخول [cite: 2026-02-27]
-  return NextResponse.redirect(`${origin}/${lang}/auth/login?error=auth_failed`);
+  // ⚠️ الفشل: بما أن جوجل للمستخدمين، نرسلهم لصفحة دخول "المستخدمين" المترجمة [cite: 2026-02-27]
+  // تأكد أن هذا المسار موجود: src/app/[lang]/login/page.tsx
+  return NextResponse.redirect(`${origin}/${lang}/login?error=auth_failed`);
 }

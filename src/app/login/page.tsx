@@ -17,20 +17,18 @@ export default function LoginPage() {
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  e.preventDefault();
+  setLoading(true);
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      // تنبيه بلغة المستخدم [cite: 2026-02-27]
-      alert(isAr ? "خطأ في الدخول: " + error.message : "Login Error: " + error.message);
-    } else {
-      // ✅ الحل: إضافة رمز اللغة للمسار لمنع الـ 404 [cite: 2026-02-27]
-      router.push(`/${lang}/admin`); 
-    }
-    setLoading(false);
-  };
+  if (error) {
+    alert(isAr ? "خطأ" : "Error");
+  } else {
+    // ✅ التعديل: التوجه للمسار العام في الجذر [cite: 2026-02-27]
+    router.push('/admin'); 
+  }
+  setLoading(false);
+};
 
   return (
     <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center p-6">

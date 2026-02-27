@@ -24,30 +24,28 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // 1. استثناء مسار الـ Auth العام تماماً (المسار الجديد في الـ Root) [cite: 2026-02-27]
-  // هذا يمنع الـ Middleware من إضافة /en/ أو /ar/ لرابط جوجل أو الـ Magic Link
-  if (pathname.startsWith('/auth')) {
+  // 1. حصانة مسارات الجذر (الأدمن والأوث العام) [cite: 2026-02-27]
+  const isRootRoute = 
+    pathname.startsWith('/admin') || 
+    pathname.startsWith('/auth') || 
+    pathname === '/login';
+
+  if (isRootRoute) {
+    // التحقق من الصلاحيات للأدمن وهو في الجذر [cite: 2026-02-27]
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    // إذا حاول دخول /admin وهو غير مسجل، يذهب لـ /login في الجذر [cite: 2026-02-27]
+    if (pathname.startsWith('/admin') && !user) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
     return res;
   }
 
-  // 2. استخراج اللغة من المسار أو الكوكيز [cite: 2026-02-27]
+  // 2. استخراج اللغة للمسارات المترجمة [cite: 2026-02-27]
   const locales = ['en', 'ar'];
   const lang = locales.find(l => pathname.startsWith(`/${l}`)) || 'en';
 
-  // 3. جلب المستخدم للتحقق من الصلاحيات [cite: 2026-02-27]
-  const { data: { user } } = await supabase.auth.getUser();
-
-  // 4. حماية صفحة الأدمن المترجمة (مثل /ar/admin أو /en/admin) [cite: 2026-02-27]
-  if (pathname.includes('/admin') && !user) {
-    return NextResponse.redirect(new URL(`/${lang}/auth/login`, req.url));
-  }
-
-  // 5. توجيه المستخدم للأدمن إذا كان مسجلاً وحاول دخول صفحة اللوجن [cite: 2026-02-27]
-  if (pathname.includes('/auth/login') && user) {
-    return NextResponse.redirect(new URL(`/${lang}/admin`, req.url));
-  }
-
-  // 6. إضافة رمز اللغة تلقائياً للمسارات التي تفتقده [cite: 2026-02-27]
+  // 3. إضافة رمز اللغة للمسارات التي تفتقده (تجاهل الملفات الثابتة) [cite: 2026-02-27]
   const pathnameIsMissingLocale = locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
@@ -56,7 +54,6 @@ export async function middleware(req: NextRequest) {
     const locale = req.cookies.get('NEXT_LOCALE')?.value || 'en';
     const redirectRes = NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url));
     
-    // مزامنة الكوكيز لضمان استمرار الجلسة أثناء التوجيه [cite: 2026-02-27]
     res.cookies.getAll().forEach((cookie) => {
       redirectRes.cookies.set(cookie.name, cookie.value, { 
         path: '/', secure: true, sameSite: 'lax' 
@@ -69,6 +66,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // الحفاظ على حماية كافة المسارات مع استثناء الملفات الثابتة [cite: 2026-02-27]
   matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico|.*\\..*).*)'],
 }
