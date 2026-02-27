@@ -80,18 +80,15 @@ export default function LoginPage({ params }: { params: Promise<{ lang: string }
   };
 
   const handleGoogleLogin = async () => {
-    setErrorMsg(null);
-    const { error: googleError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${nextRoute}`,
-        // ملاحظة: جوجل يقوم بإنشاء حساب تلقائياً إذا كان الإيميل غير موجود
-        // إلا إذا قمت بتقييد ذلك عبر Trigger في قاعدة البيانات.
-      },
-    });
-    
-    if (googleError) setErrorMsg(googleError.message);
-  };
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      // ✅ يجب أن يتطابق هذا الرابط تماماً مع ما أضفته في لوحة تحكم Supabase [cite: 2026-02-27]
+      redirectTo: `${window.location.origin}/${lang}/auth/callback`,
+    },
+  });
+  if (error) console.error(error.message);
+};
 
   return (
     <div className="min-h-screen w-full bg-[#F2F4F7] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-12">
