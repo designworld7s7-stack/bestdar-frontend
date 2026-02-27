@@ -1,32 +1,25 @@
 import { createClient } from '@/utils/supabase/server';
 import { NextResponse, NextRequest } from 'next/server';
 
-// في Next.js 15، الـ params هي Promise دائماً
 export async function GET(
   request: NextRequest, 
   { params }: { params: Promise<{ lang: string }> }
 ) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
+  const { lang } = await params;
   
-  // استخراج اللغة ديناميكياً من المسار
-  const { lang } = await params; 
-  const next = searchParams.get('next') || `/${lang}/admin`;
-
+  // إذا كان هناك رمز (Code)، نقوم بتبديله بجلسة [cite: 2026-02-27]
   if (code) {
     const supabase = await createClient();
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
     
-    if (!error && data?.session) {
-      // بناء رابط التوجيه النهائي مع الحفاظ على اللغة
-      const targetUrl = next.startsWith(`/${lang}`) 
-        ? next 
-        : `/${lang}${next.startsWith('/') ? next : '/' + next}`;
-
-      return NextResponse.redirect(`${origin}${targetUrl}`);
+    if (!error) {
+      // بعد النجاح، نتوجه لصفحة الأدمن باللغة الصحيحة [cite: 2026-02-27]
+      return NextResponse.redirect(`${origin}/${lang}/admin`);
     }
   }
 
-  // في حال الفشل، نعود لصفحة الدخول بنفس اللغة
-  return NextResponse.redirect(`${origin}/${lang}/auth/login?error=auth_failed`);
+  // في حال الفشل أو عدم وجود كود، نعود للوجن مع رسالة خطأ [cite: 2026-02-27]
+  return NextResponse.redirect(`${origin}/${lang}/auth/login?error=auth_callback_failed`);
 }
