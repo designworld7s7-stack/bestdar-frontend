@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 
