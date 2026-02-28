@@ -35,9 +35,10 @@ export default function GuideSidebar({ lang }: { lang: string }) {
         .limit(5);
       
       if (error) {
-        console.error("🔴 Supabase Error:", error.message);
+        console.error("🔴 Supabase Sidebar Error:", error.message);
         return;
       }
+      // حتى لو كانت المشاهدات 0، سيجلب البيانات [cite: 2026-02-28]
       if (data) setMostRead(data as MostReadGuide[]);
     } catch (err) {
       console.error("🔴 Fetch failed:", err);
@@ -46,20 +47,28 @@ export default function GuideSidebar({ lang }: { lang: string }) {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || isLoading) return;
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail || isLoading) return;
 
     setIsLoading(true);
     try {
       const { error } = await supabase
         .from('newsletter_subscribers')
-        .insert([{ email, source: 'guide_sidebar' }]);
+        .insert([{ email: cleanEmail, source: 'guide_sidebar' }]);
 
-      if (error) throw error;
-      alert(isAr ? "تم الاشتراك بنجاح! شكراً لك." : "Subscribed successfully! Thank you.");
-      setEmail("");
+      if (error) {
+        if (error.code === '23505') {
+          alert(isAr ? "أنت مشترك بالفعل!" : "Already subscribed!");
+        } else {
+          throw error;
+        }
+      } else {
+        alert(isAr ? "تم الاشتراك بنجاح! شكراً لك." : "Subscribed successfully! Thank you.");
+        setEmail("");
+      }
     } catch (err: any) {
       console.error("🔴 Subscription error:", err);
-      alert(isAr ? "حدث خطأ أو أنك مشترك بالفعل." : "Already subscribed or an error occurred.");
+      alert(isAr ? "حدث خطأ في الاشتراك." : "Subscription error occurred.");
     } finally {
       setIsLoading(false);
     }
@@ -68,9 +77,9 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   if (!mounted) return null;
 
   return (
-    <div className="w-full lg:max-w-[340px] space-y-8" dir={isAr ? "rtl" : "ltr"}>
+    <div className="w-full lg:max-w-[340px] space-y-8 relative z-30" dir={isAr ? "rtl" : "ltr"}>
       
-      {/* 1. قسم الأكثر قراءة (Most Read) [cite: 2026-02-27] */}
+      {/* 1. قسم الأكثر قراءة (Most Read) - سيظهر دائماً طالما هناك مقالات [cite: 2026-02-28] */}
       {mostRead.length > 0 && (
         <div className="bg-[#0A0A0A] p-8 rounded-[32px] border border-white/5 shadow-2xl">
           <div className="flex items-center gap-3 mb-8">
@@ -93,7 +102,7 @@ export default function GuideSidebar({ lang }: { lang: string }) {
                   </p>
                   <span className="text-[10px] text-gray-500 font-mono flex items-center gap-1 opacity-70">
                     <TrendingUp size={10} />
-                    {item.views_count} {isAr ? 'مشاهدة' : 'views'}
+                    {item.views_count || 0} {isAr ? 'مشاهدة' : 'views'}
                   </span>
                 </div>
               </Link>
@@ -102,8 +111,8 @@ export default function GuideSidebar({ lang }: { lang: string }) {
         </div>
       )}
 
-      {/* 2. قسم النشرة الإخبارية (Newsletter) [cite: 2026-02-27] */}
-      <div className="bg-[#0A0A0A] p-8 rounded-[32px] text-center shadow-2xl relative border border-white/5">
+      {/* 2. قسم النشرة الإخبارية (Newsletter) - تم تعزيز الطبقات [cite: 2026-02-28] */}
+      <div className="bg-[#0A0A0A] p-8 rounded-[32px] text-center shadow-2xl relative border border-white/5 overflow-hidden">
         <div className="relative z-10">
           <h2 className="text-white text-2xl mb-2 font-medium">
             {isAr ? "رؤى أسبوعية" : "Weekly Insights"}
@@ -112,7 +121,8 @@ export default function GuideSidebar({ lang }: { lang: string }) {
             {isAr ? "أحدث تقارير السوق في بريدك" : "Latest market trends in your inbox"}
           </p>
           
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-3"> 
+          {/* ✅ z-50 و pointer-events-auto لضمان التفاعل [cite: 2026-02-28] */}
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-3 relative z-50 pointer-events-auto"> 
             <div className="relative">
               <Mail 
                 className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-gray-500`} 
@@ -124,22 +134,22 @@ export default function GuideSidebar({ lang }: { lang: string }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={isAr ? "بريدك الإلكتروني" : "Your email address"} 
-                className={`w-full bg-white/5 border border-white/10 rounded-xl py-4 ${isAr ? 'pr-11' : 'pl-11'} text-white text-xs font-medium outline-none focus:border-[#12AD65] transition-all`}
+                className={`w-full bg-white/5 border border-white/10 rounded-xl py-4 ${isAr ? 'pr-11' : 'pl-11'} text-white text-xs font-medium outline-none focus:border-[#12AD65] transition-all relative z-50`}
               />
             </div>
 
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 bg-[#12AD65] text-white rounded-xl font-bold cursor-pointer hover:bg-white hover:text-black transition-all disabled:opacity-50"
+              className="w-full py-4 bg-[#12AD65] text-white rounded-xl font-bold cursor-pointer hover:bg-white hover:text-black transition-all disabled:opacity-50 relative z-50"
             >
               {isLoading ? (isAr ? "جاري..." : "Subscribing...") : (isAr ? "اشتراك" : "Subscribe")}
             </button>
           </form>
         </div>
         
-        {/* خلفية جمالية */}
-        <div className="absolute top-0 right-0 w-full h-full bg-[#12AD65] opacity-[0.02] pointer-events-none" />
+        {/* خلفية جمالية - z-0 و pointer-events-none لكي لا تغطي الأزرار [cite: 2026-02-28] */}
+        <div className="absolute top-0 right-0 w-full h-full bg-[#12AD65] opacity-[0.02] pointer-events-none z-0" />
       </div>
     </div>
   );

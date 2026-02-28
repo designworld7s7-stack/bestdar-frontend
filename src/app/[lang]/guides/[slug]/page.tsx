@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/utils/supabase/server';
 
@@ -17,74 +17,52 @@ const calculateReadingTime = (text: string) => {
   const words = text.trim().split(/\s+/).length;
   return Math.ceil(words / 220);
 };
-// 1. Dynamic Metadata (تدعم اللغتين)
-export async function generateMetadata({ params }: any) {
-  const { lang, slug } = await params;
-  const supabase = await createClient();
-  const { data: guide } = await supabase.from('guides').select('title, title_ar').eq('slug', slug).single();
-  
-  // تحديد العنوان حسب اللغة
-  const isAr = lang === 'ar';
-  const displayTitle = isAr ? (guide?.title_ar || guide?.title) : guide?.title;
-
-  return { 
-    title: displayTitle ? `Best Dar | ${displayTitle}` : 'Best Dar | Guide' 
-  };
-}
 
 export default async function GuideDetailsPage({ params }: any) {
   const { lang, slug } = await params; 
   const supabase = await createClient();
   const isAr = lang === 'ar';
 
-  // 1. جلب بيانات الدليل (Guide Data)
+  // 1. جلب بيانات الدليل الأساسية [cite: 2026-02-28]
   const { data: guide, error: guideError } = await supabase
     .from('guides')
     .select('*')
     .eq('slug', slug)
     .single();
 
-  // التحقق من وجود الدليل
   if (guideError || !guide) {
     notFound(); 
   }
 
-  // 2. تفعيل التتبع وجلب البيانات الجانبية بالتوازي
-  // قمنا بإضافة trackingResult لنعرف حالة العملية في الـ Terminal
-  const [{ data: relatedGuides }, trackingResult] = await Promise.all([
+  // 2. تنفيذ ثلاث عمليات بالتوازي لسرعة الأداء:
+  // - جلب المقالات ذات الصلة
+  // - تسجيل الزيارة في جدول التتبع العام (page_views)
+  // - زيادة عداد المشاهدات الفعلي في جدول guides [cite: 2026-02-28]
+  const [{ data: relatedGuides }, trackingResult, incrementResult] = await Promise.all([
     supabase.from('guides').select('*').neq('slug', slug).limit(3),
     
-    // تسجيل الزيارة في جدول page_views
     supabase.from('page_views').insert([{
-      content_id: guide.id.toString(), // تحويله لنص لضمان التوافق
+      content_id: guide.id.toString(),
       content_type: 'guide',
       page_path: `/${lang}/guides/${slug}`
-    }])
+    }]),
+
+    // زيادة العداد في السيرفر فوراً [cite: 2026-02-28]
+    supabase.rpc('increment_views', { guide_slug: slug })
   ]);
 
-  // 3. فحص نتيجة التتبع في الـ Terminal (للمراقبة فقط)
-  if (trackingResult.error) {
-    console.error("❌ GUIDE TRACKING ERROR:", trackingResult.error.message);
-  } else {
-    console.log("✅ GUIDE VIEW RECORDED:", slug);
-  }
+  // للمراقبة في الـ Terminal فقط [cite: 2026-02-28]
+  if (incrementResult.error) console.error("❌ Increment Error:", incrementResult.error.message);
 
-  // ------------------------------------------------------------------
-  // 🎯 منطق الترجمة الذكي: تجهيز المتغيرات قبل تمريرها للمكونات
-  // إذا كانت اللغة عربية ولم يكن هناك نص عربي، سيتم عرض الإنجليزي كخيار بديل
-  // ------------------------------------------------------------------
+  // 3. منطق الترجمة الكامل (لضمان عدم حدوث أخطاء في الـ JSX) [cite: 2026-02-28]
   const displayTitle = isAr ? (guide.title_ar || guide.title) : guide.title;
   const displaySubtitle = isAr ? (guide.subtitle_ar || guide.subtitle) : guide.subtitle;
   const displayIntro = isAr ? (guide.intro_text_ar || guide.intro_text) : guide.intro_text;
   const displayContent = isAr ? (guide.content_ar || guide.content) : guide.content;
   const displaySidebarLinks = isAr ? (guide.sidebar_links_ar || guide.sidebar_links) : guide.sidebar_links;
-  
-  // لا تنسَ الـ Callout الذي أضفناه اليوم! 
-  // يمكنك تمريره لـ GuideContent أو أي مكون تراه مناسباً
   const displayCallout = isAr ? (guide.callout_ar || guide.callout) : guide.callout;
 
-  // 3. ثانياً: الآن فقط يمكننا حساب وقت القراءة (لأن displayContent أصبح موجوداً)
-  // ونقوم بتحويله إلى String ليتطابق مع الـ Interface الخاص بك
+  // 4. حساب وقت القراءة بناءً على المحتوى المعروض [cite: 2026-02-28]
   const timeInMinutes = calculateReadingTime(displayContent);
   const readingTime = isAr ? `${timeInMinutes} دقائق قراءة` : `${timeInMinutes} min read`;
   
