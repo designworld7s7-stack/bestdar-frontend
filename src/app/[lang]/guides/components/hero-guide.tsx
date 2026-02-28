@@ -40,9 +40,9 @@ export default function HeroGuide({ id, title, description, image, date, lang }:
               - في الموبايل يبقى line-clamp-2 (سطرين فقط كما طلبت).
               - في الـ Desktop (md:) يصبح line-clamp-none ليظهر النص كاملاً.
           */}
-          <p className="text-white/70 text-sm lg:text-lg font-medium leading-relaxed mb-10 line-clamp-2 md:line-clamp-none max-w-[90%] md:max-w-[700px]">
-            {description}
-          </p>
+          <p className="text-white/80 text-[13px] md:text-lg font-medium leading-relaxed mb-8 md:mb-10 line-clamp-3 md:line-clamp-none max-w-[95%] md:max-w-[700px]">
+  {description}
+</p>
 
           <div className="inline-flex bg-white text-black px-10 py-4 rounded-full font-bold text-[12px] uppercase tracking-[0.1em] transition-all duration-500 group-hover:bg-[#12AD65] group-hover:text-white items-center gap-3">
             {isAr ? "اقرأ المقال" : "Read Guide"}

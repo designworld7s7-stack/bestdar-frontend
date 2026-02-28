@@ -27,23 +27,27 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   }, [lang]);
 
   const fetchMostRead = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('guides')
-        .select('slug, title_en, title_ar, views_count')
-        .order('views_count', { ascending: false })
-        .limit(5);
-      
-      if (error) {
-        console.error("🔴 Supabase Sidebar Error:", error.message);
-        return;
-      }
-      // حتى لو كانت المشاهدات 0، سيجلب البيانات [cite: 2026-02-28]
-      if (data) setMostRead(data as MostReadGuide[]);
-    } catch (err) {
-      console.error("🔴 Fetch failed:", err);
+  try {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('slug, title_en, title_ar, views_count')
+      // تأكد من جلب المقالات التي لها مشاهدات حتى لو كانت قليلة [cite: 2026-02-28]
+      .order('views_count', { ascending: false })
+      .limit(5);
+    
+    if (error) {
+      console.error("🔴 Sidebar DB Error:", error.message);
+      return;
     }
-  };
+    
+    console.log("📊 Most Read Data:", data); // سيظهر لك البيانات في Console المتصفح [cite: 2026-02-28]
+    if (data && data.length > 0) {
+      setMostRead(data as MostReadGuide[]);
+    }
+  } catch (err) {
+    console.error("🔴 Sidebar Fetch Catch:", err);
+  }
+};
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,30 +126,27 @@ export default function GuideSidebar({ lang }: { lang: string }) {
           </p>
           
           {/* ✅ z-50 و pointer-events-auto لضمان التفاعل [cite: 2026-02-28] */}
-          <form onSubmit={handleSubscribe} className="flex flex-col gap-3 relative z-50 pointer-events-auto"> 
-            <div className="relative">
-              <Mail 
-                className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-gray-500`} 
-                size={14} 
-              />
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={isAr ? "بريدك الإلكتروني" : "Your email address"} 
-                className={`w-full bg-white/5 border border-white/10 rounded-xl py-4 ${isAr ? 'pr-11' : 'pl-11'} text-white text-xs font-medium outline-none focus:border-[#12AD65] transition-all relative z-50`}
-              />
-            </div>
+          <form onSubmit={handleSubscribe} className="flex flex-col gap-3 relative z-[100] pointer-events-auto"> 
+  <div className="relative">
+    <Mail className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-gray-500`} size={14} />
+    <input 
+      type="email" 
+      required
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      placeholder={isAr ? "بريدك الإلكتروني" : "Your email address"} 
+      className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pr-11 pl-11 text-white text-xs outline-none focus:border-[#12AD65] transition-all relative z-[110] pointer-events-auto"
+    />
+  </div>
 
-            <button 
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-4 bg-[#12AD65] text-white rounded-xl font-bold cursor-pointer hover:bg-white hover:text-black transition-all disabled:opacity-50 relative z-50"
-            >
-              {isLoading ? (isAr ? "جاري..." : "Subscribing...") : (isAr ? "اشتراك" : "Subscribe")}
-            </button>
-          </form>
+  <button 
+    type="submit"
+    disabled={isLoading}
+    className="w-full py-4 bg-[#12AD65] text-white rounded-xl font-bold cursor-pointer hover:bg-white hover:text-black transition-all relative z-[110] pointer-events-auto"
+  >
+    {isLoading ? (isAr ? "جاري..." : "Subscribing...") : (isAr ? "اشتراك" : "Subscribe")}
+  </button>
+</form>
         </div>
         
         {/* خلفية جمالية - z-0 و pointer-events-none لكي لا تغطي الأزرار [cite: 2026-02-28] */}
