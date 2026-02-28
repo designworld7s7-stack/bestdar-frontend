@@ -130,6 +130,8 @@ export default function GuideSidebar({ lang }: { lang: string }) {
   <div className="relative">
     <Mail className={`absolute ${isAr ? 'right-4' : 'left-4'} top-1/2 -translate-y-1/2 text-gray-500`} size={14} />
     <input 
+    id="newsletter-email"
+    name="email"
       type="email" 
       required
       value={email}
