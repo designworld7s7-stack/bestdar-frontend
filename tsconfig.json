@@ -17,10 +17,9 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "src/*"
+        "./src/*"
       ]
     },
     "plugins": [
@@ -34,8 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src" // Explicitly include the src directory as a root
-    ,
+    "src",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
